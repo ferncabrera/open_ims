@@ -6,7 +6,7 @@ import _ from 'lodash';
 function App() {
 
   const [apiData, setApiData] = useState('');
-  const [buttonText, setButtonText] = useState('Click me for a secret message!');
+  const [buttonText, setButtonText] = useState('beep');
 
   const requestHandler = async () => {
 
