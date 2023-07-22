@@ -8,7 +8,9 @@ export const getJSONResponse = async (props: IGetResponse) => {
             params,
         } = props;
 
-    const url = `http://localhost:3000${endpoint}`;
+    // TODO:
+    // localhost will definitely need to be a HOST env var lol
+    const url = `http://localhost${endpoint}`;
     const parameters = params ? params : {}; //can add default headers here in the future.
 
     // will always expect this to be a JSON object

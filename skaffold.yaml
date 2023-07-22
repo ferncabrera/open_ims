@@ -1,0 +1,45 @@
+apiVersion: skaffold/v4beta6
+kind: Config
+manifests:
+  rawYaml:
+    - k8s/client-cluster-ip-service.yaml
+    - k8s/client-deployment.yaml
+    - k8s/ingress-service.yaml
+    - k8s/server-cluster-ip-service.yaml
+    - k8s/server-deployment.yaml
+metadata:
+  name: open-ims-local-dev-env
+build:
+  local:
+    push: false
+  artifacts:
+    - image: fcabrera01/skaffold-client-dev
+      context: client
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "src/**/*.js"
+            dest: .
+          - src: "src/**/*.ts"
+            dest: .
+          - src: "src/**/*.tsx"
+            dest: .
+          - src: "src/**/*.css"
+            dest: .
+          - src: "vite.config.ts"
+            dest: .
+          - src: "src/**/*.html"
+            dest: .
+    - image: fcabrera01/skaffold-server-dev
+      context: server
+      docker:
+        dockerfile: Dockerfile.dev
+      sync:
+        manual:
+          - src: "**/*.js"
+            dest: .
+          - src: "**/*.ts"
+            dest: .
+          - src: "tsconfig.json"
+            dest: .
