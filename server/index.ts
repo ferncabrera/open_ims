@@ -1,12 +1,15 @@
 import express, { Express, Request, Response } from "express";
 import cors from 'cors';
 import dotenv from 'dotenv';
+import morgan from 'morgan';
 
 dotenv.config();
 
 const app: Express = express();
 
 app.use(cors());
+
+app.use(morgan('common'));
 
 // Will have to figure out how we will work with env variables in deployment.
 const PORT = process.env.PORT || 3000;
