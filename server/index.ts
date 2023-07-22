@@ -14,8 +14,8 @@ app.use(morgan('common'));
 // Will have to figure out how we will work with env variables in deployment.
 const PORT = process.env.PORT || 3000;
 
-app.get('/', (req: Request, res: Response) => {
-  res.json({ data: `Hello! This information came from the back-end! Don't believe me? Search the source folder and I guarantee you won't be able to find this message in there` });
+app.get('/api/server/testmsg', (req: Request, res: Response) => {
+  res.json({ data: `Hello! This information came from the back-end! Don't believe me? Search the source folder and I guarantee you won't be able to find this message in there!!!!!` });
 });
 
 app.get('*', (req: Request, res: Response) => {

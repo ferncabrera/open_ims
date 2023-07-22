@@ -11,7 +11,7 @@ function App() {
   const requestHandler = async () => {
 
     if (!apiData) {
-      const response = await getJSONResponse({ endpoint: "/" });
+      const response = await getJSONResponse({ endpoint: "/api/server/testmsg" });
       const text = _.get(response, 'data', '');
       setApiData(text);
       setButtonText('Quick! Hide the message!');
