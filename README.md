@@ -24,9 +24,9 @@ After it has finished setting up, you are ready to start up the application!
 #### Starting the dev env
 In the root of the project, run:
 ```
-skaffold dev --no-prune=false --cache-artifacts=false
+skaffold dev
 ```
-<strong>The terminal should now be streaming logs.</strong> The additional flag prevents Docker from caching image artifacts and will prune dangling images created by Skaffold after the environment is torn down (to save memory on your development machine).
+<strong>The terminal should now be streaming logs.</strong> Tack on the ```--keep-running-on-failure``` to prevent Skaffolds default behaviour of exiting on failuire and live-debug the app.
 <br/>
 <br/>
 This command will run the application in dev mode. Skaffold will deploy our application and (based on configurations) re-deploy the applications services as it picks up changes to the code. At first, this may take a couple of minutes as images may have to be pulled from <a href="https://hub.docker.com/">Docker Hub</a>, please be patient as Skaffold sets up the environment for the first time.
