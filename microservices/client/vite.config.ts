@@ -8,8 +8,9 @@ export default defineConfig({
     host: true,
     port: 5000,
     // Add the next lines if you're using windows and hot reload doesn't work
-    //  watch: {
-    //    usePolling: true
-    //  }
+     watch: {
+       usePolling: true
+     },
+     strictPort: true
   }
 })

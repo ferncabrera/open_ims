@@ -1,0 +1,10 @@
+# .git
+# .vscode
+# .dockerignore
+# .gitignore
+# .env
+# config
+# dist
+# node_modules
+# kustomize
+# THIS FILE MAY HAVE CAUSED ISSUES - COMMENTED OUT FOR NOW

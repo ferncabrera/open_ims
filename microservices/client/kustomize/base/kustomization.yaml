@@ -1,0 +1,6 @@
+resources:
+  - client-cluster-ip-service.yaml
+  - client-deployment.yaml
+
+commonLabels:
+  component: web

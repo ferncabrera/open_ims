@@ -2,8 +2,8 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-service
-  annotations:
-    nginx.ingress.kubernetes.io/use-regex: "true"
+  # annotations:
+    # nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
   - http:
@@ -15,7 +15,7 @@ spec:
             name: client-cluster-ip-service
             port:
               number: 5000
-      - path: /api/server/testmsg
+      - path: /api/server
         pathType: Prefix
         backend:
           service:
