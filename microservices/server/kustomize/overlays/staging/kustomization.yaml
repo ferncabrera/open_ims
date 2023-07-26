@@ -1,0 +1,9 @@
+resources:
+  - ../../base
+
+# namePrefix: 
+#   dev-
+
+configMapGenerator:
+  - name: open-ims-server-map
+    env: config.properties
