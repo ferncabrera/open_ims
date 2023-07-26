@@ -1,0 +1,16 @@
+FROM node:18.17.0-alpine3.18 as builder
+
+WORKDIR /home/node/app
+
+COPY ./package.json ./
+RUN npm install
+COPY ./ ./
+CMD ["npm", "run", "build"]
+
+# Slimmed production image
+FROM nginx:1.24.0
+
+EXPOSE 5000
+
+COPY --from=builder /home/node/app/dist/ /usr/share/nginx/html
+COPY /nginx/default.conf /etc/nginx/conf.d/default.conf

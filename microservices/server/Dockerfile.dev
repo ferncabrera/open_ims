@@ -3,12 +3,16 @@ FROM node:18.17.0-alpine3.18
 EXPOSE 3000
 USER node 
 
-RUN mkdir -p /home/node/app
 WORKDIR /home/node/app
 
 COPY --chown=node:node ./package.json ./
 RUN npm install
 COPY --chown=node:node ./ ./
+
+# ** Workaround **  
 RUN npm run build
 
+# Looks like the process wants to access the 
+# dist/ before building the resource when
+# running "npm run dev"...
 CMD ["npm", "run", "dev"]

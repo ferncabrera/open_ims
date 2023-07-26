@@ -1,0 +1,6 @@
+resources:
+  - server-cluster-ip-service.yaml
+  - server-deployment.yaml
+
+commonLabels:
+  component: server

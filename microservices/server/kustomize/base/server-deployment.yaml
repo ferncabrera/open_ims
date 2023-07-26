@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: client-deployment
+  name: server-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      component: web
+      component: server
   template:
     metadata:
       labels:
-        component: web
+        component: server
     spec:
       containers:
-      - name: client
-        image: fcabrera01/skaffold-client-dev
+      - name: server
+        image: fcabrera01/open-ims-server
         # resources:
         #   limits:
-        #     memory: "512Mi"
+        #     memory: "128Mi"
         #     cpu: "500m"
         ports:
-        - containerPort: 5000
+        - containerPort: 3000
