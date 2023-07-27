@@ -1,5 +1,5 @@
 name: Main branch acceptance check
-run-name: ${{ github.actor }}'s main branch PR - Test Results
+run-name: ${{ github.actor }}'s main branch PR - Verification Test
 
 # env:
 #   SERVER: production
@@ -14,12 +14,6 @@ jobs:
   main_branch_acceptance_check:
     runs-on: ubuntu-latest
     steps:
-      # Login to Docker registry
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
       # Install kubectl
       - name: Install kubectl
         run: |
@@ -41,3 +35,23 @@ jobs:
         with:
           path: ~/.skaffold/
           key: fixed-${{ github.sha }}
+      # Login to Docker registry
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      # Staging
+      - name: Build, Deploy, Verify
+        run: |
+          skaffold build -p staging --file-output=staging-tags.json && \
+          skaffold deploy -p staging -a staging-tags.json && \
+          skaffold verify -p staging && \
+          skaffold delete -p staging
+
+# hostname -l
+
+# skaffold build -p staging --file-output=staging-tags.json
+# skaffold deploy -p staging -a staging-tags.json
+# skaffold verify -p staging
+# skaffold delete -p staging 
