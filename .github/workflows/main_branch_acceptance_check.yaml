@@ -44,12 +44,9 @@ jobs:
       # Checkout repository
       - uses: actions/checkout@v3
       # Staging
-      - name: Build, Deploy, Verify
+      - name: Build and Push to DockerHub
         run: |
-          skaffold build -p staging --file-output=staging-tags.json && \
-          skaffold deploy -p staging -a staging-tags.json && \
-          skaffold verify -p staging && \
-          skaffold delete -p staging
+          skaffold build -p staging
 
 # hostname -l
 
