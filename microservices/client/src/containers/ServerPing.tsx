@@ -1,9 +1,8 @@
 import { useState } from 'react';
-import './App.css';
-import { getJSONResponse } from './utilities/apiHelpers';
+import { getJSONResponse } from '../utilities/apiHelpers';
 import _ from 'lodash';
 
-function App() {
+export const ServerPing = () => {
 
   const [apiData, setApiData] = useState('');
   const [buttonText, setButtonText] = useState('Kustomize:D!!');
@@ -32,5 +31,3 @@ function App() {
     </>
   )
 }
-
-export default App
