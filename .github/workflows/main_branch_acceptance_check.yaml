@@ -1,5 +1,5 @@
 name: Main branch acceptance check
-run-name: ${{ github.actor }}'s main branch PR - Verification Test
+run-name: ${{ github.actor }}'s main branch PR - ***Placeholder workflow***
 
 # env:
 #   SERVER: production
