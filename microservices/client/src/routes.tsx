@@ -1,19 +1,18 @@
 import React from "react";
 
-import {Login} from "./containers/auth/Login";
-import {Register} from "./containers/auth/Register";
+import { Authentication } from "./containers/auth";
 import Error from "./containers/Error";
 import { MainContainer } from "./containers/MainContainer";
 
 const Routes = [
     {
         path: '/',
-        element: <Login />,
+        element: <Authentication />,
         errorElement: <Error />
     },
     {
         path: '/register',
-        element: <Register />,
+        element: <Authentication />,
     },
     {
         path: '/home',

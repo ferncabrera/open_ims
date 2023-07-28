@@ -1,0 +1,24 @@
+.auth_page_paddings{
+    padding: 3em;
+    padding-left: 5em;
+    padding-right: 6em;
+}
+
+.left_auth_formatting {
+    position: relative;
+    margin-top: 8em;
+    padding-right: 5%;
+}
+
+.auth_image_container {
+    padding: 0;
+    max-height: 90vh;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 10% 0;
+}
+
+.auth_image {
+    max-width: 100%;
+    object-fit: contain;
+}

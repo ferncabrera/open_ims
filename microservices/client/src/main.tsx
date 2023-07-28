@@ -9,6 +9,8 @@ const router = createBrowserRouter(Routes)
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <div className='open-ims-styling'>
+      <RouterProvider router={router} />
+    </div>
   </React.StrictMode>,
 )

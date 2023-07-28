@@ -1,0 +1,31 @@
+@import './general/colors.scss';
+
+.open-ims-styling {
+
+    form {
+
+        label {
+            font-weight: 500;
+        }
+
+        input {
+            border-radius: 10px;
+            border-color: $grey;
+            margin-bottom: 20px;
+        }
+
+        .form-check {
+            label {
+                font-weight: 400;
+            }
+
+            input.form-check-input {
+                border-radius: 0;
+                border-width: 2px;
+                &:hover {
+                    cursor: pointer;
+                }
+            }
+        }
+    }
+}
