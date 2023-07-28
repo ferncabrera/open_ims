@@ -1,6 +1,7 @@
 import React from "react";
 
 import { Authentication } from "./containers/auth";
+import { ServerPing } from "./containers/ServerPing";
 import Error from "./containers/Error";
 import { MainContainer } from "./containers/MainContainer";
 
@@ -8,6 +9,13 @@ const Routes = [
     {
         path: '/',
         element: <Authentication />,
+        errorElement: <Error />
+    },
+    // Just want some placeholder api call to backend for now
+    // for testing purposes
+    {
+        path: '/serverping',
+        element: <ServerPing />,
         errorElement: <Error />
     },
     {
