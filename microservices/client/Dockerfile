@@ -5,12 +5,12 @@ WORKDIR /home/node/app
 COPY ./package.json ./
 RUN npm install
 COPY ./ ./
-CMD ["npm", "run", "build"]
+RUN npm run build
 
 # Slimmed production image
 FROM nginx:1.24.0
 
 EXPOSE 5000
 
-COPY --from=builder /home/node/app/dist/ /usr/share/nginx/html
+COPY --from=builder /home/node/app/dist /usr/share/nginx/html
 COPY /nginx/default.conf /etc/nginx/conf.d/default.conf
