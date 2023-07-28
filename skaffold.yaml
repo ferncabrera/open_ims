@@ -48,7 +48,7 @@ profiles:
   manifests:
     kustomize:
       paths:
-        - ./common/kustomize/overlays/dev
+        - ./common/ingress/kustomize/overlays/dev
         - ./microservices/server/kustomize/overlays/dev
         - ./microservices/client/kustomize/overlays/dev
       
@@ -73,7 +73,7 @@ profiles:
   manifests:
     kustomize:
       paths:
-        - ./common/kustomize/overlays/staging
+        - ./common/ingress/kustomize/overlays/staging
         - ./microservices/server/kustomize/overlays/staging
         - ./microservices/client/kustomize/overlays/staging
   verify:
