@@ -13,7 +13,7 @@ const Routes = [
     },
     {
         path: '/register',
-        element: <Authentication />,
+        element: <Authentication isLogin={false} />,
     },
     // Just want some placeholder api call to backend for now
     // for testing purposes

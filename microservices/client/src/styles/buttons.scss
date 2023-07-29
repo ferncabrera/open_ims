@@ -9,6 +9,11 @@
         &.btn-primary {
             background-color: $primary-blue;
             color: $white;
+            &:hover {
+                background-color: $secondary-blue;
+                border-color: $secondary-blue;
+            }
         }
+
     }
 }
