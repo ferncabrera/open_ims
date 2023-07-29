@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { Form, Row, Button } from 'react-bootstrap'
 import { Password } from '../../../components/forms/Password';
 import { CenteredModal } from '../../../components/modals/CenteredModal';
+import { MdOutlineEmail } from 'react-icons/md';
 
 import styles from './index.module.scss';
 
@@ -10,16 +11,45 @@ import styles from './index.module.scss';
 export const Login = () => {
 
     const [showResetPassword, setShowResetPassword] = useState(false);
+    const [emailSent, setEmailSent] = useState(false);
 
-    const modalContent = () => {
+    const modalFooter = emailSent ? null : <a
+        onClick={() => {
+            setShowResetPassword(false);
+            setEmailSent(false);
+        }}
+    >
+        Cancel
+    </a>
+
+    const resetPasswordContent = () => {
         return (
             <div>
                 <h6 className='mb-3'>Enter the email associated with you CCG inventory account here:</h6>
                 <Form>
                     <Form.Control type="email" placeholder='' />
-                    <Button className='mt-2'>Send email</Button>
+                    <Button
+                        className='mt-2'
+                        onClick={() => setEmailSent(true)}
+                    >
+                        Send email
+                    </Button>
                 </Form>
                 <p className='mt-5 text-center'>If we find your email in our records, we'll send you an email with next steps.</p>
+            </div>
+        )
+    };
+
+    const resetPasswordSentContent = () => {
+        return (
+            <div>
+                <h2 className='mb-5 pb-5 d-flex justify-content-center'>Email Sent!</h2>
+                <div className='mt-5'>
+                    <span className='d-flex justify-content-center'>
+                        <MdOutlineEmail className="font-24" />
+                    </span>
+                    <p className='text-center'>Keep an eye out for an incoming email with your next steps.</p>
+                </div>
             </div>
         )
     }
@@ -53,9 +83,13 @@ export const Login = () => {
             <CenteredModal
                 heading={<div><h3>Forgot your Password?</h3><h3>No Worries.</h3></div>}
                 show={showResetPassword}
-                footer={<a>Cancel</a>}
+                footer={modalFooter}
+                topCloseFunction={() => {
+                    setShowResetPassword(false)
+                    setEmailSent(false)
+                }}
             >
-                {modalContent()}
+                {!emailSent ? resetPasswordContent() : resetPasswordSentContent()}
             </CenteredModal>
         </>
     )

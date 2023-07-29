@@ -35,6 +35,9 @@ html, body {
         &.no-underline {
             text-decoration: none;
         }
+        &:hover {
+            cursor: pointer;
+        }
     }
 
     .title-heading {
@@ -51,6 +54,26 @@ html, body {
 
     img {
         user-select: none;
+    }
+
+    .font-12 {
+        font-size: 12px;
+    }
+
+    .font-18 {
+        font-size: 18px;
+    }
+
+    .font-24 {
+        font-size: 24px;
+    }
+
+    .font-36 {
+        font-size: 36px;
+    }
+
+    .font-48 {
+        font-size: 48px;
     }
 
 
