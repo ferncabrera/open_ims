@@ -1,0 +1,19 @@
+
+@import './general/colors.scss';
+
+.open-ims-styling {
+    button.btn {
+        width: 100%;
+        border-radius: 15px;
+        height: 45px;
+        &.btn-primary {
+            background-color: $primary-blue;
+            color: $white;
+            &:hover {
+                background-color: $secondary-blue;
+                border-color: $secondary-blue;
+            }
+        }
+
+    }
+}

@@ -1,16 +1,19 @@
 import React from "react";
 
+import { Authentication } from "./containers/auth";
 import { ServerPing } from "./containers/ServerPing";
-import { Login } from "./containers/auth/Login";
-import { Register } from "./containers/auth/Register";
 import Error from "./containers/Error";
 import { MainContainer } from "./containers/MainContainer";
 
 const Routes = [
     {
         path: '/',
-        element: <Login />,
+        element: <Authentication />,
         errorElement: <Error />
+    },
+    {
+        path: '/register',
+        element: <Authentication isLogin={false} />,
     },
     // Just want some placeholder api call to backend for now
     // for testing purposes
@@ -19,10 +22,7 @@ const Routes = [
         element: <ServerPing />,
         errorElement: <Error />
     },
-    {
-        path: '/register',
-        element: <Register />,
-    },
+    
     {
         path: '/home',
         element: <MainContainer />, // this main container will handle our breadcrumbs https://reactrouter.com/en/main/hooks/use-matches

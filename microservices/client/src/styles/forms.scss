@@ -1,0 +1,56 @@
+@import './general/colors.scss';
+
+.open-ims-styling {
+
+    form {
+
+        label {
+            font-weight: 500;
+        }
+
+        input {
+            border-radius: 10px;
+            border-color: $grey;
+            margin-bottom: 20px;
+
+            &::selection {
+                background-color: $secondary-blue;
+                color: $white;
+            }
+
+            &:focus {
+                border-color: $secondary-blue;
+                box-shadow: 0 0 0 0.25rem $secondary-blue;
+            }
+        }
+
+        .form-check {
+            label {
+                font-weight: 400;
+            }
+
+            input.form-check-input {
+                border-radius: 0;
+                border-width: 2px;
+
+                &:hover {
+                    cursor: pointer;
+                }
+
+                &:checked {
+                    background-color: $primary-blue;
+                    border-color: $primary-blue ;
+                    box-shadow: none;
+                }
+
+                &:focus {
+                    box-shadow: none;
+                }
+            }
+        }
+
+        span.input-group-text {
+            margin-bottom: 20px;
+        }
+    }
+}
