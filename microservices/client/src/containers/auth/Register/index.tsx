@@ -11,7 +11,7 @@ export const Register = () => {
             <div className='mt-5 mb-5'>
                 <h1>Create an account</h1>
                 <div className={`d-flex justify-content-start ${styles.flex_wrapper}`}>
-                    <h6>Already have an account?</h6>
+                    <h6 className='d-flex align-items-center'>Already have an account?</h6>
                     <Link className={`ps-1 ${styles.link_header}`} to={'/'}> Log in</Link>
                 </div>
             </div>

@@ -7,6 +7,7 @@
 @import './colors.scss';
 @import '../forms.scss';
 @import '../buttons.scss';
+@import '../modal.scss';
 
 html, body {
     margin: 0;
@@ -25,9 +26,7 @@ html, body {
     h1,h2,h3,h4,h5,h6 {
         padding: 0;
         margin: 0;
-        display: inline-flex;
-        align-items: center;
-        
+        display: block;        
     }
 
     a {
