@@ -11,6 +11,10 @@ const Routes = [
         element: <Authentication />,
         errorElement: <Error />
     },
+    {
+        path: '/register',
+        element: <Authentication />,
+    },
     // Just want some placeholder api call to backend for now
     // for testing purposes
     {
@@ -18,10 +22,7 @@ const Routes = [
         element: <ServerPing />,
         errorElement: <Error />
     },
-    {
-        path: '/register',
-        element: <Authentication />,
-    },
+    
     {
         path: '/home',
         element: <MainContainer />, // this main container will handle our breadcrumbs https://reactrouter.com/en/main/hooks/use-matches

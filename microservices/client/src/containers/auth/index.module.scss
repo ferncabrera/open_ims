@@ -1,5 +1,5 @@
 .auth_page_paddings{
-    padding: 3em;
+    padding: 2em;
     padding-left: 5em;
     padding-right: 6em;
 }
@@ -21,4 +21,11 @@
 .auth_image {
     max-width: 100%;
     object-fit: contain;
+}
+
+@media (max-width: 1140px) {
+    .auth_image {
+        height: 100%;
+        object-fit: fill;
+    }
 }

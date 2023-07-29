@@ -8,7 +8,7 @@ export const Login = () => {
         <>
             <div className='mt-5 mb-5'>
                 <h1>Welcome back</h1>
-                <div className='d-flex justify-content-start'>
+                <div className={`d-flex justify-content-start ${styles.flex_wrapper}`}>
                     <h6>New to CCG Inventory?</h6>
                     <a className={`ps-1 ${styles.link_header}`} href="/"> Create an account</a>
                 </div>
@@ -23,7 +23,7 @@ export const Login = () => {
                     <Form.Control type="password" placeholder='' />
                 </Form.Group>
                 <Row>
-                    <div className='d-flex justify-content-between'>
+                    <div className={'d-flex justify-content-between' + ` ${styles.flex_wrapper}`}>
                         <Form.Check label='Remember me for 30 days' />
                         <a className='no-underline' href="/">forgot password</a>
                     </div>

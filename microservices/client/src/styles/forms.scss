@@ -25,6 +25,14 @@
                 &:hover {
                     cursor: pointer;
                 }
+                &:checked {
+                    background-color: $primary-blue;
+                    border-color: $primary-blue ;
+                    box-shadow: none;
+                }
+                &:focus {
+                    box-shadow: none;
+                }
             }
         }
     }
