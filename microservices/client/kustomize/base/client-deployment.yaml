@@ -13,7 +13,7 @@ spec:
         - containerPort: 5000
         envFrom:
           - configMapRef:
-              name: open-ims-client-map
+              name: client-config
         resources:
           limits:
             memory: "512Mi"
