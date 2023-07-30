@@ -49,6 +49,7 @@ profiles:
     kustomize:
       paths:
         - ./common/ingress/kustomize/overlays/dev
+        - ./common/database/kustomize/overlays/dev
         - ./microservices/server/kustomize/overlays/dev
         - ./microservices/client/kustomize/overlays/dev
       

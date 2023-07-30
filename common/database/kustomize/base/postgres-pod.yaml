@@ -1,0 +1,48 @@
+# Is this better than including the definition in our statefulset?
+
+# apiVersion: v1
+# kind: Pod
+# metadata:
+#   name: postgres-pod
+#   labels:
+#     component: database
+# spec:
+#   volumes:
+#     - name: postgres-storage
+#       persistentVolumeClaim:
+#         claimName: postgres-persistent-volume-claim
+#   containers:
+#   - name: postgres
+#     image: postgres:15.3
+#     volumeMounts:
+#     - mountPath: "/var/lib/postgresql"
+#       name: postgres-storage
+#       subPath: postgres
+#     ports:
+#       - containerPort: 5432
+#     resources:
+#       limits:
+#         memory: "512Mi"
+#         cpu: "1000m"
+#     envFrom:
+#       - configMapRef:
+#           name: open-ims-postgres-map
+    # This is needed for prod
+    # env:
+    #   - name: POSTGRES_PASSWORD
+    #     valueFrom:
+    #       secretKeyRef:
+    #         name: postgres-credentials
+    #         key: password
+  # initContainers:
+  # - name: pgsql-data-permission-fix
+  #   image: busybox
+  #   command: ["/bin/chmod","-R","777", "/var/lib/postgresql/data"]
+  #   volumeMounts:
+  #   - name: postgres-storage
+  #     mountPath: /var/lib/postgresql/data
+  #     subPath: postgres
+  #   resources:
+  #     limits:
+  #       memory: "512Mi"
+  #       cpu: "1000m"

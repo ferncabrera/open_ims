@@ -15,9 +15,12 @@ spec:
       containers:
       - name: server
         image: fcabrera01/open-ims-server
-        # resources:
-        #   limits:
-        #     memory: "128Mi"
-        #     cpu: "500m"
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
         ports:
         - containerPort: 3000
+        envFrom:
+          - configMapRef:
+              name: open-ims-server-map

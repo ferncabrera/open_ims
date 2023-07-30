@@ -14,7 +14,7 @@ spec:
         envFrom:
           - configMapRef:
               name: open-ims-client-map
-        # resources:
-        #   limits:
-        #     memory: "512Mi"
-        #     cpu: "500m"
+        resources:
+          limits:
+            memory: "512Mi"
+            cpu: "1000m"
