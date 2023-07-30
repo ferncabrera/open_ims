@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: postgres-stateful-set
+spec:
+  serviceName: postgres-headless-port-service
+  replicas: 1
+  template:
+    spec:
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: postgres-persistent-volume-claim
+      containers:
+      - name: postgres
+        image: postgres:latest
+        volumeMounts:
+        - mountPath: "/var/lib/postgresql/data"
+          name: postgres-storage
+          subPath: postgres
+        ports:
+          - containerPort: 5432
+        envFrom:
+          - configMapRef:
+              name: postgres-config

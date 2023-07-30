@@ -2,3 +2,11 @@ resources:
 - ../../base
 
 namePrefix: staging-
+
+patches:
+- path: env-name-patch.json
+  target:
+    group: networking.k8s.io
+    version: v1
+    kind: Ingress
+    name: ingress-service

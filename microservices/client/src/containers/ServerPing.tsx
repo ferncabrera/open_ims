@@ -3,10 +3,12 @@ import { getJSONResponse } from '../utilities/apiHelpers';
 import {Button} from 'react-bootstrap'
 import _ from 'lodash';
 
+const msg = "This is msg";
+
 export const ServerPing = () => {
 
   const [apiData, setApiData] = useState('');
-  const [buttonText, setButtonText] = useState('Kustomize:D!!');
+  const [buttonText, setButtonText] = useState(msg);
 
   const requestHandler = async () => {
 
@@ -16,7 +18,7 @@ export const ServerPing = () => {
       setApiData(text);
       setButtonText('Quick! Hide the message!');
     } else {
-      setButtonText('Click me for a secret message!');
+      setButtonText(msg);
       setApiData('');
     }
 
