@@ -7,3 +7,7 @@ namePrefix:
 configMapGenerator:
   - name: client-config
     env: config.properties
+
+images:
+- name: fcabrera01/open-ims-client
+  newName: fcabrera01/open-ims-client-dev

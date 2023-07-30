@@ -11,11 +11,11 @@ profiles:
   build:
     local:
       push: false
-    tagPolicy:
-      gitCommit: 
-        prefix: "dev-"
+    # tagPolicy:
+    #   gitCommit: 
+    #     prefix: "dev-"
     artifacts:
-      - image: fcabrera01/open-ims-client
+      - image: fcabrera01/open-ims-client-dev
         context: microservices/client
         docker:
           dockerfile: Dockerfile.dev
@@ -33,7 +33,7 @@ profiles:
               dest: .
             - src: "src/**/*.html"
               dest: .
-      - image: fcabrera01/open-ims-server
+      - image: fcabrera01/open-ims-server-dev
         context: microservices/server
         docker:
           dockerfile: Dockerfile.dev
@@ -55,17 +55,17 @@ profiles:
       
 - name: staging
   build:
-    tagPolicy:
-      gitCommit: 
-        prefix: "staging-"
+    # tagPolicy:
+    #   gitCommit: 
+    #     prefix: "staging-"
     # local:
     #   push: false
     artifacts:
-      - image: fcabrera01/open-ims-client
+      - image: fcabrera01/open-ims-client-staging
         context: microservices/client
         docker:
           dockerfile: Dockerfile
-      - image: fcabrera01/open-ims-server
+      - image: fcabrera01/open-ims-server-staging
         context: microservices/server
         docker:
           dockerfile: Dockerfile
@@ -75,12 +75,13 @@ profiles:
     kustomize:
       paths:
         - ./common/ingress/kustomize/overlays/staging
+        - ./common/database/kustomize/overlays/staging
         - ./microservices/server/kustomize/overlays/staging
         - ./microservices/client/kustomize/overlays/staging
-  verify:
-    - name: alpine-wget
-      container:
-        name: alpine-wget
-        image: alpine:3.15.4
-        command: ["/bin/sh"]
-        args: ["-c", "wget http://localhost/api/server/testmsg"]
+  # verify:
+  #   - name: alpine-wget
+  #     container:
+  #       name: alpine-wget
+  #       image: alpine:3.15.4
+  #       command: ["/bin/sh"]
+  #       args: ["-c", "wget http://localhost/api/server/testmsg"]

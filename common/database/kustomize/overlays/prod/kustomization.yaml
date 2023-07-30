@@ -2,3 +2,7 @@ resources:
 - ../../base
 
 namePrefix: prod-
+
+configMapGenerator:
+  - name: postgres-config
+    env: config.properties

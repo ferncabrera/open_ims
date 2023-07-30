@@ -1,0 +1,25 @@
+[
+    {
+        "op": "add",
+        "path": "/spec/template/spec/initContainers",
+        "value": [
+              {
+                "name": "pgsql-data-permission-fix",
+                "image": "busybox",
+                "command": [
+                  "/bin/chmod",
+                  "-R",
+                  "777",
+                  "/var/lib/postgresql/data"
+                ],
+                "volumeMounts": [
+                  {
+                    "name": "postgres-storage",
+                    "mountPath": "/var/lib/postgresql/data",
+                    "subPath": "postgres"
+                  }
+                ]
+              }
+            ]
+    }
+]
