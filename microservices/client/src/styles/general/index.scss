@@ -1,0 +1,81 @@
+@import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;0,900;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;1,100;1,200;1,300;1,400;1,500;1,600;1,700&display=swap');
+
+@import 'bootstrap/dist/css/bootstrap.min.css';
+
+
+@import './colors.scss';
+@import '../forms.scss';
+@import '../buttons.scss';
+@import '../modal.scss';
+
+html, body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Rubik';
+    color: $dark-grey;
+
+    ::selection {
+        background-color: $secondary-blue;
+    }
+}
+
+// global styling wrapper
+.open-ims-styling {
+
+    h1,h2,h3,h4,h5,h6 {
+        padding: 0;
+        margin: 0;
+        display: block;        
+    }
+
+    a {
+        color: $primary-blue;
+
+        &.no-underline {
+            text-decoration: none;
+        }
+        &:hover {
+            cursor: pointer;
+        }
+    }
+
+    .title-heading {
+        font-family: 'IBM Plex Sans';
+        font-variant: small-caps;
+        font-size: 35px;
+        color: $dark-grey;
+    }
+
+    .page-heading {
+        font-weight: 700;
+        font-size: larger;
+    }
+
+    img {
+        user-select: none;
+    }
+
+    .font-12 {
+        font-size: 12px;
+    }
+
+    .font-18 {
+        font-size: 18px;
+    }
+
+    .font-24 {
+        font-size: 24px;
+    }
+
+    .font-36 {
+        font-size: 36px;
+    }
+
+    .font-48 {
+        font-size: 48px;
+    }
+
+
+
+}

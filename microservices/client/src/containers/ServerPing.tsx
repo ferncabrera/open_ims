@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { getJSONResponse } from '../utilities/apiHelpers';
+import {Button} from 'react-bootstrap'
 import _ from 'lodash';
 
 export const ServerPing = () => {
@@ -24,7 +25,7 @@ export const ServerPing = () => {
 
   return (
     <>
-      <button onClick={requestHandler}>{buttonText}</button>
+      <Button onClick={requestHandler}>{buttonText}</Button>
       <div>
         {apiData ? apiData : null}
       </div>
