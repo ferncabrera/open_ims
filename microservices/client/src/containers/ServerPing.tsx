@@ -3,7 +3,7 @@ import { getJSONResponse } from '../utilities/apiHelpers';
 import {Button} from 'react-bootstrap'
 import _ from 'lodash';
 
-const msg = "This is msg";
+let msg = "This is a message!";
 
 export const ServerPing = () => {
 

@@ -1,7 +1,8 @@
 resources:
-  - postgres-headless-port-service.yaml
+  - postgres-headless-service.yaml
+  # - postgres-cluster-ip-service.yaml
   - postgres-stateful-set.yaml
   - postgres-persistent-volume-claim.yaml
 
-commonLabels:
-  component: database
+# commonLabels:
+#   component: database

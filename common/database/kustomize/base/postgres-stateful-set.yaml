@@ -3,9 +3,15 @@ kind: StatefulSet
 metadata:
   name: postgres-stateful-set
 spec:
-  serviceName: postgres-headless-port-service
+  selector:
+    matchLabels:
+      component: database # has to match .spec.template.metadata.labels
+  serviceName: postgres-headless-service
   replicas: 1
   template:
+    metadata:
+      labels:
+        component: database
     spec:
       volumes:
         - name: postgres-storage
@@ -23,3 +29,9 @@ spec:
         envFrom:
           - configMapRef:
               name: postgres-config
+        env: 
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pgpassword
+                key: PGPASSWORD
