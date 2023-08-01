@@ -1,11 +1,8 @@
 import express, { Express, Request, Response } from "express";
 import cors from 'cors';
-// import bodyParser from "body-parser";
-// import dotenv from 'dotenv';
 import morgan from 'morgan';
 import { Client, Pool } from "pg";
-const PORT = process.env.PORT || 3000
-// dotenv.config();
+// const PORT = process.env.PORT || 3000
 
 const app: Express = express();
 
@@ -18,12 +15,12 @@ const pool: Pool = new Pool();
 
 const openDBConn = async (): Promise<void> => {
     try {
-        console.log(await pool.query('SELECT NOW()'))
-        // await client.connect();
-        // client.on('error', (err) => {
-        //     console.error('something bad has happened!', err.stack)
-        //   }) 
-        // await client.query("CREATE TABLE IF NOT EXISTS values (number INT)")        
+        console.log(`Connecting to ${process.env.PGDATABASE}`);
+        // console.log("Result -> ", await pool.query('SELECT NOW()'));   
+        await pool.query('CREATE TABLE IF NOT EXISTS Values (number integer)');
+
+
+        console.log('Successfully completed all requests!');
     } catch (error) {
         console.log(`Failed to connect to postgres db ${"postgres"}`);
         console.log(`error -> ${error}`)
@@ -48,5 +45,6 @@ app.get('*', (req: Request, res: Response) => {
     res.sendStatus(404);
 });
 
-app.listen(3000, () => { console.log('[server compiled]: Running on port ', PORT, ` at http://localhost:${PORT}/`) });
-openDBConn();
+app.listen(process.env.SERVER_PORT, () => { console.log('[server compiled]: Running on port ', process.env.SERVER_PORT, ` (http://localhost:${process.env.SERVER_PORT}/)`) });
+
+openDBConn().then(() => console.log("Finished executing DB commands!"));
