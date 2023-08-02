@@ -1,7 +1,7 @@
 resources:
 - ../../base
 
-# namePrefix: dev-
+namePrefix: dev-
 
 configMapGenerator:
   - name: postgres-config

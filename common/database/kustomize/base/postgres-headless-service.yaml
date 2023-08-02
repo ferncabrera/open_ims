@@ -1,10 +1,7 @@
 apiVersion: v1
 kind: Service
 metadata:
-  # name: dev-postgres-stateful-set
   name: postgres-headless-service
-  labels:
-    component: database
   namespace: default
 spec:
   ports:
@@ -12,5 +9,3 @@ spec:
       name: postgres
       port: 5432
       targetPort: 5432
-  selector:
-    component: database

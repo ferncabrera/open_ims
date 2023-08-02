@@ -3,15 +3,9 @@ kind: StatefulSet
 metadata:
   name: postgres-stateful-set
 spec:
-  selector:
-    matchLabels:
-      component: database # has to match .spec.template.metadata.labels
   serviceName: postgres-headless-service
   replicas: 1
   template:
-    metadata:
-      labels:
-        component: database
     spec:
       volumes:
         - name: postgres-storage

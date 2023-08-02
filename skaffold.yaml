@@ -54,6 +54,7 @@ profiles:
         - ./microservices/server/kustomize/overlays/dev
         - ./microservices/client/kustomize/overlays/dev
       
+# TODO
 - name: staging
   build:
     # tagPolicy:

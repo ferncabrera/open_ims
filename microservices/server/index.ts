@@ -2,7 +2,6 @@ import express, { Express, Request, Response } from "express";
 import cors from 'cors';
 import morgan from 'morgan';
 import { Client, Pool } from "pg";
-// const PORT = process.env.PORT || 3000
 
 const app: Express = express();
 
@@ -16,16 +15,11 @@ const pool: Pool = new Pool();
 const openDBConn = async (): Promise<void> => {
     try {
         console.log(`Connecting to ${process.env.PGDATABASE}`);
-        // console.log("Result -> ", await pool.query('SELECT NOW()'));   
         await pool.query('CREATE TABLE IF NOT EXISTS Values (number integer)');
-        // await pool.query('CREATE TABLE IF NOT EXISTS Test (anotherTest integer)');
-        // await pool.query('CREATE TABLE IF NOT EXISTS finaltest (finaltest varchar[50])');
-
 
         console.log('Successfully completed all requests!');
     } catch (error) {
-        // console.log(`Failed to connect to postgres db ${"postgres"}`);
-        console.log(`error -> ${error}`)
+        console.log(`Error executing postgres commands -> ${error}`)
     }
 }
 
@@ -49,4 +43,4 @@ app.get('*', (req: Request, res: Response) => {
 
 app.listen(process.env.SERVER_PORT, () => { console.log('[server compiled]: Running on port ', process.env.SERVER_PORT, ` (http://localhost:${process.env.SERVER_PORT}/)`) });
 
-openDBConn().then(() => console.log("Finished executing DB commands!"));
+openDBConn().then((): void => console.log("Finished executing DB commands!"));
