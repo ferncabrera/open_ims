@@ -18,11 +18,13 @@ const openDBConn = async (): Promise<void> => {
         console.log(`Connecting to ${process.env.PGDATABASE}`);
         // console.log("Result -> ", await pool.query('SELECT NOW()'));   
         await pool.query('CREATE TABLE IF NOT EXISTS Values (number integer)');
+        // await pool.query('CREATE TABLE IF NOT EXISTS Test (anotherTest integer)');
+        // await pool.query('CREATE TABLE IF NOT EXISTS finaltest (finaltest varchar[50])');
 
 
         console.log('Successfully completed all requests!');
     } catch (error) {
-        console.log(`Failed to connect to postgres db ${"postgres"}`);
+        // console.log(`Failed to connect to postgres db ${"postgres"}`);
         console.log(`error -> ${error}`)
     }
 }

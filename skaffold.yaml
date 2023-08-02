@@ -48,8 +48,9 @@ profiles:
   manifests:
     kustomize:
       paths:
+        - ./common/secrets/dev
         - ./common/database/kustomize/overlays/dev
-        - ./common/ingress/kustomize/overlays/dev
+        - ./common/ingress/overlays/dev
         - ./microservices/server/kustomize/overlays/dev
         - ./microservices/client/kustomize/overlays/dev
       
