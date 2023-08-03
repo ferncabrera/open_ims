@@ -49,8 +49,9 @@ profiles:
     kustomize:
       paths:
         - ./common/secrets/dev
-        - ./common/database/kustomize/overlays/dev
         - ./common/ingress/overlays/dev
+        - ./common/database/kustomize/overlays/dev
+        - ./common/database/pgadmin
         - ./microservices/server/kustomize/overlays/dev
         - ./microservices/client/kustomize/overlays/dev
       
