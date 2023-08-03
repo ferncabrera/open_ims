@@ -24,3 +24,14 @@ spec:
         envFrom:
           - configMapRef:
               name: server-config
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pg-credentials
+                key: POSTGRES_PASSWORD
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                name: pg-credentials
+                key: POSTGRES_USER

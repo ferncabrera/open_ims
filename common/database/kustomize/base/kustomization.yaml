@@ -1,5 +1,5 @@
 resources:
-  - postgres-headless-port-service.yaml
+  - postgres-headless-service.yaml
   - postgres-stateful-set.yaml
   - postgres-persistent-volume-claim.yaml
 

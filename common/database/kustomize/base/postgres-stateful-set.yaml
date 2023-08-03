@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: postgres-stateful-set
 spec:
-  serviceName: postgres-headless-port-service
+  serviceName: postgres-headless-service
   replicas: 1
   template:
     spec:
@@ -23,3 +23,14 @@ spec:
         envFrom:
           - configMapRef:
               name: postgres-config
+        env:
+          - name: POSTGRES_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: pg-credentials
+                key: POSTGRES_PASSWORD
+          - name: POSTGRES_USER
+            valueFrom:
+              secretKeyRef:
+                name: pg-credentials
+                key: POSTGRES_USER

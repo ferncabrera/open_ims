@@ -5,4 +5,5 @@ namePrefix: dev-
 
 configMapGenerator:
   - name: postgres-config
-    env: config.properties
+    envs: 
+    - .env
