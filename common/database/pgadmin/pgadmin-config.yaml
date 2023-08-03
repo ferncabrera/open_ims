@@ -1,0 +1,19 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+ name: pgadmin-config
+data:
+ servers.json: |
+   {
+       "Servers": {
+         "1": {
+           "Name": "Open IMS Database",
+           "Group": "Servers",
+           "Port": 5432,
+           "Username": "dev",
+           "Host": "dev-postgres-stateful-set-0.dev-postgres-headless-service",
+           "SSLMode": "prefer",
+           "MaintenanceDB": "postgres"
+         }
+       }
+   }

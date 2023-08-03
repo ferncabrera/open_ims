@@ -20,4 +20,11 @@ spec:
             name: server-cluster-ip-service
             port:
               number: 3000
+      # - path: /pgadmin
+      #   pathType: Prefix
+      #   backend:
+      #     service:
+      #       name: pgadmin-service
+      #       port:
+      #         number: 9000
   ingressClassName: nginx
