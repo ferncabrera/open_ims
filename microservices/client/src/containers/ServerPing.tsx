@@ -9,10 +9,10 @@ export const ServerPing = () => {
     const [timesClicked, setTimesClicked] = useState(0);
 
     useEffect(() => {
-        (async () => {
+        void (async () => {
             // ! This will run once when the page reloads.
             const response = await getJSONResponse({ endpoint: "/api/server/getClickedNum" });
-            const maxNum = _.get(response, 'maxNum', '');
+            const maxNum = _.get(response, 'maxNum');
             setTimesClicked(maxNum);
 
 
@@ -25,7 +25,7 @@ export const ServerPing = () => {
 
     const handleRefresh = async () => {
         const response = await getJSONResponse({ endpoint: "/api/server/getClickedNum" });
-        const maxNumber = _.get(response, 'maxNum', '');
+        const maxNumber = _.get(response, 'maxNum');
         setTimesClicked(maxNumber);
     }
 
