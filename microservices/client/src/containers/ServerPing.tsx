@@ -1,36 +1,46 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getJSONResponse } from '../utilities/apiHelpers';
-import {Button} from 'react-bootstrap'
+import { Button } from 'react-bootstrap'
 import _ from 'lodash';
 
-let msg = "This is a message!";
 
 export const ServerPing = () => {
 
-  const [apiData, setApiData] = useState('');
-  const [buttonText, setButtonText] = useState(msg);
+    const [timesClicked, setTimesClicked] = useState(0);
 
-  const requestHandler = async () => {
+    useEffect(() => {
+        (async () => {
+            // ! This will run once when the page reloads.
+            const response = await getJSONResponse({ endpoint: "/api/server/getClickedNum" });
+            const maxNum = _.get(response, 'maxNum', '');
+            setTimesClicked(maxNum);
 
-    if (!apiData) {
-      const response = await getJSONResponse({ endpoint: "/api/server/testmsg" });
-      const text = _.get(response, 'data', '');
-      setApiData(text);
-      setButtonText('Quick! Hide the message!');
-    } else {
-      setButtonText(msg);
-      setApiData('');
+
+            // ! This will run once when page reload
+        })();
+        return (): void => {
+            console.log("Component unmount!");
+        }
+    }, [])
+
+    const handleRefresh = async () => {
+        const response = await getJSONResponse({ endpoint: "/api/server/getClickedNum" });
+        const maxNumber = _.get(response, 'maxNum', '');
+        setTimesClicked(maxNumber);
     }
 
-  }
+    const handleClick = async () => {
+        console.log("sending add click request to server from CLIENT!")
+        await getJSONResponse({ endpoint: "/api/server/addClick" });
+    }
 
-
-  return (
-    <>
-      <Button onClick={requestHandler}>{buttonText}</Button>
-      <div>
-        {apiData ? apiData : null}
-      </div>
-    </>
-  )
+    return (
+        <>
+            <Button onClick={handleRefresh}>{"Refresh Count!"}</Button>
+            <Button onClick={handleClick}>{"Add click to DB!"}</Button>
+            <div>
+                <h1>Times you have clicked: {timesClicked}</h1>
+            </div>
+        </>
+    )
 }

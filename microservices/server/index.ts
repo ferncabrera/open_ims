@@ -9,31 +9,57 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('common'));
 
-const client: Client = new Client();
+// const client: Client = new Client();
 const pool: Pool = new Pool();
 
-const openDBConn = async (): Promise<void> => {
+const dbInit = async (): Promise<void> => {
     try {
-        console.log(`Connecting to ${process.env.PGDATABASE}`);
-        await pool.query('CREATE TABLE IF NOT EXISTS Values (number integer)');
-
-        console.log('Successfully completed all requests!');
+        console.log(`Connecting to ${process.env.PGDATABASE}!`);
+        await pool.query('CREATE TABLE IF NOT EXISTS exampletable (nums integer UNIQUE)');
+        const exampleQuery = {
+            text: 'INSERT INTO exampletable(nums) VALUES($1)',
+            values: [1],
+        }
+        await pool.query(exampleQuery);
+        console.log('Successfully seeded DB!');
     } catch (error) {
         console.log(`Error executing postgres commands -> ${error}`)
     }
 }
 
-app.get('/api/server/testmsg', async (req: Request, res: Response) => {
+dbInit().then((): void => console.log("Done executing db init function!"));
+
+app.get('/api/server/getClickedNum', async (req: Request, res: Response) => {
+    let maxNum;
     try {
-        // const queryMaxNum = "SELECT MAX(number) as maxVal FROM values";
-        // const qRes = await client.query(queryMaxNum);
-        // const maxNum = qRes.rows[0].maxVal;
-        // console.log("QueryRes fetched --> ", qRes);
-        // console.log("maxNum fetched --> ", maxNum);
+        const queryMaxNum = "SELECT MAX(nums) as maxval FROM exampletable";
+        const qRes = await pool.query(queryMaxNum);
+        maxNum = qRes.rows[0].maxval;
     } catch (error) {
-        console.log("Err fetching maxNum from db");
+        console.log(`Error trying to fetch maxNum from DB!`);
     }
-    res.json({ data: `Hello! This information came from the back-end! Don't believe me? Search the source folder and I guarantee you won't be able to find this message in there!!!!!` });
+    res.json({ maxNum: maxNum });
+});
+
+app.get('/api/server/addClick', async (req: Request, res: Response) => {
+    let maxNum;
+    try {
+        console.log("Add Click Request recieved in server!");
+
+        const queryMaxNum = "SELECT MAX(nums) as maxval FROM exampletable";
+        const qRes = await pool.query(queryMaxNum);
+        maxNum = qRes.rows[0].maxval;
+        const exampleQuery = {
+            text: 'INSERT INTO exampletable(nums) VALUES($1)',
+            // ? SQL Injection vunerabiltiy ? 
+            values: [maxNum + 1],
+        }
+        await pool.query(exampleQuery);
+
+    } catch (error) {
+        console.log(`Error trying to fetch maxNum from DB!`);
+    }
+    res.json({ done: true });
 });
 
 app.get('*', (req: Request, res: Response) => {
@@ -42,5 +68,3 @@ app.get('*', (req: Request, res: Response) => {
 });
 
 app.listen(process.env.SERVER_PORT, () => { console.log('[server compiled]: Running on port ', process.env.SERVER_PORT, ` (http://localhost:${process.env.SERVER_PORT}/)`) });
-
-openDBConn().then((): void => console.log("Finished executing DB commands!"));
