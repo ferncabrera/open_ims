@@ -1,47 +1,30 @@
 import express, { Express, Request, Response } from "express";
 import cors from 'cors';
 import morgan from 'morgan';
-import { Client, Pool } from "pg";
 import { initializeRoutes } from "./src/routes/initialize";
-import open_ims_route from './src/routes/open_ims';
+import * as db from './db/index'
 
 const app: Express = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(morgan('common'));
+app.use(initializeRoutes);
 
-initializeRoutes(app);
-// const client: Client = new Client();
-const pool: Pool = new Pool();
-
-const dbInit = async (): Promise<void> => {
-    try {
-        console.log(`Connecting to ${process.env.PGDATABASE}!`);
-        await pool.query('CREATE TABLE IF NOT EXISTS exampletable (nums integer UNIQUE)');
-        const exampleQuery = {
-            text: 'INSERT INTO exampletable(nums) VALUES($1)',
-            values: [1],
-        }
-        await pool.query(exampleQuery);
-        console.log('Successfully seeded DB!');
-    } catch (error) {
-        console.log(`Error executing postgres commands -> ${error}`)
-    }
-}
-
-dbInit().then((): void => console.log("Done executing db init function!"));
 
 app.get('/api/server/getClickedNum', async (req: Request, res: Response) => {
     let maxNum;
     try {
-        const queryMaxNum = "SELECT MAX(nums) as maxval FROM exampletable";
-        const qRes = await pool.query(queryMaxNum);
-        maxNum = qRes.rows[0].maxval;
+
+        const queryMaxNum: string = "SELECT MAX(nums) as maxval FROM exampletable";
+        const result = await db.query(queryMaxNum)
+        maxNum = result?.rows[0].maxval;
+
+        res.json({ maxNum: maxNum });
     } catch (error) {
         console.log(`Error trying to fetch maxNum from DB!`);
+        res.json({ success: false });
     }
-    res.json({ maxNum: maxNum });
 });
 
 app.get('/api/server/addClick', async (req: Request, res: Response) => {
@@ -50,19 +33,28 @@ app.get('/api/server/addClick', async (req: Request, res: Response) => {
         console.log("Add Click Request recieved in server!");
 
         const queryMaxNum = "SELECT MAX(nums) as maxval FROM exampletable";
-        const qRes = await pool.query(queryMaxNum);
-        maxNum = qRes.rows[0].maxval;
-        const exampleQuery = {
-            text: 'INSERT INTO exampletable(nums) VALUES($1)',
-            // ? SQL Injection vunerabiltiy ? 
-            values: [maxNum + 1],
-        }
-        await pool.query(exampleQuery);
+        const qRes = await db.query(queryMaxNum);
+        maxNum = qRes?.rows[0].maxval;
+        await db.query('INSERT INTO exampletable(nums) VALUES($1)', [maxNum + 1]);
 
+        res.json({ success: true });
     } catch (error) {
         console.log(`Error trying to fetch maxNum from DB!`);
+        res.json({ success: false });
     }
-    res.json({ done: true });
+});
+
+app.get('/api/server/poolclientcheck', (req: Request, res: Response) => {
+    try {
+        console.log("Printing the amount of idle clients below (Pool of 10 total):");
+        console.log("--------------");
+        console.log(db.clientCheck());
+        console.log("--------------");
+        res.json({ success: true });
+    } catch (error) {
+        console.log(`Error trying to fetch clientCheck from DB!`);
+        res.json({ success: false });
+    }
 });
 
 app.get('*', (req: Request, res: Response) => {
@@ -71,3 +63,5 @@ app.get('*', (req: Request, res: Response) => {
 });
 
 app.listen(process.env.SERVER_PORT, () => { console.log('[server compiled]: Running on port ', process.env.SERVER_PORT, ` (http://localhost:${process.env.SERVER_PORT}/)`) });
+
+db.seed();

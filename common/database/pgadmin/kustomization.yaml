@@ -1,0 +1,13 @@
+resources:
+  - pgadmin-config.yaml
+  - pgadmin-service.yaml
+  - pgadmin-statefuls-set.yaml
+  - pgadmin-secret.yaml
+  - pgadmin-persistent-volume-claim.yaml
+
+  # namePrefix: dev-
+
+configMapGenerator:
+  - name: pgadmin-user-config
+    envs: 
+    - .env
