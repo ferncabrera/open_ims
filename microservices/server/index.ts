@@ -2,6 +2,8 @@ import express, { Express, Request, Response } from "express";
 import cors from 'cors';
 import morgan from 'morgan';
 import { Client, Pool } from "pg";
+import { initializeRoutes } from "./src/routes/initialize";
+import open_ims_route from './src/routes/open_ims';
 
 const app: Express = express();
 
@@ -9,6 +11,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('common'));
 
+initializeRoutes(app);
 // const client: Client = new Client();
 const pool: Pool = new Pool();
 
