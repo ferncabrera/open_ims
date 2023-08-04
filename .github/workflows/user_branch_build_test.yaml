@@ -11,7 +11,7 @@ on:
       - main
 
 jobs:
-  main_branch_acceptance_check:
+  user_branch_build_test:
     runs-on: ubuntu-latest
     steps:
       # Install kubectl
