@@ -1,35 +1,5 @@
-import { Client, Pool } from 'pg';
-import { QueryResult } from 'pg';
-
-const pool = new Pool();
-
-export const seed = async (): Promise<void> => {
-    try {
-        console.log("Creating exampletable....");
-        await query('CREATE TABLE IF NOT EXISTS exampletable (nums integer UNIQUE)');
-
-        console.log("Inserting num1 if not exists...");
-        await query('INSERT INTO exampletable(nums) VALUES($1)', [1]);
-
-    } catch (error) {
-        console.log("Error seeding your database! See it below");
-        console.log(error)
-    }
-};
-
-
-export const query = async (text: string, params?: (any)[]) => {
-    try {
-        const start = Date.now()
-        const res = await pool.query(text, params)
-        const duration = Date.now() - start
-        console.log('Query details below:\n', { text, execTimeInMS: duration, rowsInQuery: res.rowCount })
-        return res;
-    } catch (err) {
-        console.log("Oh no - There was an error executing your query, please see below:");
-        console.log({ text, err });
-    }
-};
+import { pool } from "..";
+import { QueryResult } from "pg";
 
 export const clientCheck = (): number => {
     return pool.idleCount;
@@ -64,5 +34,3 @@ export const getClient = async () => {
         console.log(error);
     }
 };
-
-// export const query = (text, params) => pool.query(text, params);
