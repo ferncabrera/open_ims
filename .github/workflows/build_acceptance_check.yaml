@@ -1,0 +1,56 @@
+name: User branch build test
+run-name: ${{ github.actor }}'s push - Build Test
+
+# env:
+#   SERVER: production
+
+on:
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches-ignore: 
+      - main
+
+jobs:
+  main_branch_acceptance_check:
+    runs-on: ubuntu-latest
+    steps:
+      # Install kubectl
+      - name: Install kubectl
+        run: |
+          curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+          curl -LO "https://dl.k8s.io/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl.sha256"
+          echo "$(<kubectl.sha256) kubectl" | sha256sum --check
+
+          sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+          kubectl version --client
+      # Install Skaffold
+      - name: Install Skaffold
+        run: |
+          curl -Lo skaffold https://storage.googleapis.com/skaffold/releases/latest/skaffold-linux-amd64 && \
+          sudo install skaffold /usr/local/bin/
+          skaffold version
+      # Cache skaffold image builds & config
+      - name: Cache skaffold image builds & config
+        uses: actions/cache@v3
+        with:
+          path: ~/.skaffold/
+          key: fixed-${{ github.sha }}
+      # Login to Docker registry
+      - name: Login to Docker Hub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      # Checkout repository
+      - uses: actions/checkout@v3
+      # Staging
+      - name: Build and Push to DockerHub
+        run: |
+          skaffold build -p staging
+
+# hostname -l
+
+# skaffold build -p staging --file-output=staging-tags.json
+# skaffold deploy -p staging -a staging-tags.json
+# skaffold verify -p staging
+# skaffold delete -p staging 
