@@ -27,7 +27,7 @@ _Confirm that you have the ingress-nginx service running or else application sta
 
 <img width="469" alt="image" src="https://github.com/ferncabrera/open_ims/assets/73137447/a2a8d465-c30a-4f80-a350-d77316209fda">
 
-If you don't see this or are not sure if it is running, just re-run the command in the *Pre-requisites* section used to set up ingress-nginx.
+If you don't see this or are not sure if it is running, just re-run the command in the <a href="https://github.com/ferncabrera/open_ims/blob/main/README.md#pre-requisites">Pre-requisites section</a> used to set up ingress-nginx.
 
 Now that you are ready, in the root of the project, run: 
 ```
