@@ -6,7 +6,7 @@ export const pool = new Pool();
 
 export const seed = async (): Promise<void> => {
     try {
-        console.log("Creating exampletable....");
+        console.log("Creating exampletable...");
         await query('CREATE TABLE IF NOT EXISTS exampletable (nums integer UNIQUE)');
 
         console.log("Inserting num1 if not exists...");

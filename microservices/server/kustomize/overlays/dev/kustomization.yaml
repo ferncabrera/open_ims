@@ -12,3 +12,11 @@ configMapGenerator:
 images:
 - name: fcabrera01/open-ims-server
   newName: fcabrera01/open-ims-server-dev
+
+patches:
+- path: postgres-credentials-patch.json
+  target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: server-deployment

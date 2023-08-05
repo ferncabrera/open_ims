@@ -8,6 +8,6 @@ spec:
    port: 9000
    targetPort: http
    nodePort: 30007
- selector:
-   app: pgadmin
+#  selector:
+#    app: pgadmin
  type: NodePort
