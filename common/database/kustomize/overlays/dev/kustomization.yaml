@@ -1,5 +1,6 @@
 resources:
-- ../../base
+  - ../../base
+  - postgres-credentials.yaml
 
 namePrefix: dev-
 

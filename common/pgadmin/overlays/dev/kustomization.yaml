@@ -1,0 +1,10 @@
+resources:
+- ../../base
+- pgadmin-credentials.yaml
+
+namePrefix: dev-
+
+# configMapGenerator:
+#   - name: pgadmin-user-config
+#     envs: 
+#     - .env
