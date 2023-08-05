@@ -8,6 +8,14 @@ profiles:
 - name: dev
   activation:
     - command: dev
+  manifests:
+    kustomize:
+      paths:
+        - ./common/ingress/overlays/dev
+        - ./common/pgadmin/overlays/dev
+        - ./common/database/kustomize/overlays/dev
+        - ./microservices/server/kustomize/overlays/dev
+        - ./microservices/client/kustomize/overlays/dev
   build:
     local:
       push: false
@@ -45,18 +53,16 @@ profiles:
               dest: .
             - src: "tsconfig.json"
               dest: .
-  manifests:
-    kustomize:
-      paths:
-        - ./common/secrets/dev
-        - ./common/ingress/overlays/dev
-        - ./common/database/kustomize/overlays/dev
-        - ./common/database/pgadmin
-        - ./microservices/server/kustomize/overlays/dev
-        - ./microservices/client/kustomize/overlays/dev
       
 # TODO
 - name: staging
+  manifests:
+    kustomize:
+      paths:
+        - ./common/database/kustomize/overlays/staging
+        - ./common/ingress/kustomize/overlays/staging
+        - ./microservices/server/kustomize/overlays/staging
+        - ./microservices/client/kustomize/overlays/staging
   build:
     # tagPolicy:
     #   gitCommit: 
@@ -74,13 +80,6 @@ profiles:
           dockerfile: Dockerfile
       # - image: fcabrera01/integration-testing
       #   context: common/testing
-  manifests:
-    kustomize:
-      paths:
-        - ./common/database/kustomize/overlays/staging
-        - ./common/ingress/kustomize/overlays/staging
-        - ./microservices/server/kustomize/overlays/staging
-        - ./microservices/client/kustomize/overlays/staging
   # verify:
   #   - name: alpine-wget
   #     container:
