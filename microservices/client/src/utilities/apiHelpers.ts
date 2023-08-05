@@ -1,5 +1,5 @@
 import { apiCall } from "./apiCall";
-import { IGetResponse } from "./types"
+import { IGetResponse } from "./types/types"
 
 export const getJSONResponse = async (props: IGetResponse) => {
     const

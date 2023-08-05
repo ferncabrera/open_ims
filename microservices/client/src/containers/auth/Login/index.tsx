@@ -1,17 +1,41 @@
-import React, { useState } from 'react'
+import React, { SyntheticEvent, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
 import { Form, Row, Button } from 'react-bootstrap'
 import { Password } from '../../../components/forms/Password';
 import { CenteredModal } from '../../../components/modals/CenteredModal';
 import { MdOutlineEmail } from 'react-icons/md';
+import { fieldValidation } from '../../../utilities/validation';
+import { IValidate } from '../../../utilities/types/validationTypes';
+import _ from 'lodash';
 
 import styles from './index.module.scss';
+
+const initialErrorFieldState = {
+    email: null,
+    password: null,
+}
+
+const formData = {};
+let trackErrorList = [];
 
 
 export const Login = () => {
 
+
+    const keyPaths = {
+        attributes: 'attributes',
+        email: 'attributes.email',
+        password: 'attributes.password',
+    }
+
     const [showResetPassword, setShowResetPassword] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
+    const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
+
+    useEffect(() => {
+        _.set(formData, keyPaths.email, "");
+        _.set(formData, keyPaths.password, "");
+    }, []);
 
     const modalFooter = emailSent ? null : <a
         onClick={() => {
@@ -52,6 +76,34 @@ export const Login = () => {
                 </div>
             </div>
         )
+    };
+
+    const validate = (data: IValidate) => {
+        const valid = fieldValidation(data)
+        const name = valid.fieldName;
+        if (!valid.isValid) {
+            setError((prevError) => ({ ...prevError, [name]: { valid: valid.isValid, message: valid.message } }));
+        } else {
+            setError((prevError) => ({ ...prevError, [name]: null }))
+        }
+        return valid.isValid;
+    }
+
+    const handleSignIn = () => {
+        const loginData = _.get(formData, keyPaths.attributes);
+        console.log('loginData', loginData);
+        _.forIn(loginData, (value, key: string) => {
+            const data = { value, name: key, required: true }
+            const isValid = validate(data);
+            trackErrorList.push(isValid)
+        });
+        if (_.some(trackErrorList, (validEntity) => validEntity === false)) {
+            trackErrorList = [];
+            return
+        }
+        // Send post request here
+        console.log('We send the POST request here if no errors!')
+
     }
 
     return (
@@ -66,9 +118,35 @@ export const Login = () => {
             <Form>
                 <Form.Group>
                     <Form.Label>Email:</Form.Label>
-                    <Form.Control type="email" placeholder='' />
+                    <Form.Control
+                        name="email"
+                        type="email"
+                        placeholder=''
+                        isInvalid={error.email?.valid === false}
+                        required
+                        onChange={(e) => { _.set(formData, keyPaths.email, e.target.value) }}
+                        onBlur={(data) => {
+                            const target = data.target as HTMLTextAreaElement;
+                            const { value, name, required } = target;
+                            validate({ value, name, required })
+                        }}
+                    />
+                    {error.email?.valid === false &&
+                        <Form.Control.Feedback type='invalid'>{error.email.message}</Form.Control.Feedback>
+                    }
                 </Form.Group>
-                <Password onChange={() => { return }} />
+                <Password
+                    isInvalid={error.password?.valid === false}
+                    onChange={(e) => { _.set(formData, keyPaths.password, e.target.value) }}
+                    onBlur={(data: SyntheticEvent) => {
+                        const target = data.target as HTMLTextAreaElement;
+                        const { value, name, required } = target;
+                        validate({ value, name, required });
+                    }}
+                    required
+                    errorMessage={_.get(error, "password.message", '')}
+                />
+
                 <Row>
                     <div className={'d-flex justify-content-between' + ` ${styles.flex_wrapper}`}>
                         <Form.Check label='Remember me for 30 days' />
@@ -76,7 +154,7 @@ export const Login = () => {
                     </div>
                 </Row>
                 <div className='mt-5'>
-                    <Button>Sign in</Button>
+                    <Button onClick={handleSignIn}>Sign in</Button>
                 </div>
             </Form>
             {/* Display Modal here */}

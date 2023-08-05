@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Container, Row, Col, Image } from 'react-bootstrap'
 import { Login } from './Login';
 import { Register } from './Register';
