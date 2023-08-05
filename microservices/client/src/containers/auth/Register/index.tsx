@@ -1,9 +1,18 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import { Link } from 'react-router-dom';
 import {Form, Button} from 'react-bootstrap';
 import { Password } from '../../../components/forms/Password';
 
 import styles from './index.module.scss';
+
+const initialErrorFieldState = {
+    name: null,
+    email: null,
+    newPassword: null,
+  }
+  
+  const formData = {};
+  let trackErrorList = [];
 
 export const Register = () => {
   return (
