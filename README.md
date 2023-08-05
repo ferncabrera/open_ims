@@ -76,7 +76,7 @@ Like the postgres container, you can also view the login information required fo
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/1ff50848-52a4-421f-92bf-eaf9420a6721)
 
-Once you are in, click on the "Servers" dropdown, it should automatically show your **open-ims-db** a DB that you can connect to. Click on it and then enter the PostgresDB password, which is **admin**.
+Once you are in, click on the "Servers" dropdown to the left, it should automatically show your **open-ims-dev** DB that you can connect to. Click on it and then enter the PostgresDB password, which is **admin**.
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/3ec69e2d-ebc4-4ef8-82b3-d9eceb8ecd5d)
 
