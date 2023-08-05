@@ -57,7 +57,7 @@ Run ```psql -U dev -d open-ims-dev``` in the terminal to connect to the postgres
 A simple demo showing how we can connect to the database from our express app (server) has been setup at the /serverping route of the app. We use the <a href="https://node-postgres.com/">node-postgres</a> package to connect from our server and execute commands on the DB.
 
 #### Connecting to the database using PGAdmin4
-We run a <a href="https://www.pgadmin.org/docs/pgadmin4/development/index.html">PGAdmin4</a> instance as a part of our K8s App (please read the docs for more information about what you can do with PGAdmin). You may use it to connect to the local development database running as part of your application, it is available at <a href="http://localhost:30007/">localhost:30007</a> when the app is running. To use this tool simply launch the app as normal, **but note that you may have to wait a minute or two for PGAdmin to set up before you can access it**. It takes some time to start the PGAdmin4 server so if you try to visit <a href="http://localhost:30007/">localhost:30007</a> it may return a 404 error! You can confirm whether or not PGAdmin4 is loading by looking at the container logs in Docker Desktop (exactly the same as you do for the actual postgres database except) for a pod named **k8s_pgadmin_dev-pgadmin-0_default_**+RandomNumberAndLetters.
+We run a <a href="https://www.pgadmin.org/docs/pgadmin4/development/index.html">PGAdmin4</a> instance as a part of our K8s App (please read the docs for more information about what you can do with PGAdmin). You may use it to connect to the local development database running as part of your application, it is available at <a href="http://localhost:30007/">localhost:30007</a> when the app is running. To use this tool simply launch the app as normal, **but note that you may have to wait a minute or two for PGAdmin to set up before you can access it**. It takes some time to start the PGAdmin server so if you try to visit <a href="http://localhost:30007/">localhost:30007</a> it may return a 404 error! You can confirm whether or not PGAdmin is loading by looking at the container logs in Docker Desktop (exactly the same as you do for the actual postgres database except) for a pod named **k8s_pgadmin_dev-pgadmin-0_default_**+RandomNumberAndLetters.
 
 If the container is showing logs like the ones in the image below, it means that it is still loading!
 
@@ -67,7 +67,7 @@ Wait until you see logs like the ones in the image below (or just a minute or tw
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/eef63ebf-0ee4-4270-8ae4-5d2ec90f392e)
 
-Once the page loads, you will be prompted to enter a PGAdmin email and password. There are default values set for you which you can use to log in:
+Once the page loads, you will be prompted to enter a PGAdmin email and password. There are default values set (for your local dev environment) which you can use to log in:
 <ul>
   <li>Email: **admin@openims.com**</li>
   <li>Password: **pgadmin**</li>
