@@ -23,7 +23,7 @@ export const Authentication: React.FC <IAuthenticationProps> = (props) => {
     <>
       <Container fluid className={styles.auth_page_paddings}>
         <Row>
-          <Col className={`me-5 ${styles.left_auth_formatting}`}>
+          <Col className={`me-5 ${!isLogin ? styles.left_auth_formatting_register : styles.left_auth_formatting}`}>
             <div className='title-heading d-flex justify-content-center mb-2'>
               <h3><Image src={logoWithText}/> </h3>
             </div>

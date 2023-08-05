@@ -1,6 +1,6 @@
 import { IValidate } from "./types/validationTypes";
 //global validation function
-export const fieldValidation = (data: IValidate ) => {
+export const fieldValidation = (data: IValidate) => {
     const {name, value, required} = data;
 
     let isValid: boolean;

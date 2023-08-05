@@ -91,7 +91,6 @@ export const Login = () => {
 
     const handleSignIn = () => {
         const loginData = _.get(formData, keyPaths.attributes);
-        console.log('loginData', loginData);
         _.forIn(loginData, (value, key: string) => {
             const data = { value, name: key, required: true }
             const isValid = validate(data);
