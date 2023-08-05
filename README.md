@@ -76,11 +76,11 @@ Like the postgres container, you can also view the login information required fo
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/1ff50848-52a4-421f-92bf-eaf9420a6721)
 
-Once you are in, click on the "Servers" dropdown to the left, it should automatically show your **open-ims-dev** DB that you can connect to. Click on it and then enter the PostgresDB password, which is **admin**.
+Once you are in, click on the "Servers" dropdown to the left, it should automatically show an **Open IMS Server** which lists the databases in our postgres instance that you can connect to. Click on it and then enter our Postgres password, which is **admin**.
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/3ec69e2d-ebc4-4ef8-82b3-d9eceb8ecd5d)
 
-Then, you should be able to select the **open-ims-dev"" db to start messing around with it!
+Then, you should be able to select the **open-ims-dev** db to start messing around with it! _(Note that you will find TWO databases under the Open IMS Server list. The database named "postgres" is always created by default and we do not need to use it, just stick to messing with open-ims-dev, the database which our applications server is connected to and using.)_
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/3b772f46-1c88-4bdd-9c91-9b04332a3560)
 
