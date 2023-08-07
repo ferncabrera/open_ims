@@ -53,6 +53,7 @@ export const Login = () => {
                 <Form>
                     <Form.Control type="email" placeholder='' />
                     <Button
+                        id="send-email"
                         className='mt-2'
                         onClick={() => setEmailSent(true)}
                     >
@@ -116,9 +117,10 @@ export const Login = () => {
             </div>
             <Form>
                 <Form.Group>
-                    <Form.Label>Email:</Form.Label>
+                    <Form.Label htmlFor='email'>Email:</Form.Label>
                     <Form.Control
                         name="email"
+                        id='email'
                         type="email"
                         placeholder=''
                         isInvalid={error.email?.valid === false}
@@ -131,7 +133,7 @@ export const Login = () => {
                         }}
                     />
                     {error.email?.valid === false &&
-                        <Form.Control.Feedback type='invalid'>{error.email.message}</Form.Control.Feedback>
+                        <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.email.message}</Form.Control.Feedback>
                     }
                 </Form.Group>
                 <Password
