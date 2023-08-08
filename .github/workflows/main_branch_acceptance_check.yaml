@@ -46,7 +46,7 @@ jobs:
       # Staging
       - name: Build and Push to DockerHub
         run: |
-          skaffold build -p staging
+          skaffold build -p prod
 
 # hostname -l
 
