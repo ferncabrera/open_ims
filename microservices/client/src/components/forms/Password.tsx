@@ -20,10 +20,11 @@ export const Password: React.FC<IPasswordProps> = (props) => {
 
     return (
         <>
-            <Form.Label>Password:</Form.Label>
+            <Form.Label htmlFor='password'>Password:</Form.Label>
             <div style={{ marginBottom: "20px" }}>
                 <InputGroup style={{ display: "block", marginBottom: "0px" }}>
                     <Form.Control
+                        id='password'
                         className={`${styles.password} ${props.className} ${props.isInvalid ? styles.password_invalid : ''}`}
                         name={props.newPassword ? 'newPassword' : 'password'}
                         type={showPassword ? 'text' : 'password'}
@@ -55,7 +56,7 @@ export const Password: React.FC<IPasswordProps> = (props) => {
 
                 </InputGroup>
                 {props.isInvalid &&
-                    <div style={{ fontSize: "14px" }} className='invalid'>
+                    <div data-testid="password-error" style={{ fontSize: "14px" }} className='invalid'>
                         {props.errorMessage ? props.errorMessage :
                             <>
                                 <p className='mb-0'>Password does not meet password requirements:</p>

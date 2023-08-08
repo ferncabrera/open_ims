@@ -77,9 +77,10 @@ export const Register = () => {
             </div>
             <Form>
                 <Form.Group>
-                    <Form.Label>First Name:</Form.Label>
+                    <Form.Label htmlFor='firstName'>First Name:</Form.Label>
                     <Form.Control
                         name='firstName'
+                        id='firstName'
                         type="text"
                         placeholder=''
                         isInvalid={error.firstName?.valid === false}
@@ -93,13 +94,14 @@ export const Register = () => {
 
                     />
                     {error.firstName?.valid === false &&
-                        <Form.Control.Feedback type='invalid'>{error.firstName.message}</Form.Control.Feedback>
+                        <Form.Control.Feedback data-testid="firstName-error" type='invalid'>{error.firstName.message}</Form.Control.Feedback>
                     }
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Last Name:</Form.Label>
+                    <Form.Label htmlFor='lastName'>Last Name:</Form.Label>
                     <Form.Control
                         name='lastName'
+                        id='lastName'
                         type="text"
                         placeholder=''
                         isInvalid={error.lastName?.valid === false}
@@ -113,13 +115,14 @@ export const Register = () => {
 
                     />
                     {error.lastName?.valid === false &&
-                        <Form.Control.Feedback type='invalid'>{error.lastName.message}</Form.Control.Feedback>
+                        <Form.Control.Feedback data-testid="lastName-error" type='invalid'>{error.lastName.message}</Form.Control.Feedback>
                     }
                 </Form.Group>
                 <Form.Group>
-                    <Form.Label>Email:</Form.Label>
+                    <Form.Label htmlFor='email'>Email:</Form.Label>
                     <Form.Control
                         name='email'
+                        id='email'
                         type="email"
                         placeholder=''
                         isInvalid={error.email?.valid === false}
@@ -132,7 +135,7 @@ export const Register = () => {
                         }}
                     />
                     {error.email?.valid === false &&
-                        <Form.Control.Feedback type='invalid'>{error.email.message}</Form.Control.Feedback>
+                        <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.email.message}</Form.Control.Feedback>
                     }
                 </Form.Group>
                 <Password

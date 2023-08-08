@@ -29,7 +29,6 @@ export const CenteredModal: React.FC<IModalProps> = (props) => {
     if (!show) {
       setAnimate(true);
     } else {
-      console.log('when do we make it false?')
       setAnimate(false);
     }
   }, [show])
