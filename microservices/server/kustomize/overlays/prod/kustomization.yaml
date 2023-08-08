@@ -1,9 +1,22 @@
 resources:
   - ../../base
 
-# namePrefix: 
-#   dev-
+namePrefix: 
+  prod-
 
 configMapGenerator:
-  - name: open-ims-server-map
-    env: config.properties
+  - name: server-config
+    envs:
+    - .env
+
+images:
+- name: fcabrera01/open-ims-server
+  newName: fcabrera01/ccg-server
+
+patches:
+- path: postgres-credentials-patch.json
+  target:
+    group: apps
+    version: v1
+    kind: Deployment
+    name: server-deployment

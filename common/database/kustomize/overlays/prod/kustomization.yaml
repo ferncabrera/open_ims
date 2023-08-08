@@ -1,8 +1,18 @@
 resources:
-- ../../base
+  - ../../base
+  # - postgres-credentials.yaml
 
 namePrefix: prod-
 
 configMapGenerator:
   - name: postgres-config
-    env: config.properties
+    envs: 
+    - .env
+
+patches:
+- path: postgres-credentials-patch.json
+  target:
+    group: apps
+    version: v1
+    kind: StatefulSet
+    name: postgres-stateful-set
