@@ -21,5 +21,8 @@ export default defineConfig({
     coverage: {
       provider: 'v8',
     }
+  },
+  define: {
+    'process.env': process.env
   }
 })
