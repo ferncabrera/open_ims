@@ -1,17 +1,16 @@
-name: Main branch acceptance check
-run-name: ${{ github.actor }}'s main branch PR - Skaffold Build Test
+name: Deploy to digital ocean
+run-name: ${{ github.actor }}'s merge - Deployment to Digital Ocean
 
 # env:
 #   SERVER: production
 
 on:
-  pull_request:
-    # Sequence of patterns matched against refs/heads
-    branches: 
+  push:
+    branches:
       - main
 
 jobs:
-  main_branch_acceptance_check:
+  main_branch_deployment:
     runs-on: ubuntu-latest
     steps:
       # Install kubectl
@@ -47,18 +46,17 @@ jobs:
         run: |
           skaffold build -p prod --file-output='production-tags.json'
       
-      # - name: Install doctl
-      #   uses: digitalocean/action-doctl@v2
-      #   with:
-      #     token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-      # - name: Save DigitalOcean kubeconfig with short-lived credentials
-      #   run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 do-tor1-k8s-ccg-ims
-      # - name: Deploy to DigitalOcean Kubernetes
-      #   run: skaffold deploy -p prod --build-artifacts='production-tags.json'
+      - name: Install doctl
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+      - name: Save DigitalOcean kubeconfig with short-lived credentials
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 do-tor1-k8s-ccg-ims
+      - name: Deploy to DigitalOcean Kubernetes
+        run: skaffold deploy -p prod --build-artifacts='production-tags.json'
       # - name: Verify deployment
       #   run: kubectl rollout status deployment/appname -n appname
       # Need to install doctl 
-# hostname -l
 
 
     # skaffold build -p prod --file-output='production-tags.json'

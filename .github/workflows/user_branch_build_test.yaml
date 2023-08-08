@@ -1,5 +1,5 @@
 name: User branch build test
-run-name: ${{ github.actor }}'s push - Build Test
+run-name: ${{ github.actor }}'s push - Docker Build Test
 
 # env:
 #   SERVER: production
