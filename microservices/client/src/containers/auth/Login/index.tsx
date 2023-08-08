@@ -151,7 +151,7 @@ export const Login = () => {
                 <Row>
                     <div className={'d-flex justify-content-between' + ` ${styles.flex_wrapper}`}>
                         <Form.Check label='Remember me for 30 days' />
-                        <a className='no-underline' onClick={() => setShowResetPassword(true)}>forgott password</a>
+                        <a className='no-underline' onClick={() => setShowResetPassword(true)}>forgot password</a>
                     </div>
                 </Row>
                 <div className='mt-5'>
