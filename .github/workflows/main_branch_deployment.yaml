@@ -51,7 +51,7 @@ jobs:
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
       - name: Save DigitalOcean kubeconfig with short-lived credentials
-        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 do-tor1-k8s-ccg-ims
+        run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 k8s-ccg-ims
       - name: Deploy to DigitalOcean Kubernetes
         run: skaffold deploy -p prod --build-artifacts='production-tags.json'
       # - name: Verify deployment
