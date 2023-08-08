@@ -54,7 +54,6 @@ profiles:
             - src: "tsconfig.json"
               dest: .
       
-# TODO
 - name: prod
   manifests:
     kustomize:
