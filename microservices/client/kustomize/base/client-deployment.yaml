@@ -14,7 +14,7 @@ spec:
         envFrom:
           - configMapRef:
               name: client-config
-        resources:
-          limits:
-            memory: "512Mi"
-            cpu: "1000m"
+        # resources:
+        #   limits:
+        #     memory: "512Mi"
+        #     cpu: "1000m"
