@@ -82,8 +82,6 @@ profiles:
           dockerfile: Dockerfile
   deploy:
     kubectl: {}
-      # - image: fcabrera01/integration-testing
-      #   context: common/testing
   # verify:
   #   - name: alpine-wget
   #     container:
