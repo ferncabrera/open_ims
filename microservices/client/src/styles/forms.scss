@@ -11,7 +11,6 @@
         input {
             border-radius: 10px;
             border-color: $grey;
-            margin-bottom: 20px;
 
             &::selection {
                 background-color: $secondary-blue;
@@ -51,6 +50,10 @@
 
         span.input-group-text {
             margin-bottom: 20px;
+        }
+
+        div {
+            margin-bottom: 10px;
         }
     }
 }

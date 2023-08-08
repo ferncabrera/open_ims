@@ -14,12 +14,12 @@ const router = createBrowserRouter(Routes, {
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      <div className='open-ims-styling'>
-      <RouterProvider
-            router={router}
-            fallbackElement={<><p>Spinner here lol</p></>}
-        />
-      </div>
-        
+        <div className='open-ims-styling'>
+            <RouterProvider
+                router={router}
+                fallbackElement={<><p>Spinner here lol</p></>}
+            />
+        </div>
+
     </React.StrictMode>,
 )
