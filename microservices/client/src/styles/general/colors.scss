@@ -11,3 +11,82 @@ $secondary-blue: #9EA2FF;
 
 $light-orange: #FDAD36;
 $magenta: #E15ECC;
+
+$invalid: #dc3545;
+$invalid-faded: #dc354640;
+
+// include colour classes here
+
+.white {
+    color: $white;
+}
+
+.dark-grey {
+    color: $dark-grey;
+}
+
+.grey {
+    color: $grey;
+}
+
+.light-grey {
+    color: $light-grey;
+}
+
+.primary-blue {
+    color: $primary-blue;
+}
+
+.light-orange {
+    color: $light-orange;
+}
+
+.magenta {
+    color: $magenta;
+}
+
+.invalid {
+    color: $invalid;
+}
+
+.invalid-faded {
+    color: $invalid-faded;
+}
+
+// Background Colors
+
+.bg-white {
+    background-color: $white;
+}
+
+.bg-dark-grey {
+    background-color: $dark-grey;
+}
+
+.bg-grey {
+    background-color: $grey;
+}
+
+.bg-light-grey {
+    background-color: $light-grey;
+}
+
+.bg-primary-blue {
+    background-color: $primary-blue;
+}
+
+.bg-light-orange {
+    background-color: $light-orange;
+}
+
+.bg-magenta {
+    background-color: $magenta;
+}
+
+.bg-invalid {
+    background-color: $invalid;
+}
+
+.bg-invalid-faded {
+    background-color: $invalid-faded;
+}

@@ -28,7 +28,6 @@ spec:
           - name: PGPASSWORD
             valueFrom:
               secretKeyRef:
-              # TODO: Make JSON patches for PROD depkoyments
                 name: postgres-credentials
                 key: POSTGRES_PASSWORD
           - name: PGUSER

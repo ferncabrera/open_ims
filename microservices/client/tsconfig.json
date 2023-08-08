@@ -21,6 +21,11 @@
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src"],
-  // "exclude": ["src"],
+  // "exclude": [
+  //   "jest.config.js",
+  //   "./src/__tests__/**",
+  //   "./src/__mocks__/**",
+  //   "./src/test-utils"
+  // ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -3,7 +3,7 @@
 
 interface apiCallProps {
     url: string,
-    method: IMethod,
+    method: TMethod,
     headers?: object,
     parameters?: object,
     data?: object,

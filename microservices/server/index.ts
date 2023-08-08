@@ -2,7 +2,6 @@ import express, { Express, Request, Response } from "express";
 import cors from 'cors';
 import morgan from 'morgan';
 import { initializeRoutes } from "./src/routes/initialize";
-import { seed } from "./src/db/index";
 
 const app: Express = express();
 
@@ -18,5 +17,3 @@ app.get('*', (req: Request, res: Response) => {
 });
 
 app.listen(process.env.SERVER_PORT, () => { console.log('[server compiled]: Running on port ', process.env.SERVER_PORT, ` (http://localhost:${process.env.SERVER_PORT}/)`) });
-
-seed();

@@ -55,31 +55,33 @@ profiles:
               dest: .
       
 # TODO
-- name: staging
+- name: prod
   manifests:
     kustomize:
       paths:
-        - ./common/database/kustomize/overlays/staging
-        - ./common/ingress/kustomize/overlays/staging
-        - ./microservices/server/kustomize/overlays/staging
-        - ./microservices/client/kustomize/overlays/staging
+        - ./common/ingress/overlays/prod
+        # ? Should we have PGAdmin in PROD? (While devving maybe?)
+        # - ./common/pgadmin/overlays/dev
+        - ./common/database/kustomize/overlays/prod
+        - ./microservices/server/kustomize/overlays/prod
+        - ./microservices/client/kustomize/overlays/prod
   build:
-    # tagPolicy:
-    #   gitCommit: 
-    #     prefix: "staging-"
     # local:
     #   push: false
+    tagPolicy:
+      gitCommit: 
+        prefix: "prod-"
     artifacts:
-      - image: fcabrera01/open-ims-client-staging
+      - image: fcabrera01/ccg-client
         context: microservices/client
         docker:
           dockerfile: Dockerfile
-      - image: fcabrera01/open-ims-server-staging
+      - image: fcabrera01/ccg-server
         context: microservices/server
         docker:
           dockerfile: Dockerfile
-      # - image: fcabrera01/integration-testing
-      #   context: common/testing
+  deploy:
+    kubectl: {}
   # verify:
   #   - name: alpine-wget
   #     container:

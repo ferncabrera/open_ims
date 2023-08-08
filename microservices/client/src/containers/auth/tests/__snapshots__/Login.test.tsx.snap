@@ -1,0 +1,151 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Login Component > Login renders correctly 1`] = `
+[
+  <div
+    className="mt-5 mb-5"
+  >
+    <h1>
+      Welcome back
+    </h1>
+    <div
+      className="d-flex justify-content-start _flex_wrapper_66e569"
+    >
+      <h6
+        className="d-flex align-items-center"
+      >
+        New to CCG Inventory?
+      </h6>
+      <a
+        className="ps-1 _link_header_66e569"
+        href="/register"
+        onClick={[Function]}
+      >
+         Create an account
+      </a>
+    </div>
+  </div>,
+  <form
+    className=""
+  >
+    <div>
+      <label
+        className="form-label"
+        htmlFor="email"
+      >
+        Email:
+      </label>
+      <input
+        className="form-control"
+        id="email"
+        name="email"
+        onBlur={[Function]}
+        onChange={[Function]}
+        placeholder=""
+        required={true}
+        type="email"
+      />
+    </div>
+    <label
+      className="form-label"
+      htmlFor="password"
+    >
+      Password:
+    </label>
+    <div
+      style={
+        {
+          "marginBottom": "20px",
+        }
+      }
+    >
+      <div
+        className="input-group"
+        style={
+          {
+            "display": "block",
+            "marginBottom": "0px",
+          }
+        }
+      >
+        <input
+          className="_password_8ab8af undefined  form-control"
+          id="password"
+          name="password"
+          onBlur={[Function]}
+          onChange={[Function]}
+          required={true}
+          type="password"
+        />
+        <span
+          className="_password_8ab8af"
+          onClick={[Function]}
+        >
+          <svg
+            fill="currentColor"
+            height="1em"
+            stroke="currentColor"
+            strokeWidth="0"
+            style={
+              {
+                "color": undefined,
+              }
+            }
+            viewBox="0 0 16 16"
+            width="1em"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"
+            />
+            <path
+              d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"
+            />
+          </svg>
+        </span>
+      </div>
+    </div>
+    <div
+      className="row"
+    >
+      <div
+        className="d-flex justify-content-between _flex_wrapper_66e569"
+      >
+        <div
+          className="form-check"
+        >
+          <input
+            className="form-check-input"
+            disabled={false}
+            type="checkbox"
+          />
+          <label
+            className="form-check-label"
+            title=""
+          >
+            Remember me for 30 days
+          </label>
+        </div>
+        <a
+          className="no-underline"
+          onClick={[Function]}
+        >
+          forgot password
+        </a>
+      </div>
+    </div>
+    <div
+      className="mt-5"
+    >
+      <button
+        className="btn btn-primary"
+        disabled={false}
+        onClick={[Function]}
+        type="button"
+      >
+        Sign in
+      </button>
+    </div>
+  </form>,
+]
+`;

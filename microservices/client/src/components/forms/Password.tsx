@@ -5,8 +5,13 @@ import { Form, InputGroup } from 'react-bootstrap';
 import styles from './Password.module.scss';
 
 interface IPasswordProps {
-    onChange: (event: ChangeEvent) => void;
+    onChange: (event: ChangeEvent<HTMLInputElement>) => void;
     className?: string;
+    isInvalid?: any;
+    onBlur: (e) => void;
+    required: boolean;
+    errorMessage: string;
+    newPassword?: boolean;
 }
 
 export const Password: React.FC<IPasswordProps> = (props) => {
@@ -15,20 +20,31 @@ export const Password: React.FC<IPasswordProps> = (props) => {
 
     return (
         <>
-            <Form.Label>Password:</Form.Label>
-            <InputGroup>
-                <Form.Control
-                    className={`${styles.password} ${props.className}`}
-                    type={showPassword ? 'text' : 'password'}
-                    onChange={props.onChange}
-                />
-                <span 
-                className={`${styles.password}`}
-                onClick={() => setShowPassword(!showPassword)}
-                >
-                    {showPassword ? <BsEyeSlash /> : <BsEye />}
-                </span>
-                {/* <InputGroup.Text
+            <Form.Label htmlFor='password'>Password:</Form.Label>
+            <div style={{ marginBottom: "20px" }}>
+                <InputGroup style={{ display: "block", marginBottom: "0px" }}>
+                    <Form.Control
+                        id='password'
+                        className={`${styles.password} ${props.className} ${props.isInvalid ? styles.password_invalid : ''}`}
+                        name={props.newPassword ? 'newPassword' : 'password'}
+                        type={showPassword ? 'text' : 'password'}
+                        onChange={props.onChange}
+                        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+                        // isInvalid={props.isInvalid}
+                        onBlur={(e) => props.onBlur(e)}
+                        required={props.required}
+                    />
+                    <span
+                        className={`${styles.password}`}
+                        onClick={() => setShowPassword(!showPassword)}
+                    >
+                        {showPassword ? <BsEyeSlash /> : <BsEye />}
+                    </span>
+                    {/* {error.password?.valid === false &&
+                    <Form.Control.Feedback type='invalid'>{error.password.message}</Form.Control.Feedback>
+                } */}
+
+                    {/* <InputGroup.Text
                        className={`${styles.password}`}
                     >
                         < div
@@ -38,7 +54,21 @@ export const Password: React.FC<IPasswordProps> = (props) => {
                         </div>
                     </InputGroup.Text> */}
 
-            </InputGroup>
+                </InputGroup>
+                {props.isInvalid &&
+                    <div data-testid="password-error" style={{ fontSize: "14px" }} className='invalid'>
+                        {props.errorMessage ? props.errorMessage :
+                            <>
+                                <p className='mb-0'>Password does not meet password requirements:</p>
+                                <ul>
+                                    <li>must be at least 8 - 64 characters long.</li>
+                                    <li>must include one lowercase letter, one uppercase letter, one number, and one special character.</li>
+                                </ul>
+                            </>
+                        }
+                    </div>
+                }
+            </div>
         </>
     )
 }
