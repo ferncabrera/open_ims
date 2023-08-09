@@ -4,9 +4,10 @@ resources:
 namePrefix: 
   dev-
 
-configMapGenerator:
-  - name: client-config
-    env: config.properties
+# configMapGenerator:
+#   - name: client-config
+#     envs:
+#       - .env
 
 images:
 - name: fcabrera01/open-ims-client

@@ -8,9 +8,7 @@ export const getJSONResponse = async (props: IGetResponse) => {
             params,
         } = props;
 
-    // TODO:
-    // localhost will definitely need to be a HOST env var lol
-    const url = `http://localhost${endpoint}`;
+    const url = `http://${import.meta.env.DEV?import.meta.env.VITE_HOST_DEV:import.meta.env.VITE_HOST_PROD}${endpoint}`;
     const parameters = params ? params : {}; //can add default headers here in the future.
 
     // will always expect this to be a JSON object

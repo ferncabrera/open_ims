@@ -16,3 +16,8 @@ patches:
     version: v1
     kind: StatefulSet
     name: postgres-stateful-set
+
+images:
+- name: postgres
+  newName: postgres
+  newTag: '15.3'

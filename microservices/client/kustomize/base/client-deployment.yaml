@@ -11,9 +11,9 @@ spec:
         image: fcabrera01/open-ims-client
         ports:
         - containerPort: 5000
-        envFrom:
-          - configMapRef:
-              name: client-config
+        # envFrom:
+        #   - configMapRef:
+        #       name: client-config
         # resources:
         #   limits:
         #     memory: "512Mi"
