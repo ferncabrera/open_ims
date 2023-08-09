@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
-import { BsEye } from 'react-icons/bs';
-import { BsEyeSlash } from 'react-icons/bs';
+import {MdOutlineVisibilityOff, MdOutlineVisibility} from 'react-icons/md';
 import { Form, InputGroup } from 'react-bootstrap';
 import styles from './Password.module.scss';
 
@@ -38,7 +37,7 @@ export const Password: React.FC<IPasswordProps> = (props) => {
                         className={`${styles.password}`}
                         onClick={() => setShowPassword(!showPassword)}
                     >
-                        {showPassword ? <BsEyeSlash /> : <BsEye />}
+                        {showPassword ? <MdOutlineVisibilityOff className="font-24" /> : <MdOutlineVisibility className="font-24" />}
                     </span>
                     {/* {error.password?.valid === false &&
                     <Form.Control.Feedback type='invalid'>{error.password.message}</Form.Control.Feedback>
@@ -56,17 +55,19 @@ export const Password: React.FC<IPasswordProps> = (props) => {
 
                 </InputGroup>
                 {props.isInvalid &&
-                    <div data-testid="password-error" style={{ fontSize: "14px" }} className='invalid'>
-                        {props.errorMessage ? props.errorMessage :
-                            <>
-                                <p className='mb-0'>Password does not meet password requirements:</p>
-                                <ul>
-                                    <li>must be at least 8 - 64 characters long.</li>
-                                    <li>must include one lowercase letter, one uppercase letter, one number, and one special character.</li>
-                                </ul>
-                            </>
-                        }
-                    </div>
+                    <>
+                        <div data-testid="password-error" className='invalid'>
+                            {props.errorMessage ? <div className='invalid-feedback'>{props.errorMessage} </div> :
+                                <>
+                                    <p className='mb-0 invalid-feedback' style={{ fontSize: "14px" }}>Password does not meet password requirements:</p>
+                                    <ul className='invalid' style={{ fontSize: "14px" }}>
+                                        <li>must contain 8 to 64 characters.</li>
+                                        <li>must include one lowercase letter, one uppercase letter, one number, and one special character.</li>
+                                    </ul>
+                                </>
+                            }
+                        </div>
+                    </>
                 }
             </div>
         </>

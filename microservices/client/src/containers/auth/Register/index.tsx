@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, SyntheticEvent } from 'react'
 import { Link } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { Password } from '../../../components/forms/Password';
@@ -50,7 +50,8 @@ export const Register = () => {
         return valid.isValid;
     };
 
-    const handleSignIn = () => {
+    const handleRegister = (e: SyntheticEvent) => {
+        e.preventDefault();
         const loginData = _.get(formData, keyPaths.attributes);
         _.forIn(loginData, (value, key: string) => {
             const data = { value, name: key, required: true }
@@ -75,7 +76,7 @@ export const Register = () => {
                     <Link className={`ps-1 ${styles.link_header}`} to={'/'}> Log in</Link>
                 </div>
             </div>
-            <Form>
+            <Form noValidate onSubmit={handleRegister}>
                 <Form.Group>
                     <Form.Label htmlFor='firstName'>First Name:</Form.Label>
                     <Form.Control
@@ -152,7 +153,7 @@ export const Register = () => {
 
                 />
                 <div className='mt-5'>
-                    <Button onClick={handleSignIn}>Create account</Button>
+                    <Button type='submit' >Create account</Button>
                 </div>
             </Form>
 

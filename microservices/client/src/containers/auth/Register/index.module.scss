@@ -1,6 +1,9 @@
 @media (max-width: 1240px) {
     .flex_wrapper {
         flex-direction: column;
+        a {
+            max-width: fit-content;
+        }
     }
 }
 
