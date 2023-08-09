@@ -1,4 +1,5 @@
 @import './general/colors.scss';
+@import './general/variables.scss';
 
 .open-ims-styling {
 
@@ -54,6 +55,27 @@
 
         div {
             margin-bottom: 10px;
+        }
+
+        .form-control.is-invalid {
+            background-image: none;
+        }
+
+        .invalid-feedback {
+            display: inline-flex;
+            align-items: center;
+            margin: 0;
+
+            &::before {
+                content: $alertIcon;
+                color: $invalid;
+                transform: scale(0.57);
+                transform-origin: center;
+                width: 23px;
+                height: 25px;
+                padding: 0;
+                margin: 0;
+            }
         }
     }
 }
