@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useState } from 'react'
-import { BsEye } from 'react-icons/bs';
-import { BsEyeSlash } from 'react-icons/bs';
+import {MdOutlineVisibilityOff, MdOutlineVisibility} from 'react-icons/md';
 import { Form, InputGroup } from 'react-bootstrap';
 import styles from './Password.module.scss';
 
@@ -38,7 +37,7 @@ export const Password: React.FC<IPasswordProps> = (props) => {
                         className={`${styles.password}`}
                         onClick={() => setShowPassword(!showPassword)}
                     >
-                        {showPassword ? <BsEyeSlash /> : <BsEye />}
+                        {showPassword ? <MdOutlineVisibilityOff className="font-24" /> : <MdOutlineVisibility className="font-24" />}
                     </span>
                     {/* {error.password?.valid === false &&
                     <Form.Control.Feedback type='invalid'>{error.password.message}</Form.Control.Feedback>

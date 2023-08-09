@@ -90,7 +90,8 @@ export const Login = () => {
         return valid.isValid;
     }
 
-    const handleSignIn = () => {
+    const handleSignIn = (e : SyntheticEvent) => {
+        e.preventDefault();
         const loginData = _.get(formData, keyPaths.attributes);
         _.forIn(loginData, (value, key: string) => {
             const data = { value, name: key, required: true }
@@ -115,7 +116,7 @@ export const Login = () => {
                     <Link className={`ps-1 ${styles.link_header}`} to={'/register'}> Create an account</Link>
                 </div>
             </div>
-            <Form>
+            <Form noValidate onSubmit={handleSignIn}>
                 <Form.Group>
                     <Form.Label htmlFor='email'>Email:</Form.Label>
                     <Form.Control
@@ -155,7 +156,7 @@ export const Login = () => {
                     </div>
                 </Row>
                 <div className='mt-5'>
-                    <Button onClick={handleSignIn}>Sign in</Button>
+                    <Button type='submit' >Sign in</Button>
                 </div>
             </Form>
             {/* Display Modal here */}
