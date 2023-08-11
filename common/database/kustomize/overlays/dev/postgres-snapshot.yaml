@@ -1,0 +1,8 @@
+
+apiVersion: snapshot.storage.k8s.io/v1
+kind: VolumeSnapshot
+metadata:
+  name: postgres-snapshot
+spec:
+  source:
+    persistentVolumeClaimName: dev-postgres-persistent-volume-claim
