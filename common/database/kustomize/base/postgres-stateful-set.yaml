@@ -5,6 +5,15 @@ metadata:
 spec:
   serviceName: postgres-headless-service
   replicas: 1
+  # volumeClaimTemplates:
+  # - metadata:
+  #     name: postgres-persistent-volume-claim
+  #   spec:
+  #     accessModes:
+  #       - ReadWriteOnce
+  #     resources:
+  #       requests:
+  #         storage: 5Gi
   template:
     spec:
       volumes:
@@ -16,6 +25,7 @@ spec:
         image: postgres:latest
         volumeMounts:
         - mountPath: "/var/lib/postgresql/data"
+          # name: postgres-persistent-volume-claim
           name: postgres-storage
           subPath: postgres
         ports:
