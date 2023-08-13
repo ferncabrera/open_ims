@@ -2,5 +2,5 @@
 import { Express, Request, Response } from "express"
 
 export const healthCheck = (req : Request, res : Response) => {
-        res.send('Health Check Successful')
+        res.send('Health Check Successful, API services are running')
 }
