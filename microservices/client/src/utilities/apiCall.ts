@@ -7,21 +7,23 @@ interface apiCallProps {
     headers?: object,
     parameters?: object,
     data?: object,
-    Accept?: object,
-
 }
 
 
 export const apiCall = async <T>(props: apiCallProps) : Promise<T> => {
     //this definitely needs to be more fleshed out in props, but for now we only need url and method for testing purposes.
+    const {headers, data, parameters} = props;
 
     try {
         const response = await fetch(props.url, {
             method: props.method,
             mode: "cors",
             headers: {
-                "content-type": "application/json", // this needs to be changeable oliver
-            }
+                "content-type": "application/json",
+                ...headers,
+                ...parameters,
+            },
+            body: JSON.stringify(data)
         })
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
