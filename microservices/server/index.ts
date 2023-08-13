@@ -13,15 +13,11 @@ app.use(morgan('common'));
 app.use(cookieParser());
 
 initializeRoutes(app);
+initializeDatabaseSchema().then(() => console.log('Database Intialized!')).catch((e) => console.log(e));
 
 app.get('*', (req: Request, res: Response) => {
     console.log('we hit an error!')
     res.sendStatus(404);
 });
 
-initializeDatabaseSchema().then(() => {
-    console.log("dataBase intialized!")
-    app.listen(process.env.SERVER_PORT, () => { console.log('[server compiled]: Running on port ', process.env.SERVER_PORT, ` (http://localhost:${process.env.SERVER_PORT}/)`) });
-}).catch(error => {
-    console.log("error intializing database schema:", error)
-});
+app.listen(process.env.SERVER_PORT, () => { console.log('[server compiled]: Running on port ', process.env.SERVER_PORT, ` (http://localhost:${process.env.SERVER_PORT}/)`) });
