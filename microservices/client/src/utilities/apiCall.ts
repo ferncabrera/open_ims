@@ -30,6 +30,9 @@ export const apiCall = async <T>(props: apiCallProps) : Promise<T> => {
         return response.json();
     } catch (error) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        console.log('An error occurred:', error);
+        console.log('url', props.url)
+
         return Promise.reject(error);
     }
 }
