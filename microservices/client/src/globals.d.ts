@@ -1,6 +1,6 @@
 // Global declaration of types:
 
-type TMethod = "GET" | "PUT" | "POST" | "DELETE";
+type TMethod = "GET" | "PUT" | "POST" | "DELETE" | "PATCH";
 
 
 interface IErrorObject {
