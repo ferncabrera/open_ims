@@ -8,12 +8,16 @@ import customError from '../utils/customeError';
 
 export const forgot_pass = async (req: Request, res: Response) => {
 
-    const{email} = req.body;
-
+    const {email} = req.body;
+    // console.log("this is the api call: ", email);
+    // res.json({"this is the api call: ": email})
+    
     // using the email, find the user in the database
     const userEmail = await query('SELECT * FROM users WHERE email = $1', [email]);
-    // if the user does not exist, return an error
+    res.json({"this is the api call: ": userEmail})
 
+    // if the user does not exist, return an error
+/*
     // this format makes it less susceptible to SQL injection (directly injecting into the query)
     const user = userEmail.rows[0];
     if (!user) {
@@ -25,6 +29,7 @@ export const forgot_pass = async (req: Request, res: Response) => {
     const token = jwt.sign({exp: expirationDate, email: user.email, permission: user.permission}, `${secret}`);
     res.cookie('authToken', token, {httpOnly: true, secure: true});
     res.json({message:"Success"})
+    */
     // if (user.rows.length === 0) {
     //     return res.status(404).json('User not found');
     // } else {

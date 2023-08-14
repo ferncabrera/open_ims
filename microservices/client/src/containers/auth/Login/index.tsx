@@ -58,20 +58,13 @@ export const Login = () => {
 
     const handleForgotPass = async (e: SyntheticEvent) => {
         setEmailSent(true);
-        console.log('tester')
-        // alert('tester')
+        console.log("data:", {email: resetEmail})
+
+        // alert('')
         e.preventDefault(); // Prevents the default form submission behavior
-        // _.forIn(emailData, (value, key: string) => {
-        //     const data = { value, name: key, required: true }
-        //     // const isValid = validate(data);
-        //     // trackErrorList.push(isValid)
-        // });
-        // if (_.some(trackErrorList, (validEntity) => validEntity === false)) {
-        //     trackErrorList = [];
-        //     return
-        // }
+
         // Send post request here
-        await sendPostRequest({endpoint: "/api/server/forgot_pass", data: resetEmail });
+        await sendPostRequest({endpoint: "/api/server/forgot_pass", data:{email: resetEmail}});
 
     }
 
