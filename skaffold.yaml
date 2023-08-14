@@ -76,13 +76,14 @@ profiles:
   manifests:
     kustomize:
       paths:
+        - ./common/rbac/
         - ./common/ingress/overlays/prod
-        # ? Should we have PGAdmin in PROD? (While devving maybe?)
-        # - ./common/pgadmin/overlays/dev
         - ./common/database/kustomize/overlays/prod
         - ./microservices/server/kustomize/overlays/prod
         - ./microservices/client/kustomize/overlays/prod
         - ./common/utils/migration-job/kustomize/overlays/prod
+        # ? Should we have PGAdmin in PROD? (While devving maybe?)
+        # - ./common/pgadmin/overlays/dev
   build:
     # local:
     #   push: false

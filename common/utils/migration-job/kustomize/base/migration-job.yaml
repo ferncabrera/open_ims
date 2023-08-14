@@ -3,7 +3,7 @@ kind: Job
 metadata:
   name: migration-job
 spec:
-  ttlSecondsAfterFinished: 350
+  ttlSecondsAfterFinished: 5
   template:
     spec:
       containers:
