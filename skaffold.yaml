@@ -11,6 +11,7 @@ profiles:
   manifests:
     kustomize:
       paths:
+        - ./common/rbac/
         - ./common/ingress/overlays/dev
         - ./common/pgadmin/overlays/dev
         - ./common/database/kustomize/overlays/dev
@@ -81,6 +82,7 @@ profiles:
         - ./common/database/kustomize/overlays/prod
         - ./microservices/server/kustomize/overlays/prod
         - ./microservices/client/kustomize/overlays/prod
+        - ./common/utils/migration-job/kustomize/overlays/prod
   build:
     # local:
     #   push: false
@@ -96,9 +98,13 @@ profiles:
         context: microservices/server
         docker:
           dockerfile: Dockerfile
+      - image: fcabrera01/ccg-migration-job
+        context: common/utils/migration-job
+        docker:
+          dockerfile: Dockerfile
   deploy:
     kubectl: {}
-  # verify:
+  # verify:s
   #   - name: alpine-wget
   #     container:
   #       name: alpine-wget
