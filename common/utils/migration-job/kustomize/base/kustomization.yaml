@@ -1,0 +1,5 @@
+resources:
+  - migration-job.yaml
+
+commonLabels:
+  component: migration-job

@@ -1,0 +1,9 @@
+{
+    "dev": {
+      "driver": "pg",
+      "user": {"ENV": "POSTGRES_USER"},
+      "password": {"ENV": "POSTGRES_PASSWORD"},
+      "host": {"ENV": "POSTGRES_HOST"},
+      "database": {"ENV": "POSTGRES_DATABASE"}
+    }
+}

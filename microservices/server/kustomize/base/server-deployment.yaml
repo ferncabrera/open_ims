@@ -12,6 +12,14 @@ spec:
       labels:
         component: server
     spec:
+      initContainers:
+      - name: "job-wait-initcontainer"
+        imagePullPolicy: Always
+        image: "groundnuty/k8s-wait-for:v2.0"
+        # imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args: 
+        - "job-wr"
+        - "migration-job"
       containers:
       - name: server
         image: fcabrera01/open-ims-server
@@ -35,3 +43,8 @@ spec:
               secretKeyRef:
                 name: postgres-credentials
                 key: POSTGRES_USER
+          - name: JWT_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: JWT_SECRET_KEY

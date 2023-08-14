@@ -1,0 +1,19 @@
+{
+  "name": "migrations-handler",
+  "version": "1.0.0",
+  "description": "A custom util for handling our postgres migrations in DEV and PROD envs",
+  "main": "index.js",
+  "scripts": {
+    "migrate": "node -e 'require(`./index`).init()'",
+    "create": "node -e 'require(`./index`).create()'"
+  },
+  "keywords": [
+    "migrations"
+  ],
+  "author": "Fernando Cabrera",
+  "license": "MIT",
+  "dependencies": {
+    "db-migrate": "^0.11.13",
+    "db-migrate-pg": "^1.3.0"
+  }
+}

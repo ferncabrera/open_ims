@@ -1,0 +1,8 @@
+FROM node:18.17.0-alpine3.18
+
+WORKDIR /home/node/app/migration-job
+
+RUN npm install db-migrate -g
+RUN npm install db-migrate-pg -g
+
+# CMD ["npm", "run", "migrate"]

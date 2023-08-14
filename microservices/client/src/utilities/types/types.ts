@@ -5,3 +5,10 @@ export interface IGetResponse {
     params?: object,
 
 }
+
+export interface IPostRequest {
+    endpoint: string,
+    params?: object,
+    data: any,
+    headers?: any,
+}
