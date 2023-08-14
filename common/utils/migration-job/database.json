@@ -1,9 +1,9 @@
 {
     "dev": {
       "driver": "pg",
-      "user": "dev",
-      "password": "admin",
-      "host": "dev-postgres-stateful-set-0.dev-postgres-headless-service",
-      "database": "open-ims-dev"
+      "user": {"ENV": "POSTGRES_USER"},
+      "password": {"ENV": "POSTGRES_PASSWORD"},
+      "host": {"ENV": "POSTGRES_HOST"},
+      "database": {"ENV": "POSTGRES_DATABASE"}
     }
-  }
+}

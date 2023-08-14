@@ -16,7 +16,7 @@ profiles:
         - ./common/database/kustomize/overlays/dev
         - ./microservices/server/kustomize/overlays/dev
         - ./microservices/client/kustomize/overlays/dev
-        - ./common/utils/migration-job/kustomize/base
+        - ./common/utils/migration-job/kustomize/overlays/dev
   build:
     local:
       push: false

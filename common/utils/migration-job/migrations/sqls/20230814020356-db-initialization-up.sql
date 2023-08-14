@@ -8,7 +8,7 @@ END $$;
 
 CREATE TABLE IF NOT EXISTS user_table (
     id SERIAL PRIMARY KEY,
-    email VARCHAR(100) UNIQUE NOT NULL CHECK (Email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$'),
+    email VARCHAR(100) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     phone VARCHAR(50),

@@ -14,6 +14,7 @@
 const DBMigrate = require('db-migrate');
 
 // The next step is to get a new instance of DBMigrate
+console.log("attempting to connect to instance!");
 const dbmigrate = DBMigrate.getInstance(true);
 const log = console.log;
 
@@ -46,7 +47,9 @@ module.exports.init = function () {
 
   \x1b[31m  -> The Job "migration-job" is invalid: spec.template: Invalid value: core.PodTemplateSpec{ObjectMeta:v1.ObjectMeta{Name:"", GenerateName:"", Namespace:..\x1b[0m
 
-  \x1b[96mDon't worry, if this happens to you just open another terminal and run 'kubectl delete job migration-job', then just save the file again and it should work ;)\x1b[0m
+  \x1b[96mDon't worry, if this happens to you - either:\x1b[0
+  \x1b[96m- Open another terminal and run 'kubectl delete job migration-job', then just save the file again and it should work ;)\x1b[0m
+  \x1b[96m- Or just kill Skaffold (CTRL+C), and then re-run it :)\x1b[0m
 
 \x1b[92mHappy migrating!!!!!!\x1b[0m
           `);
@@ -74,7 +77,9 @@ module.exports.init = function () {
 
   \x1b[31m  -> The Job "migration-job" is invalid: spec.template: Invalid value: core.PodTemplateSpec{ObjectMeta:v1.ObjectMeta{Name:"", GenerateName:"", Namespace:..\x1b[0m
 
-  \x1b[96mDon't worry, if this happens to you just open another terminal and run 'kubectl delete job migration-job', then just save the file again and it should work ;)\x1b[0m
+    \x1b[96mDon't worry, if this happens to you - either:\x1b[0
+    \x1b[96m- Open another terminal and run 'kubectl delete job migration-job', then just save the file again and it should work ;)\x1b[0m
+    \x1b[96m- Or just kill Skaffold (CTRL+C), and then re-run it :)\x1b[0m
 
 \x1b[91mTHE SQL ERROR IN THE FILE THAT YOU NEED TO FIX (FIX THIS AND THEN SAVE!):\x1b[0m
 
