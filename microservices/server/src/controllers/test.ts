@@ -1,5 +1,6 @@
 import { Express, Request, Response } from "express"
 import { query } from "../db"
+import initializeDatabaseSchema from "../db/schema";
 
 
 export const getClicks = async (req: Request, res: Response) => {
@@ -15,6 +16,7 @@ export const seedDB = async (req: Request, res: Response) => {
     try {
         await query('CREATE TABLE IF NOT EXISTS exampletable (nums integer UNIQUE)');
         await query('INSERT INTO exampletable(nums) VALUES($1)', [1]);
+        await initializeDatabaseSchema();
         console.log("Your DB has been seeded!");
         res.json({ msg: "Successfully seeded the Database with the test data!" });
     } catch (error) {

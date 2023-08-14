@@ -6,7 +6,7 @@ import { CenteredModal } from '../../../components/modals/CenteredModal';
 import { MdOutlineEmail } from 'react-icons/md';
 import { fieldValidation } from '../../../utilities/validation';
 import { IValidate } from '../../../utilities/types/validationTypes';
-import { sendPostRequest } from '../../../utilities/apiHelpers';
+import { sendPostRequest, getJSONResponse } from '../../../utilities/apiHelpers';
 import _ from 'lodash';
 
 import styles from './index.module.scss';
@@ -111,7 +111,7 @@ export const Login = () => {
         return valid.isValid;
     }
 
-    const handleSignIn = (e : SyntheticEvent) => {
+    const handleSignIn = async (e : SyntheticEvent) => {
         e.preventDefault();
         const loginData = _.get(formData, keyPaths.attributes);
         _.forIn(loginData, (value, key: string) => {
@@ -124,7 +124,7 @@ export const Login = () => {
             return
         }
         // Send post request here
-        console.log('We send the POST request here if no errors!')
+        const response = await sendPostRequest({endpoint:'/api/server/login', data: loginData});
 
     }
 

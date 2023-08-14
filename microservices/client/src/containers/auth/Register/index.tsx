@@ -4,6 +4,7 @@ import { Form, Button } from 'react-bootstrap';
 import { Password } from '../../../components/forms/Password';
 import { IValidate } from '../../../utilities/types/validationTypes';
 import { fieldValidation } from '../../../utilities/validation';
+import { sendPostRequest } from '../../../utilities/apiHelpers';
 import _ from 'lodash';
 
 import styles from './index.module.scss';
@@ -50,10 +51,10 @@ export const Register = () => {
         return valid.isValid;
     };
 
-    const handleRegister = (e: SyntheticEvent) => {
+    const handleRegister = async (e: SyntheticEvent) => {
         e.preventDefault();
-        const loginData = _.get(formData, keyPaths.attributes);
-        _.forIn(loginData, (value, key: string) => {
+        const registrationData = _.get(formData, keyPaths.attributes);
+        _.forIn(registrationData, (value, key: string) => {
             const data = { value, name: key, required: true }
             const isValid = validate(data);
             trackErrorList.push(isValid)
@@ -63,7 +64,7 @@ export const Register = () => {
             return
         }
         // Send post request here
-        console.log('We send the POST request here if no errors!')
+        await sendPostRequest({endpoint: "/api/server/register", data: registrationData });
 
     }
 
