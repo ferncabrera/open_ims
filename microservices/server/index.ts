@@ -13,7 +13,7 @@ app.use(morgan('common'));
 app.use(cookieParser());
 
 initializeRoutes(app);
-initializeDatabaseSchema().then(() => console.log('Database Intialized!')).catch((e) => console.log(e));
+// initializeDatabaseSchema().then(() => console.log('Database Intialized!')).catch((e) => console.log(e));
 
 app.get('*', (req: Request, res: Response) => {
     console.log('we hit an error!')

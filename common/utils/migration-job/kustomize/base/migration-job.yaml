@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migration-job
+spec:
+  ttlSecondsAfterFinished: 3
+  template:
+    spec:
+      containers:
+      - name: migration-job
+        image: fcabrera01/ccg-migration-job
+        command: ["npm",  "run", "migrate"]
+      restartPolicy: Never
+  backoffLimit: 5

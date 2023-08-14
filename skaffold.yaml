@@ -16,6 +16,7 @@ profiles:
         - ./common/database/kustomize/overlays/dev
         - ./microservices/server/kustomize/overlays/dev
         - ./microservices/client/kustomize/overlays/dev
+        - ./common/utils/migration-job/kustomize/base
   build:
     local:
       push: false
@@ -47,12 +48,28 @@ profiles:
           dockerfile: Dockerfile.dev
         sync:
           manual:
-            - src: "**/*.js"
+            - src: "src/**/*.js"
               dest: .
-            - src: "**/*.ts"
+            - src: "src/**/*.ts"
               dest: .
             - src: "tsconfig.json"
               dest: .
+            - src: "index.ts"
+              dest: .
+      - image: fcabrera01/ccg-migration-job
+        context: common/utils/migration-job
+        docker:
+          dockerfile: Dockerfile
+        # sync:
+        #   manual:
+        #     - src: "index.js"
+        #       dest: .
+        #     - src: "database.json"
+        #       dest: .
+        #     - src: "migrations/**/*.js"
+        #       dest: .
+        #     - src: "migrations/**/*.sql"
+        #       dest: .
       
 - name: prod
   manifests:

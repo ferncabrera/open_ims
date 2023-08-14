@@ -2,7 +2,6 @@ import express from 'express';
 import { 
     getClicks, 
     addClick,
-    seedDB
 } from '../controllers/test';
 import catchAsync from '../utils/catchAsync';
 
@@ -14,9 +13,6 @@ router.route('/api/server/getClickedNum')
 
 router.route('/api/server/addClick')
     .get(catchAsync(addClick))
-
-router.route('/api/server/seed')
-    .get(catchAsync(seedDB))
 
 
 export default router; 
