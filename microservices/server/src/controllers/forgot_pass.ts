@@ -4,6 +4,7 @@ import { query } from "../db";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 import customError from "../utils/customeError";
+
 var Brevo = require("@getbrevo/brevo");
 var defaultClient = Brevo.ApiClient.instance;
 
@@ -32,32 +33,25 @@ export const forgot_pass = async (req: Request, res: Response) => {
 
   // Configure API key authorization: api-key
   var apiKey = defaultClient.authentications["api-key"];
-  apiKey.apiKey =
-    "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";
+  apiKey.apiKey = "key will go in .env file next push";
   // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
   // apiKey.apiKeyPrefix["api-key"] = "Token";
-
-  // Configure API key authorization: partner-key
-  // var partnerKey = defaultClient.authentications["partner-key"];
-  // partnerKey.apiKey = "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";
-  // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-  // partnerKey.apiKeyPrefix["partner-key"] = "Token";
-
-  // var api = new Brevo.AccountApi();
 
   var apiInstance = new Brevo.TransactionalEmailsApi();
 
   var sendSmtpEmail = new Brevo.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
-
+  sendSmtpEmail.to = [{ email: "joseph_fanous@hotmail.com", name: "John Doe" }];
+  sendSmtpEmail.templateId = 1;
   apiInstance.sendTransacEmail(sendSmtpEmail).then(
     function (data: any) {
-      console.log("API called successfully. Returned data: " + data);
+      console.log("API called successfully. Returned data: " + data.messageId);
+      res.json({ message: "Success" });
     },
     function (error: any) {
       console.error(error);
     }
   );
-  
+
   // api.getAccount().then(
   //   function (data: any) {
   //     res.json({ message: "Success" + data. });
