@@ -1,6 +1,5 @@
 import { apiCall } from "./apiCall";
 import { IGetResponse, IPostRequest } from "./types/types"
-import { IGetResponse, IPostRequest } from "./types/types"
 
 export const getJSONResponse = async (props: IGetResponse) => {
     const
@@ -18,33 +17,12 @@ export const getJSONResponse = async (props: IGetResponse) => {
             url,
             method: "GET",
             parameters
-            method: "GET",
-            parameters
         });
 
     return response;
 
 }
 
-export const sendPostRequest = async (props: IPostRequest ) => {
-    const {
-        endpoint,
-        headers,
-        data
-    } = props;
-
-    const url = `http://${import.meta.env.DEV?import.meta.env.VITE_HOST_DEV:import.meta.env.VITE_HOST_PROD}${endpoint}`;
-
-    const response : object = await apiCall(
-        {
-            url,
-            method: "POST",
-            headers,
-            data,
-        }
-    )
-    return response;
-}
 
 export const sendPatchRequest = async (props: IPostRequest) => {
     const {

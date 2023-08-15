@@ -13,8 +13,14 @@ export const forgot_pass = async (req: Request, res: Response) => {
     // res.json({"this is the api call: ": email})
     
     // using the email, find the user in the database
-    const userEmail = await query('SELECT * FROM users WHERE email = $1', [email]);
-    res.json({"this is the api call: ": userEmail})
+    const userEmail = await query('SELECT * FROM user_table WHERE email = $1', [email]);
+
+    const user = userEmail.rows[0];
+    if (!user) {
+        throw new customError({message: "Email does not exist", code:10});
+    }
+
+
 
     // if the user does not exist, return an error
 /*
