@@ -5,6 +5,7 @@ import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 import customError from "../utils/customeError";
 
+
 var Brevo = require("@getbrevo/brevo");
 var defaultClient = Brevo.ApiClient.instance;
 
@@ -32,10 +33,7 @@ export const forgot_pass = async (req: Request, res: Response) => {
   // res.cookie("authToken", token, { httpOnly: true, secure: true });
 
   // Configure API key authorization: api-key
-  var apiKey = defaultClient.authentications["api-key"];
-  apiKey.apiKey = "key will go in .env file next push";
-  // Uncomment the following line to set a prefix for the API key, e.g. "Token" (defaults to null)
-  // apiKey.apiKeyPrefix["api-key"] = "Token";
+  defaultClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
 
   var apiInstance = new Brevo.TransactionalEmailsApi();
 
@@ -52,13 +50,4 @@ export const forgot_pass = async (req: Request, res: Response) => {
     }
   );
 
-  // api.getAccount().then(
-  //   function (data: any) {
-  //     res.json({ message: "Success" + data. });
-  //     // console.log("API called successfully. Returned data: " + data);
-  //   },
-  //   function (error: any) {
-  //     console.error(error);
-  //   }
-  // );
 };
