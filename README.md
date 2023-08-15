@@ -99,7 +99,8 @@ Then, you should be able to select the **open-ims-dev** db to start messing arou
     
       Step 5: Add this to the file
       ![image](image-1.png)
-    
+
+
       Step 6: Goto server -> kustomize -> overlays -> dev -> server-deployment.yaml
     
       Step 7: Add this to the file and make sure to change the ../3/.. to the right position of your variable
