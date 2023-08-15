@@ -1,0 +1,1 @@
+This container runs as part of our server deployment pods. It will run the db-migrate up command before attempting to start the server application, effectively "catching" a database up to date with the latest changes (or creating the whole database if it is starting from scratch like in DEV).

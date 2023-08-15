@@ -5,7 +5,7 @@ metadata:
 spec:
   resources:
     requests:
-      storage: 4Gi
+      storage: 8Gi
   accessModes:
     - ReadWriteOnce
-  # storageClassName: do-block-storage
+  # storageClassName: defaults to local or do-block-storage

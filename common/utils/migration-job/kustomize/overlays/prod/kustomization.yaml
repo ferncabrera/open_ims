@@ -1,0 +1,18 @@
+resources:
+  - ../../base
+
+namePrefix: 
+  prod-
+
+configMapGenerator:
+  - name: migration-job-config
+    envs:
+    - .env
+
+patches:
+- path: postgres-credentials-patch.json
+  target:
+    group: batch
+    version: v1
+    kind: Job
+    name: migration-job

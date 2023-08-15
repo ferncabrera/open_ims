@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migration-job
+spec:
+  ttlSecondsAfterFinished: 10
+  template:
+    spec:
+      containers:
+      - name: migration-job
+        image: fcabrera01/ccg-migration-job
+        command: ["npm",  "run", "migrate"]
+        envFrom:
+          - configMapRef:
+              name: migration-job-config
+        env:
+          - name: PGPASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: POSTGRES_PASSWORD
+          - name: PGUSER
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: POSTGRES_USER
+      restartPolicy: Never
+
+  backoffLimit: 5

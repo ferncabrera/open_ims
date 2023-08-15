@@ -12,6 +12,14 @@ spec:
       labels:
         component: server
     spec:
+      initContainers:
+      - name: "job-wait-initcontainer"
+        imagePullPolicy: Always
+        image: "groundnuty/k8s-wait-for:v2.0"
+        # imagePullPolicy: {{ .Values.image.pullPolicy }}
+        args: 
+        - "job-wr"
+        - "migration-job"
       containers:
       - name: server
         image: fcabrera01/open-ims-server
