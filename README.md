@@ -107,3 +107,10 @@ Then, you should be able to select the **open-ims-dev** db to start messing arou
       ![image](image-2.png)
     
       Step 8: Repeat step 7 - 8 but for prod, which is right under the dev folder
+
+      Step 9: You can call the variable you made by using this code anywhere in the project:
+             ```js
+                 process.env.your_variable_name
+             ```
+
+   
