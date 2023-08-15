@@ -84,7 +84,7 @@ Then, you should be able to select the **open-ims-dev** db to start messing arou
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/3b772f46-1c88-4bdd-9c91-9b04332a3560)
 
-##FAQ
+## FAQ
 
 1. How do I add a secret key to the environment variables?
 
