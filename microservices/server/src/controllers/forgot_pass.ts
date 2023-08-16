@@ -33,21 +33,38 @@ export const forgot_pass = async (req: Request, res: Response) => {
   // res.cookie("authToken", token, { httpOnly: true, secure: true });
 
   // Configure API key authorization: api-key
+  // const key = process.env.BREVO_API_KEY;
+  // console.log('this is the key: ', key);
+
   defaultClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-
+  var resetLink  = "http://localhost/reset-password?token=your_reset_token_here";
   var apiInstance = new Brevo.TransactionalEmailsApi();
+  const emailTemplate = `<p>Click <a href="{reset_link}">here</a> to reset your password.</p>`;
+  const emailContent = emailTemplate.replace("%RESET_LINK%", resetLink);
 
+  
   var sendSmtpEmail = new Brevo.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
   sendSmtpEmail.to = [{ email: "joseph_fanous@hotmail.com", name: "John Doe" }];
   sendSmtpEmail.templateId = 1;
-  apiInstance.sendTransacEmail(sendSmtpEmail).then(
-    function (data: any) {
-      console.log("API called successfully. Returned data: " + data.messageId);
-      res.json({ message: "Success" });
-    },
-    function (error: any) {
-      console.error(error);
-    }
-  );
+  sendSmtpEmail.params = { RESET_LINK: emailContent };
+
+  apiInstance.sendTransacEmail(sendSmtpEmail)
+  .then((response: any) => {
+    console.log("Email sent:", response);
+    res.json({ message: "Success" });
+  })
+  .catch((error: any) => {
+    console.error("Error sending email:", error);
+  });
+
+  // apiInstance.sendTransacEmail(sendSmtpEmail).then(
+  //   function (data: any) {
+  //     console.log("API called successfully. Returned data: " + data.messageId);
+  //     res.json({ message: "Success" });
+  //   },
+  //   function (error: any) {
+  //     console.error(error);
+  //   }
+  // );
 
 };
