@@ -29,6 +29,8 @@ _Confirm that you have the ingress-nginx service running or else application sta
 
 If you don't see this or are not sure if it is running, just re-run the command in the <a href="https://github.com/ferncabrera/open_ims/blob/main/README.md#pre-requisites">Pre-requisites section</a> used to set up ingress-nginx.
 
+Finally, go to common -> database -> kustomize -> overlays -> dev -> postgres-credentials.yaml and add your Brevo api key.
+
 Now that you are ready, in the root of the project, run: 
 ```
 skaffold dev
@@ -90,7 +92,7 @@ Then, you should be able to select the **open-ims-dev** db to start messing arou
 
       Step 1: Stop the skaffold dev environment (Ctrl + c)
       
-      Step 2: Goto common -> database -> kustomize -> overlays -> dev -> postgres-credentials
+      Step 2: Goto common -> database -> kustomize -> overlays -> dev -> postgres-credentials.yaml
     
       Step 3: Add the secret key to the file (example below)
       ![image](image-3.png)
