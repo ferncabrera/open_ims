@@ -53,3 +53,8 @@ spec:
               secretKeyRef:
                 name: postgres-credentials
                 key: BREVO_API_KEY
+          - name: JWT_SECRET_KEY_FORGOT
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: JWT_SECRET_KEY_FORGOT

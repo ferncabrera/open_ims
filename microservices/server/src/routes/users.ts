@@ -10,4 +10,7 @@ router.route('/api/server/login')
 
 router.route('/api/server/register')
     .post(catchAsync(register), errorHandler)
+
+router.route('/api/server/forgot_pass')
+    .post(catchAsync(register), errorHandler)
 export default router;

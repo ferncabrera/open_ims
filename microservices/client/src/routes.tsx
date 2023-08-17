@@ -4,6 +4,7 @@ import { Authentication } from "./containers/auth";
 import { ServerPing } from "./containers/ServerPing";
 import Error from "./containers/Error";
 import { MainContainer } from "./containers/MainContainer";
+import { ForgotPass } from "./containers/auth/ResetPass";
 
 const Routes = [
     {
@@ -14,6 +15,10 @@ const Routes = [
     {
         path: '/register',
         element: <Authentication isLogin={false} />,
+    },
+    {
+        path: '/forgot_pass',
+        element: <ForgotPass />,
     },
     // Just want some placeholder api call to backend for now
     // for testing purposes

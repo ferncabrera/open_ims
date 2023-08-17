@@ -1,0 +1,14 @@
+.link_header {
+  font-weight: 500;
+}
+
+@media (max-width: 1240px) {
+  .flex_wrapper {
+    flex-direction: column;
+    max-width: fit-content;
+    flex-shrink: 0;
+    a {
+      max-width: fit-content;
+    }
+  }
+}
