@@ -111,7 +111,7 @@ export const Login = () => {
     return (
         <>
             <div className='mt-5 mb-5'>
-                <h1>Welcome back</h1>
+                <h1>Welcome back!!</h1>
                 <div className={`d-flex justify-content-start ${styles.flex_wrapper}`}>
                     <h6 className='d-flex align-items-center'>New to CCG Inventory?</h6>
                     <Link className={`ps-1 ${styles.link_header}`} to={'/register'}> Create an account</Link>

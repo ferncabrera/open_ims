@@ -22,7 +22,7 @@ export const login = async (req: Request, res: Response) => {
     const expirationDate = Math.floor(Date.now() / 1000) + (60 * 5) // expiration is 5 minutes
     const token = jwt.sign({exp: expirationDate, email: user.email, permission: user.permission}, `${secret}`);
     res.cookie('authToken', token, {httpOnly: true, secure: true});
-    res.json({message:"Success"})
+    res.json({message:"Success", token:token})
 }
 
 export const register = async (req: Request, res: Response) => {
