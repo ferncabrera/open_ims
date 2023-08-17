@@ -14,7 +14,7 @@ app.use(cookieParser());
 initializeRoutes(app);
 
 app.get('*', (req: Request, res: Response) => {
-    console.log('we hit an error!')
+    console.log('we hit an error!!')
     res.sendStatus(404);
 });
 
