@@ -1,14 +1,71 @@
-.link_header {
-  font-weight: 500;
+@import "../../../styles/general/colors.scss";
+
+body {
+  margin: 0;
+  padding: 0;
+  background: url(pexels-scott-webb-1022928.jpg) no-repeat center center fixed;
+  background-size: cover;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  font-family: Arial, sans-serif;
 }
 
-@media (max-width: 1240px) {
-  .flex_wrapper {
-    flex-direction: column;
-    max-width: fit-content;
-    flex-shrink: 0;
-    a {
-      max-width: fit-content;
+.overlay {
+  background-color: rgba(255, 255, 255, 0.8);
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+
+  .title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+
+  .subtitle {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+
+  .input-container {
+    text-align: left;
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    font-size: 14px;
+    margin-bottom: 5px;
+  }
+
+  .input-field {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+    &[type="password"] {
+      padding-right: 35px;
     }
+  }
+
+  .show-password {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+
+  button {
+    background-color: $primary-blue;
+    color: #fff;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
   }
 }

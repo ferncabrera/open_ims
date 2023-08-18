@@ -58,11 +58,7 @@ export const Login = () => {
 
     const handleForgotPass = async (e: SyntheticEvent) => {
         setEmailSent(true);
-        console.log("data:", {email: resetEmail})
-
-        // alert('')
         e.preventDefault(); // Prevents the default form submission behavior
-
         // Send post request here
         await sendPostRequest({endpoint: "/api/server/forgot_pass", data:{email: resetEmail}});
 
