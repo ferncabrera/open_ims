@@ -117,12 +117,12 @@ export const forgot_pass = async (req: Request, res: Response) => {
 };
 
 export const update_password = async (req: Request, res: Response) => {
-  const {password} = req.body;
+  const {password, token} = req.body;
 
-  //using the jwt token we passed in the url above, we can decode it and get the email
+  //using the jwt token we passed in the url above, we can decode it and get the user's email
   const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
-  const token2 = req.query.token;
-  const decoded = jwt.verify(token2 as string, `${secret2}`) as any;
+  // const token2 = req.query.token;
+  const decoded = jwt.verify(token as string, `${secret2}`) as any;
   const userEmail = decoded.email;
 
   //using the email, find the user in the database

@@ -39,10 +39,19 @@ export const ForgotPass = () => {
       return;
     }
     console.log("Password: ", resetPassword);
+    const urlSearchParams = new URLSearchParams(window.location.search);
+    const token = urlSearchParams.get('token');
+  
+    if (!token) {
+      // Token not found, handle the error or redirect
+      console.log("Token not found");
+      return;
+    }
+    
     // Send post request here
     await sendPatchRequest({
       endpoint: "/api/server/update_password",
-      data: { email: resetPassword },
+      data: { email: resetPassword, token: token },
     });
   };
 
