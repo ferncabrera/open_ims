@@ -115,3 +115,31 @@ export const forgot_pass = async (req: Request, res: Response) => {
   //   }
   // );
 };
+
+export const update_password = async (req: Request, res: Response) => {
+  const {password} = req.body;
+
+  //using the jwt token we passed in the url above, we can decode it and get the email
+  const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
+  const token2 = req.query.token;
+  const decoded = jwt.verify(token2 as string, `${secret2}`) as any;
+  const userEmail = decoded.email;
+
+  //using the email, find the user in the database
+  // this format makes it less susceptible to SQL injection (directly injecting into the query)
+  const userQuery = await query("SELECT * FROM user_table WHERE email = $1", [userEmail]);
+  const user = userQuery.rows[0];
+  if (!user) {
+      throw new customError({message: "Something went wrong", code:10});
+  }
+  const validPassword = await bcrypt.compare(password, user.password);
+  if (!validPassword) {
+      throw new customError({message: "Something went wrong", code:10});
+  }
+  const salt = await bcrypt.genSalt();
+  const hash = await bcrypt.hash(password, salt);
+
+  await query("UPDATE user_table SET password = $1 WHERE email = $2", [hash, userEmail]);
+  //password should be updated
+  res.json({message:"Password successfully updated"})
+}
