@@ -108,7 +108,7 @@ Then, you should be able to select the **open-ims-dev** db to start messing arou
       Step 7: Add this to the file and make sure to change the ../3/.. to the right position of your variable
       ![image](image-2.png)
     
-      Step 8: Repeat step 7 - 8 but for prod, which is right under the dev folder
+      Step 8: Repeat step 6 - 7 but for prod, which is right under the dev folder
 
       Step 9: You can call the variable you made by using this code anywhere in the project:
              ```
