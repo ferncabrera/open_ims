@@ -1,20 +1,28 @@
 import styles from "./index.module.scss"; // Import the SCSS module
-import { Form, Button, Image, Col, InputGroup } from "react-bootstrap";
-import { Password } from "../../../components/forms/Password";
+import { Form, Button, Image, Col } from "react-bootstrap";
 import React, { useState, SyntheticEvent, ChangeEvent, useEffect } from "react";
-import { MdOutlineVisibilityOff, MdOutlineVisibility } from "react-icons/md";
 import { IValidate } from "../../../utilities/types/validationTypes";
 import { fieldValidation } from "../../../utilities/validation";
 import { sendPatchRequest } from "../../../utilities/apiHelpers";
 import forgotPassImg from "./../../../assets/public/images/forgotPass.jpg";
 import _ from "lodash";
+import { Password } from "./pass";
+
+/*
+  ! make button work with backend
+  // ! make new custom password component
+  // ! make text box to display error under both input boxes
+  ! make scss work better and page look good
+  ! make the image appear behind the form
+  */
+let trackErrorList = [];
+const formData = {};
+const initialErrorFieldState = {
+  newPassword: null,
+  password: null,
+};
 
 export const ForgotPass = () => {
-  let trackErrorList = [];
-  const [resetPassword, setPassword] = useState("");
-  const [resetPasswordConfirm, setPasswordConfirm] = useState("");
-
-  const formData = {};
   const keyPaths = {
     attributes: "attributes",
     password: "attributes.password",
@@ -25,16 +33,17 @@ export const ForgotPass = () => {
     _.set(formData, keyPaths.newPassword, "");
   }, []);
 
-  const initialErrorFieldState = {
-    newPassword: null,
-    password: null,
-  };
-
   const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
+
   const validate = (data: IValidate) => {
     const valid = fieldValidation(data);
     const name = valid.fieldName;
-
+    console.log("name: ", name);
+    console.log("valid: ", valid);
+    //if the error is "Required" then override the error message
+    if (valid.message === "Required") {
+      valid.message = "";
+    }
     if (!valid.isValid) {
       setError((prevError) => ({
         ...prevError,
@@ -64,33 +73,42 @@ export const ForgotPass = () => {
       console.log("Token not found");
       // return;
     }
+    // log both passwords
+    console.log("New Password:", _.get(formData, keyPaths.newPassword));
+    console.log("Password:", _.get(formData, keyPaths.password));
 
-    // if (resetPassword !== resetPasswordConfirm) {
-    //   setError((prevError) => ({
-    //     ...prevError,
-    //     password: {
-    //       valid: false,
-    //       message: "Passwords do not match",
-    //     },
-    //   }));
-    //   return;
-    // }
+    //check if passwords match and output error if they dont to the ErrorBox component
+    if (
+      _.get(formData, keyPaths.newPassword) !==
+      _.get(formData, keyPaths.password)
+    ) {
+      console.log("Passwords do not match");
+      setError((prevError) => ({
+        ...prevError,
+        newPassword: {
+          valid: false,
+          message: "Passwords do not match",
+        },
+      }));
+      return false;
+    } else {
+      return true;
+    }
+
     // Send post request here
     await sendPatchRequest({
       endpoint: "/api/server/update_password",
-      data: { password: resetPassword, token: token },
+      data: { password: keyPaths.newPassword, token: token },
     });
   };
 
   const PasswordConfirm = () => {
     return (
-      <div className="mt-3" style={{ marginBottom: "20px" }}>
+      <>
         <Form.Label htmlFor="confirmPassword">Confirm Password:</Form.Label>
         <Form.Control
           id="confirmPassword"
-          className={`${styles["input-field"]} ${
-            error.password?.valid === false ? styles["password_invalid"] : ""
-          }`}
+          className={`${styles.password}`}
           type="password"
           onChange={(e) => {
             _.set(formData, keyPaths.password, e.target.value);
@@ -103,10 +121,63 @@ export const ForgotPass = () => {
           }}
           required
         />
-        {error.password?.valid === false && (
+        {/* {error.password?.valid === false && (
           <div className="invalid-feedback">{error.password.message}</div>
+        )} */}
+      </>
+    );
+  };
+  interface InvalidProp {
+    isInvalid?: any;
+    errorMessage: string;
+    children?: React.ReactNode;
+  }
+
+  const ErrorBox: React.FC<InvalidProp> = (props) => {
+    // const passwordMismatchError = "Passwords do not match";
+    // return (
+    //   <>
+    //     {props.isInvalid && (
+    //       <div data-testid="password-error" className="invalid">
+    //         <div className="invalid-feedback">
+    //           {props.errorMessage}
+    //           {props.children} {/* Display additional error messages */}
+    //         </div>
+    //         {props.errorMessage === passwordMismatchError && (
+    //           <div className="invalid-feedback">{passwordMismatchError}</div>
+    //         )}
+    //       </div>
+    //     )}
+    //   </>
+    // );
+    return (
+      <>
+        {props.isInvalid && (
+          <>
+            <div data-testid="password-error" className="invalid">
+              {props.errorMessage ? (
+                <div className="invalid-feedback">{props.errorMessage} </div>
+              ) : (
+                <>
+                  <p
+                    className="mb-0 invalid-feedback"
+                    style={{ fontSize: "14px" }}
+                  >
+                    Password does not meet password requirements:
+                  </p>
+                  <ul className="invalid" style={{ fontSize: "14px" }}>
+                    <li>must contain 8 to 64 characters.</li>
+                    <li>
+                      must include one lowercase letter, one uppercase letter,
+                      one number, and one special character.
+                    </li>
+                  </ul>
+                </>
+              )}
+            </div>
+          </>
         )}
-      </div>
+      </>
     );
   };
 
@@ -132,18 +203,13 @@ export const ForgotPass = () => {
           errorMessage={_.get(error, "newPassword.message", "")}
         />
         {PasswordConfirm()}
-        {/* <div className={styles["input-container"]}>
-          <label htmlFor="confirmPassword">Confirm Password:</label>
-          <input
-            type={showConfirmPassword ? "text" : "password"}
-            id="confirmPassword"
-            className={styles["input-field"]}
-            placeholder="Confirm your password"
-          />
-        </div> */}
         <div className="mt-5">
           <Button type="submit">Update Password</Button>
         </div>
+        <ErrorBox
+          isInvalid={error.newPassword?.valid === false}
+          errorMessage={_.get(error, "newPassword.message", "")}
+        />
         {/* <Col
           xs={6}
           md={6}
