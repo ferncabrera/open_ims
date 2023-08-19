@@ -13,7 +13,8 @@ interface apiCallProps {
 export const apiCall = async <T>(props: apiCallProps) : Promise<T> => {
     //this definitely needs to be more fleshed out in props, but for now we only need url and method for testing purposes.
     const {headers, data, parameters} = props;
-
+    console.log('made it to apiCall')
+    console.log('props', props)
     try {
         const response = await fetch(props.url, {
             method: props.method,
@@ -25,6 +26,9 @@ export const apiCall = async <T>(props: apiCallProps) : Promise<T> => {
             },
             body: JSON.stringify(data)
         })
+        console.log('made it to apiCall2')
+
+        console.log('response', response)
 
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
         return response.json();

@@ -118,7 +118,7 @@ export const forgot_pass = async (req: Request, res: Response) => {
 
 export const update_password = async (req: Request, res: Response) => {
   const {password, token} = req.body;
-
+  console.log('hit the update password route');
   //using the jwt token we passed in the url above, we can decode it and get the user's email
   const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
   // const token2 = req.query.token;

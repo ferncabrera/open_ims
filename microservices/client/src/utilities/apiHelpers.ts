@@ -25,6 +25,8 @@ export const getJSONResponse = async (props: IGetResponse) => {
 
 
 export const sendPatchRequest = async (props: IPostRequest) => {
+    console.log('made it to sendPatchRequest');
+    console.log('props', props)
     const {
         endpoint,
         headers,
@@ -32,7 +34,7 @@ export const sendPatchRequest = async (props: IPostRequest) => {
     } = props;
 
     const url = `http://${import.meta.env.DEV?import.meta.env.VITE_HOST_DEV:import.meta.env.VITE_HOST_PROD}${endpoint}`;
-
+    console.log('url', url)
     const response : object = await apiCall(
         {
             url,
@@ -41,6 +43,7 @@ export const sendPatchRequest = async (props: IPostRequest) => {
             data
         }
     )
+    console.log('response', response)
     return response;
 }
 

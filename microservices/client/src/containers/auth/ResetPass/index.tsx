@@ -91,14 +91,11 @@ export const ForgotPass = () => {
         },
       }));
       return false;
-    } else {
-      return true;
     }
-
-    // Send post request here
+    // Send patch request here
     await sendPatchRequest({
       endpoint: "/api/server/update_password",
-      data: { password: keyPaths.newPassword, token: token },
+      data: { password: _.get(formData, keyPaths.newPassword), token: token },
     });
   };
 
