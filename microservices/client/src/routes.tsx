@@ -3,7 +3,7 @@ import React from "react";
 import { Authentication } from "./containers/auth";
 import { ServerPing } from "./containers/ServerPing";
 import Error from "./containers/Error";
-import { MainContainer } from "./containers/MainContainer";
+import { MainContainer } from "./containers/main/MainContainer";
 
 const Routes = [
     {
@@ -24,11 +24,11 @@ const Routes = [
     },
     
     {
-        path: '/home',
+        path: '/ccg',
         element: <MainContainer />, // this main container will handle our breadcrumbs https://reactrouter.com/en/main/hooks/use-matches
         children: [
             {
-                path: '/home/burger',
+                path: '/ccg/dashboard',
                 element: <div>This is a good burger!</div>
             }
         ]

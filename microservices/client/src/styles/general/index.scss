@@ -76,6 +76,24 @@ html, body {
         font-size: 48px;
     }
 
+    .nav-link {
+        padding-left: 16px;
+        padding-right: 0;
+        font-weight: 400;
+        font-size: 18px;
+        color: $dark-grey2;
+        &.active {
+            background-color: $page-grey;
+            span {
+                color: $primary-blue;
+            }
+        }
+
+        span {
+            font-size: 28px;
+            padding-right: 8px;
+        }
+    }
 
 
 }
