@@ -9,6 +9,7 @@ interface IErrorObject {
 }
 
 interface IErrorFields {
+    // passwordC?: IErrorObject;
     email?: IErrorObject | null,
     password?: IErrorObject | null,
     newPassword?: IErrorObject | null,

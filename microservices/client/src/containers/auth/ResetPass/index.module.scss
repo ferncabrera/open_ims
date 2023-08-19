@@ -68,4 +68,51 @@ body {
     font-size: 16px;
     cursor: pointer;
   }
+
+  .auth_image_container {
+    // padding: 0;
+    // max-height: 90vh;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 10% 0;
+    object-fit: contain;
+  }
+
+  @media (max-width: 1140px) {
+    .auth_image {
+      height: 100%;
+      object-fit: fill;
+    }
+  }
+
+  span.password {
+    // background-color: $white;
+    // border-color: $grey;
+    // border-left: 0;
+    // margin-left: 0;
+    position: absolute;
+    z-index: 5;
+    // left: 92%;
+    top: 15%;
+    right: calc(0.375em + 0.1875rem);
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  input {
+    &.password {
+      border-radius: 10px !important;
+      width: 100% !important;
+    }
+
+    &.password_invalid {
+      border-color: $invalid !important;
+
+      &:focus {
+        box-shadow: 0 0 0 0.25rem $invalid-faded !important;
+      }
+    }
+  }
 }

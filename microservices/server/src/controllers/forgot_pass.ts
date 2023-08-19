@@ -34,7 +34,7 @@ export const forgot_pass = async (req: Request, res: Response) => {
   // console.log('this is the key: ', key);
 
   defaultClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-  var resetLink = `http://localhost/reset-password?token=${encodeURIComponent(token)}`;
+  var resetLink = `http://localhost/forgot_pass?token=${encodeURIComponent(token)}`;
   var apiInstance = new Brevo.TransactionalEmailsApi();
   // const emailTemplate = `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`;
   // const emailContent = emailTemplate.replace("%RESET_LINK%", resetLink);
