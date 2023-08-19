@@ -16,4 +16,4 @@ CREATE TABLE IF NOT EXISTS user_table (
     password VARCHAR(128) NOT NULL CHECK (Password ~ '^.*(?=.{8,64})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).*$')
 )
 
---TEST
+test
