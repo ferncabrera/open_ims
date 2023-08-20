@@ -56,7 +56,7 @@ module.exports.init = function () {
 \x1b[92m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0      
     
 \x1b[92mYAY!!!!!\x1b[0m
-\x1b[92mYour migrations have been successfully applied to the database!\x1b[0m
+\x1b[92mYour UP/DOWN migrations have BOTH been successfully applied to the database!\x1b[0m
             
   \x1b[96mQUICK NOTE:\x1b[0m
     
