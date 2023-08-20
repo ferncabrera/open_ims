@@ -1,14 +1,15 @@
 /// <reference types="vite/client" />
 
-/// Example of declaring env variables in TS below:
-
-
 interface ImportMetaEnv {
-    VITE_APP_TITLE: string;
-    VITE_API_URL: string;
-    VITE_HOST_PROD: string;
-    VITE_HOST_DEV: string;
-    // Add more environment variables here as needed
-}
+    readonly VITE_APP_TITLE: string
+    readonly VITE_API_URL: string;
+    readonly VITE_HOST_PROD: string;
+    readonly VITE_HOST_DEV: string;
+    // more env variables...
+  }
+  
+  interface ImportMeta {
+    readonly env: ImportMetaEnv
+  }
 
 // ==> call them like this: const title: string = import.meta.env.VITE_APP_TITLE;
