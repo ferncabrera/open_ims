@@ -9,15 +9,15 @@ import _ from "lodash";
 import { Password } from "./pass";
 
 /*
-  ! make button work with backend
+  // ! make button work with backend
   // ! make new custom password component
   // ! make text box to display error under both input boxes
   ! make scss work better and page look good
   ! make the image appear behind the form
   ! make sure the error message also shows if the password is different from the old password, I check in the serve call
   ! fix all bugs, such as having to blur the input box to make the password error appear, the error prioritizing one error over another and once that one error is fixed it ignores the other error
+  // ! make it redirect to login page once password is reset successfully
   ! remove all console logs once done
-  ! make it redirect to login page once password is reset successfully
   ! good luck :')
   */
 let trackErrorList = [];
@@ -38,6 +38,10 @@ export const ForgotPass = () => {
     _.set(formData, keyPaths.newPassword, "");
   }, []);
 
+  let validateNewPassword = false;
+  let validatePassword = false;
+
+  const [passwordUpdated, setPasswordUpdated] = useState(false);
   const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
 
   const validate = (data: IValidate) => {
@@ -85,7 +89,13 @@ export const ForgotPass = () => {
     //check if passwords match and output error if they dont to the ErrorBox component
     if (
       _.get(formData, keyPaths.newPassword) !==
-      _.get(formData, keyPaths.password)
+        _.get(formData, keyPaths.password) ||
+      _.get(formData, keyPaths.newPassword) === "" ||
+      _.get(formData, keyPaths.password) === "" ||
+      !validate(_.get(formData, keyPaths.newPassword)) ||
+      !validate(_.get(formData, keyPaths.password)) ||
+      !validatePassword ||
+      !validateNewPassword
     ) {
       console.log("Passwords do not match");
       setError((prevError) => ({
@@ -96,12 +106,20 @@ export const ForgotPass = () => {
         },
       }));
       return false;
+    } else {
+      // Send patch request here
+      await sendPatchRequest({
+        endpoint: "/api/server/update_password",
+        data: { password: _.get(formData, keyPaths.newPassword), token: token },
+      }).then(
+        // redirect to login page
+        (response) => {
+          console.log("Response: ", response);
+          setPasswordUpdated(true); // Set passwordUpdated to true
+          // window.location.href = "/";
+        }
+      );
     }
-    // Send patch request here
-    await sendPatchRequest({
-      endpoint: "/api/server/update_password",
-      data: { password: _.get(formData, keyPaths.newPassword), token: token },
-    });
   };
 
   const PasswordConfirm = () => {
@@ -120,6 +138,7 @@ export const ForgotPass = () => {
             const target = data.target as HTMLTextAreaElement;
             const { value, name, required } = target;
             validate({ value, name, required });
+            if (validate({ value, name, required })) validateNewPassword = true;
           }}
           required
         />
@@ -136,22 +155,6 @@ export const ForgotPass = () => {
   }
 
   const ErrorBox: React.FC<InvalidProp> = (props) => {
-    // const passwordMismatchError = "Passwords do not match";
-    // return (
-    //   <>
-    //     {props.isInvalid && (
-    //       <div data-testid="password-error" className="invalid">
-    //         <div className="invalid-feedback">
-    //           {props.errorMessage}
-    //           {props.children} {/* Display additional error messages */}
-    //         </div>
-    //         {props.errorMessage === passwordMismatchError && (
-    //           <div className="invalid-feedback">{passwordMismatchError}</div>
-    //         )}
-    //       </div>
-    //     )}
-    //   </>
-    // );
     return (
       <>
         {props.isInvalid && (
@@ -185,43 +188,62 @@ export const ForgotPass = () => {
 
   return (
     <div className={`${styles.overlay} ${styles["forgot-pass-container"]}`}>
-      <div className={styles.title}>Create New Password</div>
-      <div className={styles.subtitle}>
-        Your new password must be different from your previously used passwords.
-      </div>
-      <Form noValidate onSubmit={handlePasswordReset}>
-        <Password
-          required
-          newPassword
-          isInvalid={error.newPassword?.valid === false}
-          onChange={(e) => {
-            _.set(formData, keyPaths.newPassword, e.target.value);
-          }}
-          onBlur={(data) => {
-            const target = data.target as HTMLTextAreaElement;
-            const { value, name, required } = target;
-            validate({ value, name, required });
-          }}
-          errorMessage={_.get(error, "newPassword.message", "")}
-        />
-        {PasswordConfirm()}
-        <div className="mt-5">
-          <Button type="submit">Update Password</Button>
+      {passwordUpdated ? (
+        <div className={styles.successContainer}>
+          <div className={styles.successIcon}>✓</div>
+          <div className={styles.successMessage}>
+            Password Updated Successfully
+          </div>
+          <div className="mt-5">
+            <Button href="/" type="submit">
+              Return to login
+            </Button>
+          </div>
         </div>
-        <ErrorBox
-          isInvalid={error.newPassword?.valid === false}
-          errorMessage={_.get(error, "newPassword.message", "")}
-        />
-        {/* <Col
-          xs={6}
-          md={6}
-          lg={6}
-          xl={7}
-          className={styles.auth_image_container}
-        >
-          <Image className={styles.auth_image} src={forgotPassImg} />
-        </Col> */}
-      </Form>
+      ) : (
+        <>
+          <div className={styles.title}>Create New Password</div>
+          <div className={styles.subtitle}>
+            Your new password must be different from your previously used
+            passwords.
+          </div>
+          <Form noValidate onSubmit={handlePasswordReset}>
+            <Password
+              required
+              newPassword
+              isInvalid={error.newPassword?.valid === false}
+              onChange={(e) => {
+                _.set(formData, keyPaths.newPassword, e.target.value);
+              }}
+              onBlur={(data) => {
+                const target = data.target as HTMLTextAreaElement;
+                const { value, name, required } = target;
+                validate({ value, name, required });
+                if (validate({ value, name, required }))
+                  validateNewPassword = true;
+              }}
+              errorMessage={_.get(error, "newPassword.message", "")}
+            />
+            {PasswordConfirm()}
+            <div className="mt-5">
+              <Button type="submit">Update Password</Button>
+            </div>
+            <ErrorBox
+              isInvalid={error.newPassword?.valid === false}
+              errorMessage={_.get(error, "newPassword.message", "")}
+            />
+            {/* <Col
+      xs={6}
+      md={6}
+      lg={6}
+      xl={7}
+      className={styles.auth_image_container}
+    >
+      <Image className={styles.auth_image} src={forgotPassImg} />
+    </Col> */}
+          </Form>
+        </>
+      )}
     </div>
   );
 };
