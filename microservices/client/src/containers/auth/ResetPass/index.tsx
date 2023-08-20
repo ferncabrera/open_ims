@@ -7,6 +7,8 @@ import { sendPatchRequest } from "../../../utilities/apiHelpers";
 import forgotPassImg from "./../../../assets/public/images/forgotPass.jpg";
 import _ from "lodash";
 import { Password } from "./pass";
+import { MdOutlineCheckCircleOutline } from "react-icons/md";
+// import forgotPass from "./../../assets/public/images/forgotPass.jpg";
 
 /*
   // ! make button work with backend
@@ -189,61 +191,79 @@ export const ForgotPass = () => {
   return (
     <div className={`${styles.overlay} ${styles["forgot-pass-container"]}`}>
       {passwordUpdated ? (
-        <div className={styles.successContainer}>
-          <div className={styles.successIcon}>✓</div>
-          <div className={styles.successMessage}>
-            Password Updated Successfully
-          </div>
-          <div className="mt-5">
-            <Button href="/" type="submit">
-              Return to login
-            </Button>
+        <div className={styles.inputBox}>
+          <div className={styles.successContainer}>
+            <div className={styles.checkOutline}>
+              <MdOutlineCheckCircleOutline className={styles.checkIcon} />
+            </div>
+            <div className={styles.successMessage}>
+              Password Updated Successfully
+            </div>
+            <div className="mt-5">
+              <a href="/" className={styles.buttonLink}>
+                <Button type="submit">
+                  <div className={styles.buttonText}>Return to login</div>
+                </Button>
+              </a>
+            </div>
           </div>
         </div>
       ) : (
         <>
-          <div className={styles.title}>Create New Password</div>
-          <div className={styles.subtitle}>
-            Your new password must be different from your previously used
-            passwords.
-          </div>
-          <Form noValidate onSubmit={handlePasswordReset}>
-            <Password
-              required
-              newPassword
-              isInvalid={error.newPassword?.valid === false}
-              onChange={(e) => {
-                _.set(formData, keyPaths.newPassword, e.target.value);
-              }}
-              onBlur={(data) => {
-                const target = data.target as HTMLTextAreaElement;
-                const { value, name, required } = target;
-                validate({ value, name, required });
-                if (validate({ value, name, required }))
-                  validateNewPassword = true;
-              }}
-              errorMessage={_.get(error, "newPassword.message", "")}
-            />
-            {PasswordConfirm()}
-            <div className="mt-5">
-              <Button type="submit">Update Password</Button>
+          <div className={styles.inputBox}>
+            <div className={styles.title}>Create New Password</div>
+            <div className={styles.subtitle}>
+              Your new password must be different from your previously used
+              passwords.
             </div>
-            <ErrorBox
-              isInvalid={error.newPassword?.valid === false}
-              errorMessage={_.get(error, "newPassword.message", "")}
-            />
-            {/* <Col
-      xs={6}
-      md={6}
-      lg={6}
-      xl={7}
-      className={styles.auth_image_container}
-    >
-      <Image className={styles.auth_image} src={forgotPassImg} />
-    </Col> */}
-          </Form>
+            <Form noValidate onSubmit={handlePasswordReset}>
+              <Password
+                required
+                newPassword
+                isInvalid={error.newPassword?.valid === false}
+                onChange={(e) => {
+                  _.set(formData, keyPaths.newPassword, e.target.value);
+                }}
+                onBlur={(data) => {
+                  const target = data.target as HTMLTextAreaElement;
+                  const { value, name, required } = target;
+                  validate({ value, name, required });
+                  if (validate({ value, name, required }))
+                    validateNewPassword = true;
+                }}
+                errorMessage={_.get(error, "newPassword.message", "")}
+              />
+              {PasswordConfirm()}
+              <div className="mt-5">
+                <Button type="submit">Update Password</Button>
+              </div>
+              <ErrorBox
+                isInvalid={error.newPassword?.valid === false}
+                errorMessage={_.get(error, "newPassword.message", "")}
+              />
+            </Form>
+          </div>
         </>
       )}
     </div>
   );
 };
+
+{
+  /* <Col
+xs={6}
+md={6}
+lg={6}
+xl={7}
+className={styles.auth_image_container}
+>
+<Image className={styles.auth_image} src={forgotPassImg} />
+</Col> */
+}
+// <div className="auth_image_container">
+//   <img
+//     className={styles.auth_image}
+//     src={forgotPassImg} /* Replace with your image URL */
+//     // alt="Background"
+//     />
+//   </div>
