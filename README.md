@@ -69,6 +69,7 @@ You will see two files in this directory (the ones opened in the image above):
 - _open_ims/common/utils/migration-job/migrations/sqls/20230814020356-db-initialization-**down**.sql_
 - _open_ims/common/utils/migration-job/migrations/sqls/20230814020356-db-initialization-**up**.sql_
 
+**NOTE: You DO NOT need to use the _IF NOT EXISTS_ clause in your SQL CREATE/DROP commands! In fact you shouldn't because then you won't get SQL errors reminding you to delete your new tables!**
 These are RAW SQL files that will be run to initialize/clear the database of the items included in them **THEY BOTH MUST BE UPDATED IN A LOT OF CASES SO PLEASE READ CAREFULLY**. Here is how you can use them to add a new table, for instance:
 
 1. While your app is running, simply paste the SQL command needed to create your table in the ***\*\*UP\*\****.sql file:
