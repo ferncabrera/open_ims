@@ -15,3 +15,4 @@ CREATE TABLE IF NOT EXISTS user_table (
     permission user_permission DEFAULT 'Unauthorized' NOT NULL,
     password VARCHAR(128) NOT NULL CHECK (Password ~ '^.*(?=.{8,64})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).*$')
 )
+--test
