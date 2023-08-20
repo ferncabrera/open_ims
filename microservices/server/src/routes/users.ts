@@ -16,5 +16,5 @@ router
 
 router
   .route("/api/server/update_password")
-  .post(catchAsync(update_password), errorHandler);
+  .patch(catchAsync(update_password), errorHandler);
 export default router;

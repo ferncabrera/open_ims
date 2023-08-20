@@ -34,7 +34,9 @@ export const forgot_pass = async (req: Request, res: Response) => {
   // console.log('this is the key: ', key);
 
   defaultClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-  var resetLink = `http://localhost/forgot_pass?token=${encodeURIComponent(token)}`;
+  var resetLink = `http://localhost/forgot_pass?token=${encodeURIComponent(
+    token
+  )}`;
   var apiInstance = new Brevo.TransactionalEmailsApi();
   // const emailTemplate = `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`;
   // const emailContent = emailTemplate.replace("%RESET_LINK%", resetLink);
@@ -117,29 +119,35 @@ export const forgot_pass = async (req: Request, res: Response) => {
 };
 
 export const update_password = async (req: Request, res: Response) => {
-  const {password, token} = req.body;
-  console.log('hit the update password route');
+  const { password, token } = req.body;
+  console.log("hit the update password route");
   //using the jwt token we passed in the url above, we can decode it and get the user's email
   const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
   // const token2 = req.query.token;
   const decoded = jwt.verify(token as string, `${secret2}`) as any;
   const userEmail = decoded.email;
-
+  console.log("this is the decoded email: ", userEmail);
   //using the email, find the user in the database
   // this format makes it less susceptible to SQL injection (directly injecting into the query)
-  const userQuery = await query("SELECT * FROM user_table WHERE email = $1", [userEmail]);
+  const userQuery = await query("SELECT * FROM user_table WHERE email = $1", [
+    userEmail,
+  ]);
   const user = userQuery.rows[0];
+  console.log("this is the user: ", user);
   if (!user) {
-      throw new customError({message: "Something went wrong", code:10});
+    throw new customError({ message: "Something went wrong", code: 10 });
   }
   const validPassword = await bcrypt.compare(password, user.password);
-  if (!validPassword) {
-      throw new customError({message: "Something went wrong", code:10});
+  if (validPassword) {
+    throw new customError({ message: "New password has to be different from your old password", code: 101 });
   }
   const salt = await bcrypt.genSalt();
   const hash = await bcrypt.hash(password, salt);
 
-  await query("UPDATE user_table SET password = $1 WHERE email = $2", [hash, userEmail]);
+  await query("UPDATE user_table SET password = $1 WHERE email = $2", [
+    hash,
+    userEmail,
+  ]);
   //password should be updated
-  res.json({message:"Password successfully updated"})
-}
+  res.json({ message: "Password successfully updated" });
+};

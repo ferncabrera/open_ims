@@ -14,6 +14,10 @@ import { Password } from "./pass";
   // ! make text box to display error under both input boxes
   ! make scss work better and page look good
   ! make the image appear behind the form
+  ! make sure the error message also shows if the password is different from the old password, I check in the serve call
+  ! fix all bugs, such as having to blur the input box to make the password error appear, the error prioritizing one error over another and once that one error is fixed it ignores the other error
+  ! remove all console logs once done
+  ! good luck :')
   */
 let trackErrorList = [];
 const formData = {};
