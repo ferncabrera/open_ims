@@ -56,6 +56,57 @@ Run ```psql -U dev -d open-ims-dev``` in the terminal to connect to the postgres
 <br />
 A simple demo showing how we can connect to the database from our express app (server) has been setup at the /serverping route of the app. We use the <a href="https://node-postgres.com/">node-postgres</a> package to connect from our server and execute commands on the DB.
 
+#### Creating and editing tables during development
+**Important:**
+**Since we are still technically in a development phase across all environments (our data is not important and we don't want to save in on local OR production) the pattern described in this section applies, once we launch the first working production version, the pattern will change accordingly.**
+<br/>
+<br/>
+Start your app (in dev mode!), and then navigate to _common/utils/migration-job/migrations/sql_ directory:
+
+![image](https://github.com/ferncabrera/open_ims/assets/73137447/a6cfa90a-f435-4568-9f14-88777825767b)
+
+You will see two files in this directory (the ones opened in the image above): 
+- _open_ims/common/utils/migration-job/migrations/sqls/20230814020356-db-initialization-**down**.sql_
+- _open_ims/common/utils/migration-job/migrations/sqls/20230814020356-db-initialization-**up**.sql_
+
+These are RAW SQL files that will be run to initialize/clear the database of the items included in them **THEY BOTH MUST BE UPDATED IN A LOT OF CASES SO PLEASE READ CAREFULLY**. Here is how you can use them to add a new table, for instance:
+
+1. While your app is running, simply paste the SQL command needed to create your table in the ***\*\*UP\*\****.sql file:
+   
+   ![image](https://github.com/ferncabrera/open_ims/assets/73137447/21c32613-cbbb-4483-a324-17aedb3f18da)
+
+2. You will then notice logs outputting in the terminal where you are running the app:
+
+   ![image](https://github.com/ferncabrera/open_ims/assets/73137447/4ee7b337-4058-444b-8a7b-3edbe145fac1)
+
+   As you can see, there was an error with the SQL command that I added (I'm not even sure what it was lol)! Read the error message for additional information, but for the sake fo this example, we can just comment out the new command and save the file:
+
+   ![image](https://github.com/ferncabrera/open_ims/assets/73137447/c1448a30-dac5-4be0-9cbb-a25c65f3ab71)
+
+   and you will notice how the migration is re-run and the error no longer exists because I commented out the failing command I added.
+
+3. In case you ever see this error:
+
+   ![image](https://github.com/ferncabrera/open_ims/assets/73137447/db600375-1662-4ddd-8808-29def12ea59b)
+
+   It is because we can only have 1 migration-job running at a time, and another was started before the current job could complete. Workaround is to just wait a few seconds and then re-save the file, or delete the job by running ```kubectl delete job dev-migration-job``` and then re-saving again.
+
+5. __Make sure to ALWAYS update the ***\*\*DOWN\*\****.sql file to include the command needed to DROP/DELETE your new item from the database!!!__ Otherwise it won't be deleted everytime the the job runs. An easy way to get the required delete commands is to visit PGAdmin on localhost:30007 and look at the CREATE script for the table/type/etc that you made:
+
+   ![image](https://github.com/ferncabrera/open_ims/assets/73137447/55f9fdf6-dcfd-4282-a03b-5c041885e6dd)
+
+   This will then display a page with the command(s) required to CREATE/DELETE the postgresql resource. The DELETE command you need to add to the ***\*\*DOWN\*\****.sql file can be found commented out here as well:
+
+   ![image](https://github.com/ferncabrera/open_ims/assets/73137447/40931a78-1bcd-4c04-898e-20aea523833c)
+   
+   See how this command is added to the down.sql file:
+   
+   ![image](https://github.com/ferncabrera/open_ims/assets/73137447/0a0f4440-381f-4763-b548-fa03c0d429cf)
+
+   IF YOU CHOOSE TO USE THE CREATE SCRIPT IN THE UP.sql MIGRATION FILE **DO NOT INCLUDE THE OWNERSHIP CHANGES OF THE RESOURCES TO THE DEV USER!** The DEV user only exists in DEV and these .sql files will be run in prod as well so we need to make sure they work for both envs. For instance, in the picture below you must make sure to EXCLUDE LINES 21 AND 22 from the UP.sql file!:
+
+   ![image](https://github.com/ferncabrera/open_ims/assets/73137447/c3cb5e18-a7c7-44db-b177-13c9e5987ba1)
+
 #### Connecting to the database using PGAdmin4
 We run a <a href="https://www.pgadmin.org/docs/pgadmin4/development/index.html">PGAdmin4</a> instance as a part of our K8s App (please read the docs for more information about what you can do with PGAdmin). You may use it to connect to the local development database running as part of your application, it is available at <a href="http://localhost:30007/">localhost:30007</a> when the app is running. To use this tool simply launch the app as normal, **but note that you may have to wait a minute or two for PGAdmin to set up before you can access it**. It takes some time to start the PGAdmin server so if you try to visit <a href="http://localhost:30007/">localhost:30007</a> it may return a 404 error! You can confirm whether or not PGAdmin is loading by looking at the container logs in Docker Desktop (exactly the same as you do for the actual postgres database except) for a pod named **k8s_pgadmin_dev-pgadmin-0_default_**+RandomNumberAndLetters.
 
