@@ -126,20 +126,20 @@ profiles:
         context: microservices/client
         docker:
           dockerfile: Dockerfile
-          cacheFrom:
-          - "fcabrera01/ccg-client"
+          # cacheFrom:
+          # - "fcabrera01/ccg-client:latest"
       - image: fcabrera01/ccg-server
         context: microservices/server
         docker:
           dockerfile: Dockerfile
-          cacheFrom:
-          - "fcabrera01/ccg-server"
+          # cacheFrom:
+          # - "fcabrera01/ccg-server:latest"
       - image: fcabrera01/ccg-migration-job
         context: common/utils/migration-job
         docker:
           dockerfile: Dockerfile
-          cacheFrom:
-          - "fcabrera01/ccg-migration-job"
+          # cacheFrom:
+          # - "fcabrera01/ccg-migration-job:latest"
   deploy:
     kubectl: {}
   # verify:s
