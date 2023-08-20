@@ -1,5 +1,13 @@
 import { apiCall } from "./apiCall";
-import { IGetResponse, IPostRequest } from "./types/types"
+import { IGetResponse, IPostRequest } from "./types/types";
+
+let HOST: string | undefined;
+
+if (import.meta.env.DEV) {
+    HOST = import.meta.env.VITE_HOST_DEV;
+} else {
+    HOST = import.meta.env.VITE_HOST_PROD;
+}
 
 export const getJSONResponse = async (props: IGetResponse) => {
     const
@@ -8,11 +16,11 @@ export const getJSONResponse = async (props: IGetResponse) => {
             params,
         } = props;
 
-    const url = `http://${import.meta.env.DEV?import.meta.env.VITE_HOST_DEV:import.meta.env.VITE_HOST_PROD}${endpoint}`;
+    const url = `http://${HOST}${endpoint}`;
     const parameters = params ? params : {}; //can add default headers here in the future.
 
     // will always expect this to be a JSON object
-    const response : object = await apiCall(
+    const response: object = await apiCall(
         {
             url,
             method: "GET",
@@ -23,16 +31,16 @@ export const getJSONResponse = async (props: IGetResponse) => {
 
 }
 
-export const sendPostRequest = async (props: IPostRequest ) => {
+export const sendPostRequest = async (props: IPostRequest) => {
     const {
         endpoint,
         headers,
         data
     } = props;
 
-    const url = `http://${import.meta.env.DEV?import.meta.env.VITE_HOST_DEV:import.meta.env.VITE_HOST_PROD}${endpoint}`;
+    const url = `http://${HOST}${endpoint}`;
 
-    const response : object = await apiCall(
+    const response: object = await apiCall(
         {
             url,
             method: "POST",
