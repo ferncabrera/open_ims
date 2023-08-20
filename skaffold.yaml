@@ -82,7 +82,7 @@ profiles:
         - ./microservices/server/kustomize/overlays/prod
         - ./microservices/client/kustomize/overlays/prod
         - ./common/utils/migration-job/kustomize/overlays/prod
-        - ./common/pgadmin/overlays/prod
+        # - ./common/pgadmin/overlays/dev
   build:
     local:
       push: false
