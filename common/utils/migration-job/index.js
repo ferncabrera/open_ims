@@ -10,6 +10,9 @@
   * and other supported features in the server.js example.
   */
 
+const pg = require('pg');
+const pool = new pg.Pool();    
+
 // first require the package
 const DBMigrate = require('db-migrate');
 
@@ -20,6 +23,22 @@ const log = console.log;
 
 // next we call the migrations, several examples in a promise style
 
+const createDummyMigration = async function () {
+    try {
+        const res = await pool.query("SELECT * FROM public.migrations");
+        if(res.rowCount == 0)
+        await pool.query(`INSERT INTO public.migrations(
+            id, name, run_on)
+            VALUES (5, '/20230814020356-db-initialization', '2023-08-20 22:36:00.294');`);
+        
+        console.log("\x1b[96mSuccessfully created dummy migration, your down.sql file should run as expected :) (fix the err and continue devving!)\x1b[0");
+    } catch (error) {
+        console.log("\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0");
+        console.log(`\x1b[91mThere was an error running the migration-seed function!! This is unusual and means that your DB resets/down functionality won't work properly... please let me know if you encounter this issue!!!\n\n${error}\x1b[0`);
+        console.log("\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0");
+    }
+      
+}
 
 module.exports.init = function () {
     dbmigrate.reset()
@@ -31,7 +50,7 @@ module.exports.init = function () {
         .then(() => {
 
             dbmigrate.up()
-                .then((test) => {
+                .then(async (test) => {
                     // log(`TEST${JSON.stringify(test)}TEST`);
                     log(`
 \x1b[92m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0      
@@ -55,9 +74,10 @@ module.exports.init = function () {
             `);
                     console.log("\x1b[92m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0");
                     console.log("Process ended successfully, exiting with CODE 0");
+                    // await createDummyMigration();
                     process.exit(0);
                 })
-                .catch(err => {
+                .catch(async (err) => {
                     if (err.toString().includes('prod-postgres-stateful-set-0.prod-postgres-headless-service') || err.toString().includes('dev-postgres-stateful-set-0.dev-postgres-headless-service')) {
                         console.log("Not a valid SQL err, retrying the job!");
                         console.log("Process FAILED, exiting with ERR CODE 1");
@@ -91,10 +111,27 @@ module.exports.init = function () {
 -> \x1b[91m${err}\x1b[0
                         `);
                       console.log("\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0");
+                      await createDummyMigration();
                     });
                     
                 })
-                .catch(err => log(`ERR Reseting the database!!!! This is an unusual error, please lmk if you see this!!!!!!!!!!!!!!!! -> ${err}`));
+                .catch(err => log(`
+\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0
+
+\x1b[91mOOPS - There was an error re-setting the database!!\x1b[0
+
+This means that \x1b[91mthere was an error running your down.sql file (The one containing all of the DROP commands)! It will be displayed below, just like in the up.sql file, make sure to fix it and then save:)\x1b[0
+    
+\x1b[96mTIP: Make sure to read the error carefully, it could be caused because you re-named tables that now exist and were not deleted properly. Look at the object in PGAdmin to see what is currently in your DB!\x1b[0
+
+\x1b[91mError in the file:\x1b[0
+                
+  ->\x1b[91m ${err}\x1b[0
+
+
+    
+\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0
+    `));
                 
             };
             
