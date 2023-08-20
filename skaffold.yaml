@@ -82,11 +82,10 @@ profiles:
         - ./microservices/server/kustomize/overlays/prod
         - ./microservices/client/kustomize/overlays/prod
         - ./common/utils/migration-job/kustomize/overlays/prod
-        # ? Should we have PGAdmin in PROD? (While devving maybe?)
-        # - ./common/pgadmin/overlays/dev
+        - ./common/pgadmin/overlays/prod
   build:
-    # local:
-    #   push: false
+    local:
+      push: false
     tagPolicy:
       gitCommit: 
         prefix: "prod-"
@@ -103,18 +102,8 @@ profiles:
         context: common/utils/migration-job
         docker:
           dockerfile: Dockerfile
-          #! Will this help our builds times? Does it cache based on this images in DockerHub?
-          # cacheFrom:
-          # - "fcabrera01/ccg-migration-job"
   deploy:
     kubectl: {}
-  # verify:s
-  #   - name: alpine-wget
-  #     container:
-  #       name: alpine-wget
-  #       image: alpine:3.15.4
-  #       command: ["/bin/sh"]
-  #       args: ["-c", "wget http://localhost/api/server/testmsg"]
 
 - name: prod-do
   manifests:
@@ -126,8 +115,6 @@ profiles:
         - ./microservices/server/kustomize/overlays/prod
         - ./microservices/client/kustomize/overlays/prod
         - ./common/utils/migration-job/kustomize/overlays/prod
-        # ? Should we have PGAdmin in PROD? (While devving maybe?)
-        # - ./common/pgadmin/overlays/dev
   build:
     # local:
     #   push: false
@@ -139,14 +126,20 @@ profiles:
         context: microservices/client
         docker:
           dockerfile: Dockerfile
+          cacheFrom:
+          - "fcabrera01/ccg-client"
       - image: fcabrera01/ccg-server
         context: microservices/server
         docker:
           dockerfile: Dockerfile
+          cacheFrom:
+          - "fcabrera01/ccg-server"
       - image: fcabrera01/ccg-migration-job
         context: common/utils/migration-job
         docker:
           dockerfile: Dockerfile
+          cacheFrom:
+          - "fcabrera01/ccg-migration-job"
   deploy:
     kubectl: {}
   # verify:s
