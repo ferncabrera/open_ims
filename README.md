@@ -73,6 +73,9 @@ You will see two files in this directory (the ones opened in the image above):
 
 These are RAW SQL files that will be run to initialize/clear the database of the items included in them **THEY BOTH MUST BE UPDATED IN A LOT OF CASES SO PLEASE READ CAREFULLY**. Here is how you can use them to add a new table, for instance:
 
+**NOTE: You DO NOT need to use the _IF NOT EXISTS_ clause in your SQL CREATE/DROP commands (contrary to the photos)! In fact you shouldn't because then you won't get SQL errors reminding you to delete your new tables!**
+_Just make sure that you always define the DROP command after you have already successfully created the object once. (otherwise you'll get an <object> does not exist error when trying to delete object)_
+
 1. While your app is running, simply paste the SQL command needed to create your table in the ***\*\*UP\*\****.sql file:
    
    ![image](https://github.com/ferncabrera/open_ims/assets/73137447/21c32613-cbbb-4483-a324-17aedb3f18da)
