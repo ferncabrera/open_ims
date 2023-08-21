@@ -22,7 +22,7 @@ export const Sidebar = () => {
                 defaultActiveKey="/ccg/dashboard"
                 onSelect={selectedKey => alert(`selected ${selectedKey}`)}
             >
-                <div className='mt-2 mb-5 pb-1 px-3'>
+                <div className='mt-2 mb-4 pb-1 ps-3 pe-5'>
                     <Image className={styles.logo} src={logoWithText} />
                 </div>
                 <Nav.Item>

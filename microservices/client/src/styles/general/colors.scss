@@ -1,6 +1,7 @@
 
 
 $white: #FFFFFF;
+$dark-text: #2C2C2C;
 $dark-grey: #494949;
 $dark-grey2: #585858;
 $grey: #A8A8A8;
@@ -21,6 +22,10 @@ $invalid-faded: #dc354640;
 
 .white {
     color: $white;
+}
+
+.dark-text {
+    color: $dark-text;
 }
 
 .dark-grey {

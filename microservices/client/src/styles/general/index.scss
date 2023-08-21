@@ -77,21 +77,25 @@ html, body {
     }
 
     .nav-link {
+        display: flex;
+        align-items: center;
         padding-left: 16px;
         padding-right: 0;
         font-weight: 400;
-        font-size: 18px;
+        font-size: 14px;
         color: $dark-grey2;
         &.active {
             background-color: $page-grey;
+            color: $dark-text;
             span {
                 color: $primary-blue;
             }
         }
 
         span {
-            font-size: 28px;
+            font-size: 24px;
             padding-right: 8px;
+            padding-bottom: 3px;
         }
     }
 
