@@ -1,0 +1,29 @@
+@import "../../styles/general/colors.scss";
+
+.sidebar {
+    position: sticky;
+    width: 15rem;
+    flex: 0 0 13rem;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    min-height: 100vh !important;
+    z-index: 100;
+    padding: 0 0 0;
+    box-shadow: inset -1px 0 0 rgba(0, 0, 0, .1);
+    background-color: $white;
+    padding-top: 1rem;
+}
+
+.logo {
+    width: 100%;
+}
+
+.profileIcon {
+    position: absolute;
+    bottom: 0;
+    left: 10px;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+}
