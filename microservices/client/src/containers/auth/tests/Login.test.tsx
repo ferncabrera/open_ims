@@ -1,5 +1,5 @@
 import React from "react";
-import {expect, describe, it } from 'vitest';
+import { expect, describe, it } from 'vitest';
 import renderer from 'react-test-renderer';
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
@@ -62,7 +62,7 @@ describe("Login Component", () => {
 
     });
 
-    it("Test handle sign in", () => {
+    it("Test handle sign in", async () => {
         const { getByLabelText, getByText, queryByTestId } = tree();
         const emailInput = getByLabelText("Email:");
         const passwordInput = getByLabelText("Password:");
@@ -101,6 +101,13 @@ describe("Login Component", () => {
                 expect(queryByTestId("password-error")).not.toBeInTheDocument();
             }
         }
+
+        //check if a cookie is created from our mock apiCall
+        await new Promise((resolve) => setTimeout(resolve, 100)); // Allow asynchronous actions to create cookie
+
+        expect(document.cookie).toContain('is-authenticated=true'); // Check if the cookie is present in document.cookie
+
+
     });
 
 
