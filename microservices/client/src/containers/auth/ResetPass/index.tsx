@@ -12,20 +12,7 @@ import _ from "lodash";
 import { Password } from "./pass";
 import { MdOutlineCheckCircleOutline } from "react-icons/md";
 
-/*
-  // ! make button work with backend
-  // ! make new custom password component
-  // ! make text box to display error under both input boxes
-  // ! make scss work better and page look good
-  ! make the image appear behind the form
-  // ! make sure the error message also shows if the password is different from the old password, I check in the serve call
-  // ! fix all bugs, such as having to blur the input box to make the password error appear, the error prioritizing one error over another and once that one error is fixed it ignores the other error
-  // ! make it redirect to login page once password is reset successfully
-  ! remove all console logs once done
-  // ! make backend call to check if new password is different from old password
-  ! why is it not getting the response.status??????????????????????
-  ! good luck :')
-  */
+
 let trackErrorList = [];
 const formData = {};
 const initialErrorFieldState = {
@@ -53,8 +40,8 @@ export const ForgotPass = () => {
   const validate = (data: IValidate) => {
     const valid = fieldValidation(data);
     const name = valid.fieldName;
-    console.log("name: ", name);
-    console.log("valid: ", valid);
+    // console.log("name: ", name);
+    // console.log("valid: ", valid);
     //if the error is "Required" then override the error message
     if (valid.message === "Required") {
       valid.message = "";
@@ -85,15 +72,15 @@ export const ForgotPass = () => {
 
     if (!token) {
       // Token not found, handle the error or redirect
-      console.log("Token not found");
+      // console.log("Token not found");
       // return;
     }
 
     const newPassword = _.get(formData, keyPaths.newPassword);
     const password = _.get(formData, keyPaths.password);
     // log both passwords
-    console.log("New Password:", newPassword);
-    console.log("Password:", password);
+    // console.log("New Password:", newPassword);
+    // console.log("Password:", password);
 
     const passwordsMatch = newPassword === password;
     //check if password is valid
@@ -110,7 +97,7 @@ export const ForgotPass = () => {
 
     //check if passwords match and output error if they dont to the ErrorBox component
     if (!passwordsMatch) {
-      console.log("Passwords do not match");
+      // console.log("Passwords do not match");
       setError((prevError) => ({
         ...prevError,
         newPassword: {
@@ -134,10 +121,10 @@ export const ForgotPass = () => {
       }).then(
         //check status code
         async (response: Response) => {
-          console.log("----------------------------------------------------");
-          console.log("Response: ", response);
-          if (response.status === 200) {
-            console.log("Passwords are different, carry on");
+          // console.log("----------------------------------------------------");
+          // console.log("Response: ", response);
+          if (response.status === 201) {
+            // console.log("Passwords are different, carry on");
             // Send patch request here
             await sendPatchRequest({
               endpoint: "/api/server/update_password",
@@ -148,7 +135,7 @@ export const ForgotPass = () => {
             }).then(
               // redirect to login page
               (response) => {
-                console.log("Response: ", response);
+                // console.log("Response: ", response);
                 setPasswordUpdated(true); // Set passwordUpdated to true
                 // window.location.href = "/";
               }

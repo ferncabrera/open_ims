@@ -27,19 +27,13 @@ export const forgot_pass = async (req: Request, res: Response) => {
     { exp: expirationDate, email: user.email, permission: user.permission },
     `${secret}`
   );
-  // res.cookie("authToken", token, { httpOnly: true, secure: true });
-
-  // Configure API key authorization: api-key
-  // const key = process.env.BREVO_API_KEY;
-  // console.log('this is the key: ', key);
 
   defaultClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
   var resetLink = `http://localhost/forgot_pass?token=${encodeURIComponent(
     token
   )}`;
   var apiInstance = new Brevo.TransactionalEmailsApi();
-  // const emailTemplate = `<p>Click <a href="${resetLink}">here</a> to reset your password.</p>`;
-  // const emailContent = emailTemplate.replace("%RESET_LINK%", resetLink);
+
   const emailTemplate = `
   <!DOCTYPE html>
 <html>
@@ -93,47 +87,33 @@ export const forgot_pass = async (req: Request, res: Response) => {
     name: "Joseph Fanous",
   };
   sendSmtpEmail.subject = "Reset Password";
-  // sendSmtpEmail.templateId = 2;
-  // sendSmtpEmail.params = { RESET_LINK: resetLink };
+
   sendSmtpEmail.htmlContent = emailTemplate;
 
   apiInstance
     .sendTransacEmail(sendSmtpEmail)
     .then((response: any) => {
-      console.log("Email sent:", response);
-      res.json({ message: "Success" });
+      res.status(200).json({ message: "Success" });
     })
     .catch((error: any) => {
-      console.error("Error sending email:", error);
+      // console.error(error);
+      return;
     });
-
-  // apiInstance.sendTransacEmail(sendSmtpEmail).then(
-  //   function (data: any) {
-  //     console.log("API called successfully. Returned data: " + data.messageId);
-  //     res.json({ message: "Success" });
-  //   },
-  //   function (error: any) {
-  //     console.error(error);
-  //   }
-  // );
 };
 
 export const update_password = async (req: Request, res: Response) => {
   const { password, token } = req.body;
-  console.log("hit the update password route");
   //using the jwt token we passed in the url above, we can decode it and get the user's email
   const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
   // const token2 = req.query.token;
   const decoded = jwt.verify(token as string, `${secret2}`) as any;
   const userEmail = decoded.email;
-  console.log("this is the decoded email: ", userEmail);
   // using the email, find the user in the database
   // this format makes it less susceptible to SQL injection (directly injecting into the query)
   const userQuery = await query("SELECT * FROM user_table WHERE email = $1", [
     userEmail,
   ]);
   const user = userQuery.rows[0];
-  console.log("this is the user: ", user);
   if (!user) {
     throw new customError({ message: "Something went wrong", code: 10 });
   }
@@ -170,7 +150,6 @@ export const check_password = async (req: Request, res: Response) => {
     userEmail,
   ]);
   const user = userQuery.rows[0];
-  console.log("this is the user: ", user);
   if (!user) {
     throw new customError({ message: "Something went wrong", code: 10 });
   }
@@ -181,11 +160,7 @@ export const check_password = async (req: Request, res: Response) => {
     res.status(400).json({
       message: "New password has to be different from your old password",
     });
-    // throw new customError({
-    //   message: "New password has to be different from your old password",
-    //   code: 101,
-    // });
   } else {
-    res.status(200).json({ message: "Lookup complete" });
+    res.status(201).json({ message: "Lookup complete, password is good" });
   }
 };
