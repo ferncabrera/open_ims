@@ -1,13 +1,9 @@
 /* Replace with your SQL commands */
 
--- USER TABLE 
-DO $$ BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'user_permission') THEN
-        CREATE TYPE user_permission AS ENUM ('Admin', 'Employee', 'Customer', 'Vendor', 'Unauthorized');
-    END IF;
-END $$;
+-- USER TABLE
+CREATE TYPE user_permission AS ENUM ('Admin', 'Employee', 'Customer', 'Vendor', 'Unauthorized');
 
-CREATE TABLE IF NOT EXISTS user_table (
+CREATE TABLE user_table (
     id SERIAL PRIMARY KEY,
     email VARCHAR(100) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
@@ -18,33 +14,33 @@ CREATE TABLE IF NOT EXISTS user_table (
 );
 
  -- CUSTOMER TABLE
-CREATE TABLE IF NOT EXISTS customer_table (
+CREATE TABLE customer_table (
     id SERIAL PRIMARY KEY,
     email VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     company_name VARCHAR(50) NOT NULL,
-    phone VARCHAR(15) NOT NULL
+    phone VARCHAR(15) NOT NULL,
+    created_by INT,
+    FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
 -- VENDOR TABLE
-CREATE TABLE IF NOT EXISTS vendor_table (
+CREATE TABLE vendor_table (
     id SERIAL PRIMARY KEY,
     email VARCHAR(50) UNIQUE NOT NULL,
     first_name VARCHAR(50) NOT NULL,
     last_name VARCHAR(50) NOT NULL,
     company_name VARCHAR(50) NOT NULL,
-    phone VARCHAR(15) NOT NULL 
+    phone VARCHAR(15) NOT NULL,
+    created_by INT,
+    FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
 -- CUSTOMER AND VENDOR ADDRESSES
-DO $$ BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'address_type') THEN
-        CREATE TYPE address_type AS ENUM ('Shipping', 'Billing');
-    END IF;
-END $$;
+CREATE TYPE address_type AS ENUM ('Shipping', 'Billing');
 
-CREATE TABLE IF NOT EXISTS customer_addresses (
+CREATE TABLE customer_addresses (
     id SERIAL PRIMARY KEY,
     customer_id INT NOT NULL,
     address address_type NOT NULL,
@@ -54,23 +50,76 @@ CREATE TABLE IF NOT EXISTS customer_addresses (
     province VARCHAR(35),
     postal VARCHAR(12) NOT NULL,
     country VARCHAR(35) NOT NULL,
+    created_by INT,
+    FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION,
     FOREIGN KEY (customer_id) REFERENCES customer_table(id) ON DELETE CASCADE
 );
 
--- CREATE TABLE IF NOT EXISTS vendor_addresses (
---     id SERIAL PRIMARY KEY,
---     vendor_id NOT NULL,
---     address address_type NOT NULL,
---     street_address_line1 VARCHAR(100) NOT NULL,
---     street_address_line2 VARCHAR(100),
---     city VARCHAR(35) NOT NULL,
---     province VARCHAR(35),
---     postal VARCHAR(12) NOT NULL,
---     country VARCHAR(35) NOT NULL,
---     FOREIGN KEY (vendor_id) REFERENCES vendor_table(id) ON DELETE CASCADE
--- );
+CREATE TABLE vendor_addresses (
+    id SERIAL PRIMARY KEY,
+    vendor_id INT NOT NULL,
+    address address_type NOT NULL,
+    street_address_line1 VARCHAR(100) NOT NULL,
+    street_address_line2 VARCHAR(100),
+    city VARCHAR(35) NOT NULL,
+    province VARCHAR(35),
+    postal VARCHAR(12) NOT NULL,
+    country VARCHAR(35) NOT NULL,
+    created_by INT,
+    FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION,
+    FOREIGN KEY (vendor_id) REFERENCES vendor_table(id) ON DELETE CASCADE
+);
 
+-- CUSTOMER AND VENDOR CONNECTION (for customers that also vendor & vice versa)
+CREATE TABLE vendor_and_customer (
+    vendor_id INT NOT NULL,
+    customer_id INT NOT NULL,
+    PRIMARY KEY (vendor_id, customer_id),
+    FOREIGN KEY (vendor_id) REFERENCES vendor_table (id) ON DELETE CASCADE,
+    FOREIGN KEY (customer_id) REFERENCES customer_table (id) ON DELETE CASCADE
+);
 
+-- SALES ORDERS
+CREATE TYPE sales_order_delivery AS ENUM ('Not shipped', 'Shipped', 'Delivered');
 
+CREATE TYPE order_payment AS ENUM ('Not paid', 'Paid');
 
+CREATE TABLE sales_orders (
+  id SERIAL PRIMARY KEY,
+  customer_id INT REFERENCES customer_table(id) ON UPDATE CASCADE ON DELETE NO ACTION,
+  date DATE NOT NULL,
+  product_quantity_rate_list JSONB[],
+  delivery_status sales_order_delivery,
+  payment_status order_payment,
+  created_by INT,
+  FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION
+);
 
+--PURCHASE ORDERS
+CREATE TYPE purchase_order_delivery AS ENUM ('Not Received', 'Received');
+
+CREATE TABLE purchase_orders (
+  id SERIAL PRIMARY KEY,
+  vendor_id INT REFERENCES vendor_table(id) ON UPDATE CASCADE ON DELETE NO ACTION,
+  date DATE NOT NULL,
+  product_quantity_rate_list JSONB[],
+  delivery_status purchase_order_delivery,
+  payment_status order_payment,
+  created_by INT,
+  FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION
+);
+
+-- PRODUCTS TABLE 
+CREATE TABLE products_table (
+item_number INT NOT NULL,
+vendor_id  INT NOT NULL,
+lot INT NOT NULL, 
+product_name VARCHAR(35) NOT NULL,
+exp_date DATE,
+din VARCHAR(35) NOT NULL,
+Quantity_on_hand INT NOT NULL,
+created_by INT,
+FOREIGN KEY (vendor_id) REFERENCES vendor_table (id) ON UPDATE CASCADE ON DELETE NO ACTION,
+FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION,
+PRIMARY KEY (item_number, vendor_id, lot)
+);
