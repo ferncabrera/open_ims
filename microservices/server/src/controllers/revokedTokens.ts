@@ -10,3 +10,21 @@ export const addRevokedToken = (token: string) => {
 export const isTokenRevoked = (token: string): boolean => {
   return revokedTokens.has(token);
 };
+
+// Schedule a cleanup task to run every 10 minutes
+setInterval(() => {
+  const currentTime = Date.now();
+  const tokensToRemove: string[] = [];
+
+  for (const token of revokedTokens) {
+    // Check if the token has expired (10 minutes = 600,000 milliseconds)
+    if (currentTime - Number(token) > 600000) {
+      tokensToRemove.push(token);
+    }
+  }
+
+  // Remove expired tokens from the set
+  for (const tokenToRemove of tokensToRemove) {
+    revokedTokens.delete(tokenToRemove);
+  }
+}, 600000); // Run every 10 minutes
