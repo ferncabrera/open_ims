@@ -11,7 +11,7 @@ Our development stack consists of:
     <li>Kubernetes v1.27.0 <em>or greater</em></li>
   </ul>
   <li><a href="https://skaffold.dev/">Skaffold</a> v2.6.0 </li>
-  <li><a href="https://kustomize.io/">Kustomize</a> v5.0.1 (shipped with our version of kubernetes/kubectl) </li>
+  <li><a href="https://kustomize.io/">Kustomize</a> v5.0.1 <strong>(shipped with the recommended version of kubernetes/kubectl above)</strong> </li>
 </ul>
 
 To run, lets first make sure that Kubernetes is enabled in the Docker settings. The command ```kubectl get nodes``` should show a single node called ```docker-desktop```.
@@ -71,9 +71,8 @@ You will see two files in this directory (the ones opened in the image above):
 
 These are RAW SQL files that will be run to initialize/clear the database of the items included in them **THEY BOTH MUST BE UPDATED IN A LOT OF CASES SO PLEASE READ CAREFULLY**. Here is how you can use them to add a new table, for instance:
 
-**NOTE: You DO NOT need to use the _IF NOT EXISTS_ clause in your SQL CREATE/DROP commands (contrary to the photos)! In fact you shouldn't because then you won't get SQL errors reminding you to delete your new tables!**
-_Just make sure that you always define the DROP command after you have already successfully created the object once. (otherwise you'll get an <object> does not exist error when trying to delete object)_
-
+**NOTE: You DO NOT need to use the _IF NOT EXISTS_ clause in your SQL CREATE commands (contrary to the photos)! In fact you shouldn't because then you won't get SQL errors reminding you to add the DROP command for your new tables!**
+**NOTE: You SHOULD use the _IF NOT EXISTS_ clause in your SQL DROP commands! If you do not, you may get annoying errors telling you that it cannot delete an object that does not exist (this occurs if a migration fails, and this there are no objects in the DB for the DROP.sql file to delete)!**
 1. While your app is running, simply paste the SQL command needed to create your table in the ***\*\*UP\*\****.sql file:
    
    ![image](https://github.com/ferncabrera/open_ims/assets/73137447/21c32613-cbbb-4483-a324-17aedb3f18da)
@@ -106,7 +105,7 @@ _Just make sure that you always define the DROP command after you have already s
    
    ![image](https://github.com/ferncabrera/open_ims/assets/73137447/0a0f4440-381f-4763-b548-fa03c0d429cf)
 
-   IF YOU CHOOSE TO USE THE CREATE SCRIPT IN THE UP.sql MIGRATION FILE **DO NOT INCLUDE THE OWNERSHIP CHANGES OF THE RESOURCES TO THE DEV USER!** The DEV user only exists in DEV and these .sql files will be run in prod as well so we need to make sure they work for both envs. For instance, in the picture below you must make sure to EXCLUDE LINES 21 AND 22 from the UP.sql file!:
+   IF YOU CHOOSE TO USE THE CREATE SCRIPT IN THE UP.sql MIGRATION FILE **DO NOT INCLUDE THE OWNERSHIP CHANGES OF THE RESOURCES TO THE DEV USER (or the IF NOT EXISTS clause) in your command when you paste it into the UP.sql file!** The DEV user only exists in DEV and these .sql files will be run in prod as well so we need to make sure they work for both envs. For instance, in the picture below you must make sure to EXCLUDE LINES 21 AND 22 from the UP.sql file!:
 
    ![image](https://github.com/ferncabrera/open_ims/assets/73137447/c3cb5e18-a7c7-44db-b177-13c9e5987ba1)
 
