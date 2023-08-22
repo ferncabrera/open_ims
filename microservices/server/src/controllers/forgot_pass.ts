@@ -3,7 +3,7 @@ import { Request, Response } from "express";
 import { query } from "../db";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
-import customError from "../utils/customeError";
+import customError from "../utils/customError";
 
 var Brevo = require("@getbrevo/brevo");
 var defaultClient = Brevo.ApiClient.instance;
@@ -79,12 +79,10 @@ export const forgot_pass = async (req: Request, res: Response) => {
   `;
 
   var sendSmtpEmail = new Brevo.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
-  sendSmtpEmail.to = [
-    { email: "joseph_fanous@hotmail.com", name: "Joseph Fanous" },
-  ];
+  sendSmtpEmail.to = [{ email: userEmail, name: user.name }];
   sendSmtpEmail.sender = {
-    email: "joseph.fanous.01@gmail.com",
-    name: "Joseph Fanous",
+    email: "ccg.ca.inquiries@gmail.com",
+    name: "Austin",
   };
   sendSmtpEmail.subject = "Reset Password";
 
@@ -131,6 +129,11 @@ export const update_password = async (req: Request, res: Response) => {
     hash,
     userEmail,
   ]);
+  //once the password is updated, we can invalidate the token by settign the exp to 0
+  await jwt.sign(
+    { exp: 0, email: user.email, permission: user.permission },
+    `${secret2}`
+  );
   //password should be updated
   res.json({ message: "Password successfully updated" });
 };
