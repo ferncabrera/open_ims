@@ -11,7 +11,7 @@ Our development stack consists of:
     <li>Kubernetes v1.27.0 <em>or greater</em></li>
   </ul>
   <li><a href="https://skaffold.dev/">Skaffold</a> v2.6.0 </li>
-  <li><a href="https://kustomize.io/">Kustomize</a> v5.0.1 (shipped with our version of kubernetes/kubectl) </li>
+  <li><a href="https://kustomize.io/">Kustomize</a> v5.0.1 <strong>(shipped with the recommended version of kubernetes/kubectl above)</strong> </li>
 </ul>
 
 To run, lets first make sure that Kubernetes is enabled in the Docker settings. The command ```kubectl get nodes``` should show a single node called ```docker-desktop```.
