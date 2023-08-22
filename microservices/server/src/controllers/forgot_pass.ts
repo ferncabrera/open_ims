@@ -4,6 +4,7 @@ import { query } from "../db";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 import customError from "../utils/customError";
+import { addRevokedToken, isTokenRevoked } from "./revokedTokens";
 
 var Brevo = require("@getbrevo/brevo");
 var defaultClient = Brevo.ApiClient.instance;
@@ -77,9 +78,10 @@ export const forgot_pass = async (req: Request, res: Response) => {
 </body>
 </html>  
   `;
+  console.log(user.name);
 
   var sendSmtpEmail = new Brevo.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
-  sendSmtpEmail.to = [{ email: userEmail, name: user.name }];
+  sendSmtpEmail.to = [{ email: userEmail.rows[0].email, name: user.name }];
   sendSmtpEmail.sender = {
     email: "ccg.ca.inquiries@gmail.com",
     name: "Austin",
@@ -100,42 +102,51 @@ export const forgot_pass = async (req: Request, res: Response) => {
 };
 
 export const update_password = async (req: Request, res: Response) => {
-  const { password, token } = req.body;
-  //using the jwt token we passed in the url above, we can decode it and get the user's email
-  const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
-  // const token2 = req.query.token;
-  const decoded = jwt.verify(token as string, `${secret2}`) as any;
-  const userEmail = decoded.email;
-  // using the email, find the user in the database
-  // this format makes it less susceptible to SQL injection (directly injecting into the query)
-  const userQuery = await query("SELECT * FROM user_table WHERE email = $1", [
-    userEmail,
-  ]);
-  const user = userQuery.rows[0];
-  if (!user) {
-    throw new customError({ message: "Something went wrong", code: 10 });
-  }
-  const validPassword = await bcrypt.compare(password, user.password);
-  if (validPassword) {
-    throw new customError({
-      message: "New password has to be different from your old password",
-      code: 101,
-    });
-  }
-  const salt = await bcrypt.genSalt();
-  const hash = await bcrypt.hash(password, salt);
+  try {
+    const { password, token } = req.body;
+    //using the jwt token we passed in the url above, we can decode it and get the user's email
+    const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
+    // const token2 = req.query.token;
+    if (isTokenRevoked(token as string)) {
+      throw new customError({
+        message: "Token has been revoked, please request a new one",
+        code: 10,
+      });
+    }
+    const decoded = jwt.verify(token as string, `${secret2}`) as any;
+    const userEmail = decoded.email;
+    // using the email, find the user in the database
+    // this format makes it less susceptible to SQL injection (directly injecting into the query)
+    const userQuery = await query("SELECT * FROM user_table WHERE email = $1", [
+      userEmail,
+    ]);
+    const user = userQuery.rows[0];
+    if (!user) {
+      throw new customError({ message: "Something went wrong", code: 10 });
+    }
+    const validPassword = await bcrypt.compare(password, user.password);
+    if (validPassword) {
+      throw new customError({
+        message: "New password has to be different from your old password",
+        code: 101,
+      });
+    }
+    const salt = await bcrypt.genSalt();
+    const hash = await bcrypt.hash(password, salt);
 
-  await query("UPDATE user_table SET password = $1 WHERE email = $2", [
-    hash,
-    userEmail,
-  ]);
-  //once the password is updated, we can invalidate the token by settign the exp to 0
-  await jwt.sign(
-    { exp: 0, email: user.email, permission: user.permission },
-    `${secret2}`
-  );
-  //password should be updated
-  res.json({ message: "Password successfully updated" });
+    await query("UPDATE user_table SET password = $1 WHERE email = $2", [
+      hash,
+      userEmail,
+    ]).then((response) => {
+      //once the password is updated, we invalidate the jwt token by invoking the addRevokedToken function
+      addRevokedToken(token as string);
+    });
+    //password should be updated
+    res.json({ message: "Password successfully updated" });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 // check if old password is the same as the new password
