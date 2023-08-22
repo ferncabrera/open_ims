@@ -1,0 +1,31 @@
+@import "../../styles/general/colors.scss";
+
+.circleContainer {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 4rem;
+    width: 4rem;
+}
+
+.profileImage {
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    background-color: $secondary-blue;
+}
+
+.notificationIcon {
+    position: absolute;
+    bottom: 10%;
+    left: 7%;
+    width: 1.3rem;
+    height: 1.3rem;
+    border-radius: 50%;
+    background-color: $white;
+    border: solid thin;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

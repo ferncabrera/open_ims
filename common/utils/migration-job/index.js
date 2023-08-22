@@ -41,7 +41,7 @@ const createDummyMigration = async function () {
 }
 
 module.exports.init = function () {
-    dbmigrate.reset()
+    dbmigrate.down('20230814020356-db-initialization-down')
         .then((test) => {
             // log(`TEST${JSON.stringify(test)}TEST`);
             log('\x1b[92mYour database has been successfully reset!!!!\x1b[0m');
