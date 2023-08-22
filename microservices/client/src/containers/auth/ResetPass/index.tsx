@@ -1,25 +1,29 @@
-import styles from "./index.module.scss"; // Import the SCSS module
+import styles from "./index.module.scss";
 import { Form, Button, Image, Col } from "react-bootstrap";
 import React, { useState, SyntheticEvent, ChangeEvent, useEffect } from "react";
 import { IValidate } from "../../../utilities/types/validationTypes";
 import { fieldValidation } from "../../../utilities/validation";
-import { sendPatchRequest } from "../../../utilities/apiHelpers";
+import {
+  sendPatchRequest,
+  sendPostRequest,
+} from "../../../utilities/apiHelpers";
 import forgotPassImg from "./../../../assets/public/images/forgotPass.jpg";
 import _ from "lodash";
 import { Password } from "./pass";
 import { MdOutlineCheckCircleOutline } from "react-icons/md";
-// import forgotPass from "./../../assets/public/images/forgotPass.jpg";
 
 /*
   // ! make button work with backend
   // ! make new custom password component
   // ! make text box to display error under both input boxes
-  ! make scss work better and page look good
+  // ! make scss work better and page look good
   ! make the image appear behind the form
-  ! make sure the error message also shows if the password is different from the old password, I check in the serve call
-  ! fix all bugs, such as having to blur the input box to make the password error appear, the error prioritizing one error over another and once that one error is fixed it ignores the other error
+  // ! make sure the error message also shows if the password is different from the old password, I check in the serve call
+  // ! fix all bugs, such as having to blur the input box to make the password error appear, the error prioritizing one error over another and once that one error is fixed it ignores the other error
   // ! make it redirect to login page once password is reset successfully
   ! remove all console logs once done
+  // ! make backend call to check if new password is different from old password
+  ! why is it not getting the response.status??????????????????????
   ! good luck :')
   */
 let trackErrorList = [];
@@ -84,21 +88,28 @@ export const ForgotPass = () => {
       console.log("Token not found");
       // return;
     }
+
+    const newPassword = _.get(formData, keyPaths.newPassword);
+    const password = _.get(formData, keyPaths.password);
     // log both passwords
-    console.log("New Password:", _.get(formData, keyPaths.newPassword));
-    console.log("Password:", _.get(formData, keyPaths.password));
+    console.log("New Password:", newPassword);
+    console.log("Password:", password);
+
+    const passwordsMatch = newPassword === password;
+    //check if password is valid
+    const isValidNewPass = validate({
+      value: newPassword,
+      name: "newPassword",
+      required: true,
+    });
+    const isValidConfirmPass = validate({
+      value: password,
+      name: "password",
+      required: true,
+    });
 
     //check if passwords match and output error if they dont to the ErrorBox component
-    if (
-      _.get(formData, keyPaths.newPassword) !==
-        _.get(formData, keyPaths.password) ||
-      _.get(formData, keyPaths.newPassword) === "" ||
-      _.get(formData, keyPaths.password) === "" ||
-      !validate(_.get(formData, keyPaths.newPassword)) ||
-      !validate(_.get(formData, keyPaths.password)) ||
-      !validatePassword ||
-      !validateNewPassword
-    ) {
+    if (!passwordsMatch) {
       console.log("Passwords do not match");
       setError((prevError) => ({
         ...prevError,
@@ -108,20 +119,71 @@ export const ForgotPass = () => {
         },
       }));
       return false;
+    } else if (!isValidNewPass || !isValidConfirmPass) {
+      setError((prevError) => ({
+        ...prevError,
+        [newPassword]: { valid: false, message: "valid.message" },
+      }));
     } else {
-      // Send patch request here
-      await sendPatchRequest({
-        endpoint: "/api/server/update_password",
+      //send post request to /api/server/get_password to check if new password is different from old password
+      //if it is different then send patch request to /api/server/update_password
+      //if it is not different then output error to ErrorBox component
+      await sendPostRequest({
+        endpoint: "/api/server/get_password",
         data: { password: _.get(formData, keyPaths.newPassword), token: token },
       }).then(
-        // redirect to login page
-        (response) => {
+        //check status code
+        async (response: Response) => {
+          console.log("----------------------------------------------------");
           console.log("Response: ", response);
-          setPasswordUpdated(true); // Set passwordUpdated to true
-          // window.location.href = "/";
+          if (response.status === 200) {
+            console.log("Passwords are different, carry on");
+            // Send patch request here
+            await sendPatchRequest({
+              endpoint: "/api/server/update_password",
+              data: {
+                password: _.get(formData, keyPaths.newPassword),
+                token: token,
+              },
+            }).then(
+              // redirect to login page
+              (response) => {
+                console.log("Response: ", response);
+                setPasswordUpdated(true); // Set passwordUpdated to true
+                // window.location.href = "/";
+              }
+            );
+          } else {
+            // Passwords are the same, output error to ErrorBox component
+            setError((prevError) => ({
+              ...prevError,
+              newPassword: {
+                valid: false,
+                message: "New password must be different from old password",
+              },
+            }));
+          }
         }
       );
     }
+  };
+
+  const handleNewPasswordBlur = (e: SyntheticEvent) => {
+    const target = e.target as HTMLTextAreaElement;
+    const { value, name, required } = target;
+    validate({ value, name, required });
+
+    // Update the flag based on validation
+    validateNewPassword = error.newPassword?.valid === true;
+  };
+
+  const handlePasswordBlur = (e: SyntheticEvent) => {
+    const target = e.target as HTMLTextAreaElement;
+    const { value, name, required } = target;
+    validate({ value, name, required });
+
+    // Update the flag based on validation
+    validatePassword = error.password?.valid === true;
   };
 
   const PasswordConfirm = () => {
@@ -136,12 +198,7 @@ export const ForgotPass = () => {
             _.set(formData, keyPaths.password, e.target.value);
           }}
           isInvalid={error.password?.valid === false}
-          onBlur={(data: SyntheticEvent) => {
-            const target = data.target as HTMLTextAreaElement;
-            const { value, name, required } = target;
-            validate({ value, name, required });
-            if (validate({ value, name, required })) validateNewPassword = true;
-          }}
+          onBlur={handlePasswordBlur}
           required
         />
         {/* {error.password?.valid === false && (
@@ -224,13 +281,7 @@ export const ForgotPass = () => {
                 onChange={(e) => {
                   _.set(formData, keyPaths.newPassword, e.target.value);
                 }}
-                onBlur={(data) => {
-                  const target = data.target as HTMLTextAreaElement;
-                  const { value, name, required } = target;
-                  validate({ value, name, required });
-                  if (validate({ value, name, required }))
-                    validateNewPassword = true;
-                }}
+                onBlur={handleNewPasswordBlur}
                 errorMessage={_.get(error, "newPassword.message", "")}
               />
               {PasswordConfirm()}

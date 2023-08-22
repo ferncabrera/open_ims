@@ -127,7 +127,7 @@ export const update_password = async (req: Request, res: Response) => {
   const decoded = jwt.verify(token as string, `${secret2}`) as any;
   const userEmail = decoded.email;
   console.log("this is the decoded email: ", userEmail);
-  //using the email, find the user in the database
+  // using the email, find the user in the database
   // this format makes it less susceptible to SQL injection (directly injecting into the query)
   const userQuery = await query("SELECT * FROM user_table WHERE email = $1", [
     userEmail,
@@ -139,7 +139,10 @@ export const update_password = async (req: Request, res: Response) => {
   }
   const validPassword = await bcrypt.compare(password, user.password);
   if (validPassword) {
-    throw new customError({ message: "New password has to be different from your old password", code: 101 });
+    throw new customError({
+      message: "New password has to be different from your old password",
+      code: 101,
+    });
   }
   const salt = await bcrypt.genSalt();
   const hash = await bcrypt.hash(password, salt);
@@ -150,4 +153,39 @@ export const update_password = async (req: Request, res: Response) => {
   ]);
   //password should be updated
   res.json({ message: "Password successfully updated" });
+};
+
+// check if old password is the same as the new password
+// if it is, throw an error
+export const check_password = async (req: Request, res: Response) => {
+  const { password, token } = req.body;
+  //using the jwt token we passed in the url above, we can decode it and get the user's email
+  const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
+  // const token2 = req.query.token;
+  const decoded = jwt.verify(token as string, `${secret2}`) as any;
+  const userEmail = decoded.email;
+  // using the email, find the user in the database
+  // this format makes it less susceptible to SQL injection (directly injecting into the query)
+  const userQuery = await query("SELECT * FROM user_table WHERE email = $1", [
+    userEmail,
+  ]);
+  const user = userQuery.rows[0];
+  console.log("this is the user: ", user);
+  if (!user) {
+    throw new customError({ message: "Something went wrong", code: 10 });
+  }
+  //compare passwords
+  const validPassword = await bcrypt.compare(password, user.password);
+
+  if (validPassword) {
+    res.status(400).json({
+      message: "New password has to be different from your old password",
+    });
+    // throw new customError({
+    //   message: "New password has to be different from your old password",
+    //   code: 101,
+    // });
+  } else {
+    res.status(200).json({ message: "Lookup complete" });
+  }
 };
