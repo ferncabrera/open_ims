@@ -4,7 +4,7 @@ import { query } from "../db";
 import * as jwt from "jsonwebtoken";
 import * as bcrypt from "bcrypt";
 import customError from "../utils/customError";
-import { addRevokedToken, isTokenRevoked } from "./revokedTokens";
+import { addRevokedToken, isTokenRevoked } from "../utils/revokedTokens";
 
 var Brevo = require("@getbrevo/brevo");
 var defaultClient = Brevo.ApiClient.instance;

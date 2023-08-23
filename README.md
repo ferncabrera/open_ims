@@ -181,18 +181,18 @@ Skaffold will then output the names of the services it stopped in the CLI. Confi
       Step 2: Goto common -> database -> kustomize -> overlays -> dev -> postgres-credentials.yaml
     
       Step 3: Add the secret key to the file (example below)
-      ![image](image-3.png)
+      ![image](./img/image-3.png)
     
       Step 4: Goto server -> kustomize -> base -> server-deployment.yaml
     
       Step 5: Add this to the file
-      ![image](image-1.png)
+      ![image](./img/image-1.png)
 
 
       Step 6: Goto server -> kustomize -> overlays -> dev -> server-deployment.yaml
     
       Step 7: Add this to the file and make sure to change the ../3/.. to the right position of your variable
-      ![image](image-2.png)
+      ![image](./img/image-2.png)
     
       Step 8: Repeat step 6 - 7 but for prod, which is right under the dev folder
 
