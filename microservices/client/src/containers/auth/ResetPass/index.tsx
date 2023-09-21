@@ -12,7 +12,6 @@ import _ from "lodash";
 import { Password } from "./pass";
 import { MdOutlineCheckCircleOutline } from "react-icons/md";
 
-
 let trackErrorList = [];
 const formData = {};
 const initialErrorFieldState = {
@@ -210,13 +209,10 @@ export const ForgotPass = () => {
                 <div className="invalid-feedback">{props.errorMessage} </div>
               ) : (
                 <>
-                  <p
-                    className="mb-0 invalid-feedback"
-                    style={{ fontSize: "14px" }}
-                  >
+                  <p className={styles.invalidPassword}>
                     Password does not meet password requirements:
                   </p>
-                  <ul className="invalid" style={{ fontSize: "14px" }}>
+                  <ul className={styles.invalidPassword}>
                     <li>must contain 8 to 64 characters.</li>
                     <li>
                       must include one lowercase letter, one uppercase letter,
@@ -272,8 +268,13 @@ export const ForgotPass = () => {
                 errorMessage={_.get(error, "newPassword.message", "")}
               />
               {PasswordConfirm()}
-              <div className="mt-5">
+              {/* <div className="mt-5">
                 <Button type="submit">Update Password</Button>
+              </div> */}
+              <div>
+                <Button className={styles.submitButton} type="submit">
+                  Update Password
+                </Button>
               </div>
               <ErrorBox
                 isInvalid={error.newPassword?.valid === false}
