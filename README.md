@@ -2,6 +2,12 @@
 A custom Inventory Management Solution (IMS) designed and architected specifically for the Christensen Consulting Groups (CCG).
 
 ## Development
+
+## Linux OS Installation Instructions (Debian or Ubuntu)
+[Linux Setup Instructions](https://github.com/ferncabrera/open_ims/blob/dev-oliver/Linux.md)
+
+
+## Windows Installation Instructions (Encourage use of WSL2)
 ### Pre-requisites
 Our development stack consists of:
 <ul>
