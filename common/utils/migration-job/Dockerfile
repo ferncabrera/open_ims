@@ -3,9 +3,9 @@ FROM node:18.17.0-alpine3.18
 WORKDIR /home/node/app
 
 COPY ./package.json ./
-USER root
+# USER root
 RUN npm install
 COPY ./ ./
-USER node
+# USER node
 
 # CMD ["npm", "run", "migrate"]

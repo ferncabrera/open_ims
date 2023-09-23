@@ -6,7 +6,6 @@ USER node
 WORKDIR /home/node/app
 
 COPY --chown=node:node ./package.json ./
-USER root
 RUN chown -R node:node /home/node/app
 RUN npm install
 COPY --chown=node:node ./ ./
@@ -20,4 +19,3 @@ RUN chown -R node:node /home/node/app
 # dist/ before building the resource when
 # running "npm run dev"...
 CMD ["npm", "run", "dev"]
-USER node
