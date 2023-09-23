@@ -23,6 +23,7 @@ body {
   // border-radius: 10px;
   // margin: 20px;
   position: relative;
+  background-size: 100%;
   /* Apply border-radius to specific corners */
   border-top-left-radius: 100px;
   border-bottom-right-radius: 100px;
@@ -33,7 +34,7 @@ body {
     width: 400px; /* Fixed width */
     min-height: 100px; /* Minimum height */
     border-radius: 10px; /* Curved edges */
-    background-color: hsl(197, 64%, 96%); /* Background color */
+    // background-color: hsl(197, 64%, 96%); /* Background color */
     margin: 20px auto; /* Center horizontally */
     padding: 20px; /* Add padding for content */
     position: absolute;
@@ -159,7 +160,7 @@ body {
     width: 500px; /* Fixed width */
     min-height: 75px; /* Minimum height */
     border-radius: 10px; /* Curved edges */
-    background-color: hsl(197, 64%, 96%); /* Background color */
+    background-color: hsl(0, 0%, 100%); /* Background color */
     margin: 20px auto; /* Center horizontally */
     // padding: 20px; /* Add padding for content */
   }
