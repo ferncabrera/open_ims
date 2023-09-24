@@ -4,7 +4,7 @@ A custom Inventory Management Solution (IMS) designed and architected specifical
 ## Development
 
 ## Linux OS Installation Instructions (Debian or Ubuntu)
-[Linux Setup Instructions](https://github.com/ferncabrera/open_ims/blob/dev-oliver/Linux.md)
+Our new [Linux Setup Instructions](https://github.com/ferncabrera/open_ims/blob/dev-oliver/Linux.md)!
 
 
 ## Windows Installation Instructions (Encourage use of WSL2)
