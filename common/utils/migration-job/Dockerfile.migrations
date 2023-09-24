@@ -4,5 +4,6 @@ WORKDIR /home/node/app/migration-job
 
 RUN npm install db-migrate -g
 RUN npm install db-migrate-pg -g
+# USER node
 
 # CMD ["npm", "run", "migrate"]

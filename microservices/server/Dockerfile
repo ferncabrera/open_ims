@@ -7,6 +7,8 @@ RUN npm install
 COPY ./ ./
 
 RUN npm run build
+RUN chown -R node:node /home/node/app
+
 
 FROM node:18.17.0-alpine3.18
 

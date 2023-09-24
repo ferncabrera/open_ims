@@ -24,3 +24,4 @@ coverage
 *.sln
 *.sw?
 *-tags.json
+minikube-linux*
