@@ -6,11 +6,14 @@ USER node
 WORKDIR /home/node/app
 
 COPY --chown=node:node ./package.json ./
+RUN chown -R node:node /home/node/app
 RUN npm install
 COPY --chown=node:node ./ ./
 
 # ** Workaround **  
 RUN npm run build
+RUN chown -R node:node /home/node/app
+
 
 # Looks like the process wants to access the 
 # dist/ before building the resource when

@@ -1,6 +1,6 @@
 // Global declaration of types:
 
-type TMethod = "GET" | "PUT" | "POST" | "DELETE";
+type TMethod = "GET" | "PUT" | "POST" | "DELETE" | "PATCH";
 
 
 interface IErrorObject {
@@ -9,6 +9,7 @@ interface IErrorObject {
 }
 
 interface IErrorFields {
+    // passwordC?: IErrorObject;
     email?: IErrorObject | null,
     password?: IErrorObject | null,
     newPassword?: IErrorObject | null,

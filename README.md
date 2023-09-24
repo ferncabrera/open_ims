@@ -2,6 +2,12 @@
 A custom Inventory Management Solution (IMS) designed and architected specifically for the Christensen Consulting Groups (CCG).
 
 ## Development
+
+## Linux OS Installation Instructions (Debian or Ubuntu)
+Our new [Linux Setup Instructions](https://github.com/ferncabrera/open_ims/blob/dev-oliver/Linux.md)!
+
+
+## Windows Installation Instructions (Encourage use of WSL2)
 ### Pre-requisites
 Our development stack consists of:
 <ul>
@@ -28,6 +34,8 @@ _Confirm that you have the ingress-nginx service running or else application sta
 <img width="469" alt="image" src="https://github.com/ferncabrera/open_ims/assets/73137447/a2a8d465-c30a-4f80-a350-d77316209fda">
 
 If you don't see this or are not sure if it is running, just re-run the command in the <a href="https://github.com/ferncabrera/open_ims/blob/main/README.md#pre-requisites">Pre-requisites section</a> used to set up ingress-nginx.
+
+Finally, go to common -> database -> kustomize -> overlays -> dev -> postgres-credentials.yaml and add your Brevo api key.
 
 Now that you are ready, in the root of the project, run: 
 ```
@@ -170,3 +178,33 @@ skaffold delete -p prod-local
 ```
 Skaffold will then output the names of the services it stopped in the CLI. Confirm that all of the services have stopped by checking your running container in Docker Desktop. __The steps for running the prod-do profile are IDENTICAL, just use the prod-do profile instead of prod-local when running the CLI command listed in the steps above!__
 
+## FAQ
+
+1. How do I add a secret key to the environment variables?
+
+      Step 1: Stop the skaffold dev environment (Ctrl + c)
+      
+      Step 2: Goto common -> database -> kustomize -> overlays -> dev -> postgres-credentials.yaml
+    
+      Step 3: Add the secret key to the file (example below)
+      ![image](./img/image-3.png)
+    
+      Step 4: Goto server -> kustomize -> base -> server-deployment.yaml
+    
+      Step 5: Add this to the file
+      ![image](./img/image-1.png)
+
+
+      Step 6: Goto server -> kustomize -> overlays -> dev -> server-deployment.yaml
+    
+      Step 7: Add this to the file and make sure to change the ../3/.. to the right position of your variable
+      ![image](./img/image-2.png)
+    
+      Step 8: Repeat step 6 - 7 but for prod, which is right under the dev folder
+
+      Step 9: You can call the variable you made by using this code anywhere in the project:
+             ```
+                 process.env.your_variable_name
+             ```
+
+   

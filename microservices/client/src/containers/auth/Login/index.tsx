@@ -32,11 +32,19 @@ export const Login = () => {
     const [showResetPassword, setShowResetPassword] = useState(false);
     const [emailSent, setEmailSent] = useState(false);
     const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
+    const [resetEmail, setEmail] = useState('');
 
     useEffect(() => {
         _.set(formData, keyPaths.email, "");
         _.set(formData, keyPaths.password, "");
     }, []);
+
+    useEffect(() => {
+        if (!showResetPassword) {
+            // Reset the email state when the form is not shown
+            setEmail('');
+        }
+    }, [showResetPassword]);
 
     const modalFooter = emailSent ? null : <a
         onClick={() => {
@@ -47,17 +55,25 @@ export const Login = () => {
         Cancel
     </a>
 
+
+    const handleForgotPass = async (e: SyntheticEvent) => {
+        setEmailSent(true);
+        e.preventDefault(); // Prevents the default form submission behavior
+        // Send post request here
+        await sendPostRequest({endpoint: "/api/server/forgot_pass", data:{email: resetEmail}});
+
+    }
+
     const resetPasswordContent = () => {
         return (
             <div>
                 <h6 className='mb-3'>Enter the email associated with you CCG inventory account here:</h6>
-                <Form>
-                    <Form.Control type="email" placeholder='' />
+                <Form noValidate onSubmit={handleForgotPass}>
+                    <Form.Control type="email" placeholder='' value={resetEmail}  onChange={(e) => { setEmail(e.target.value) }}/>
                     <Button
+                        type='submit'
                         id="send-email"
-                        className='mt-2'
-                        onClick={() => setEmailSent(true)}
-                    >
+                        className='mt-2'>
                         Send email
                     </Button>
                 </Form>
