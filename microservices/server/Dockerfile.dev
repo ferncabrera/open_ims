@@ -12,7 +12,7 @@ COPY --chown=node:node ./ ./
 
 # ** Workaround **  
 RUN npm run build
-RUN chown -R node:node /home/node/app
+RUN chown -R node:node /home/node/app/dist
 
 
 # Looks like the process wants to access the 

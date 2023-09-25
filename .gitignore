@@ -25,3 +25,5 @@ coverage
 *.sw?
 *-tags.json
 minikube-linux*
+
+*.secrets.env

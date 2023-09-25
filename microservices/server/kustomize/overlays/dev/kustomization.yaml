@@ -8,6 +8,11 @@ configMapGenerator:
   - name: server-config
     envs:
     - .env
+  
+secretGenerator:
+- name: server-secrets
+  envs:
+  - .server.secrets.env
 
 images:
 - name: fcabrera01/open-ims-server

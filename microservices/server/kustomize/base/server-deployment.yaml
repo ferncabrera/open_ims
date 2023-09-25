@@ -46,15 +46,15 @@ spec:
           - name: JWT_SECRET_KEY
             valueFrom:
               secretKeyRef:
-                name: postgres-credentials
+                name: server-secrets
                 key: JWT_SECRET_KEY
           - name: BREVO_API_KEY
             valueFrom:
               secretKeyRef:
-                name: postgres-credentials
+                name: server-secrets
                 key: BREVO_API_KEY
           - name: JWT_SECRET_KEY_FORGOT
             valueFrom:
               secretKeyRef:
-                name: postgres-credentials
+                name: server-secrets
                 key: JWT_SECRET_KEY_FORGOT
