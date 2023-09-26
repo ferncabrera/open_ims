@@ -30,7 +30,13 @@ export const forgot_pass = async (req: Request, res: Response) => {
   );
 
   defaultClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
-  var resetLink = `http://localhost/forgot_pass?token=${encodeURIComponent(
+  // this is for local development
+  // var resetLink = `http://localhost/forgot_pass?token=${encodeURIComponent(
+  //   token
+  // )}`;
+
+  // this is for production
+  var resetLink = `http://146.190.188.248/forgot_pass?token=${encodeURIComponent(
     token
   )}`;
   var apiInstance = new Brevo.TransactionalEmailsApi();
