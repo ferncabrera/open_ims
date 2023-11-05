@@ -20,7 +20,7 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src"],
+  "include": ["src", "tests/mocks"],
   // "exclude": [
   //   "jest.config.js",
   //   "./src/__tests__/**",
