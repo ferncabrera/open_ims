@@ -16,7 +16,7 @@ const Routes = [
         element: <Authentication isLogin={false} />,
     },
     {
-        path: '/forgot_pass',
+        path: '/forgot_pass/:token',
         element: <ForgotPass />,
     },
     {

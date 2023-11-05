@@ -28,11 +28,7 @@ export const getJSONResponse = async (props: IGetResponse) => {
 export const sendPostRequest = async (props: IPostRequest) => {
   const { endpoint, headers, data } = props;
 
-  const url = `http://${
-    import.meta.env.DEV
-      ? import.meta.env.VITE_HOST_DEV
-      : import.meta.env.VITE_HOST_PROD
-  }${endpoint}`;
+  const url = `http://${HOST}${endpoint}`;
 
   const response: object = await apiCall({
     url,
@@ -46,11 +42,7 @@ export const sendPostRequest = async (props: IPostRequest) => {
 export const sendPatchRequest = async (props: IPostRequest) => {
   const { endpoint, headers, data } = props;
 
-  const url = `http://${
-    import.meta.env.DEV
-      ? import.meta.env.VITE_HOST_DEV
-      : import.meta.env.VITE_HOST_PROD
-  }${endpoint}`;
+  const url = `http://${HOST}${endpoint}`;
   const response: object = await apiCall({
     url,
     method: "PATCH",

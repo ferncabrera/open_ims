@@ -11,6 +11,13 @@ import forgotPassImg from "./../../../assets/public/images/forgotPass.jpg";
 import _ from "lodash";
 import { Password } from "./pass";
 import { MdOutlineCheckCircleOutline } from "react-icons/md";
+import { useParams, useNavigate } from "react-router";
+
+interface InvalidProp {
+  isInvalid?: any;
+  errorMessage: string;
+  children?: React.ReactNode;
+}
 
 let trackErrorList = [];
 const formData = {};
@@ -25,6 +32,23 @@ export const ForgotPass = () => {
     password: "attributes.password",
     newPassword: "attributes.newPassword",
   };
+
+  const { token } = useParams();
+  const navigate = useNavigate();
+
+  const [passwordUpdated, setPasswordUpdated] = useState(false);
+  const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
+  const [isTokenValid, setIsTokenValid] = useState(false);
+
+  useEffect(() => {
+    if (!token) {
+      navigate('/')
+    } else {
+      console.log('please tell me we are at least here??')
+      validateToken(token)
+    }
+  })
+
   useEffect(() => {
     _.set(formData, keyPaths.password, "");
     _.set(formData, keyPaths.newPassword, "");
@@ -33,8 +57,14 @@ export const ForgotPass = () => {
   let validateNewPassword = false;
   let validatePassword = false;
 
-  const [passwordUpdated, setPasswordUpdated] = useState(false);
-  const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
+  const validateToken = async (token) => {
+    const isValid: any = await sendPostRequest({ endpoint: '/api/server/validate_token', data: { token } });
+    if (isValid.status !== 200) {
+      return navigate('/')
+    }
+    setIsTokenValid(true);
+    return
+  }
 
   const validate = (data: IValidate) => {
     const valid = fieldValidation(data);
@@ -67,13 +97,6 @@ export const ForgotPass = () => {
     //get token from current url, decode it and send it to server
     //server will authenticate user and update password
     const urlSearchParams = new URLSearchParams(window.location.search);
-    const token = urlSearchParams.get("token");
-
-    if (!token) {
-      // Token not found, handle the error or redirect
-      // console.log("Token not found");
-      // return;
-    }
 
     const newPassword = _.get(formData, keyPaths.newPassword);
     const password = _.get(formData, keyPaths.password);
@@ -115,7 +138,7 @@ export const ForgotPass = () => {
       //if it is different then send patch request to /api/server/update_password
       //if it is not different then output error to ErrorBox component
       await sendPostRequest({
-        endpoint: "/api/server/get_password",
+        endpoint: "/api/server/check_password",
         data: { password: _.get(formData, keyPaths.newPassword), token: token },
       }).then(
         //check status code
@@ -193,11 +216,6 @@ export const ForgotPass = () => {
       </>
     );
   };
-  interface InvalidProp {
-    isInvalid?: any;
-    errorMessage: string;
-    children?: React.ReactNode;
-  }
 
   const ErrorBox: React.FC<InvalidProp> = (props) => {
     return (
@@ -229,6 +247,7 @@ export const ForgotPass = () => {
   };
 
   return (
+    isTokenValid &&
     <div className={`${styles.overlay} ${styles["forgot-pass-container"]}`}>
       {passwordUpdated ? (
         <div className={styles.inputBox}>
@@ -285,6 +304,7 @@ export const ForgotPass = () => {
         </>
       )}
     </div>
+
   );
 };
 
