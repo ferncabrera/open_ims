@@ -1,29 +1,12 @@
 @import "../../../styles/general/colors.scss";
 
-body {
-  margin: 0;
-  padding: 0;
-  // background-size: cover;
-  // background-position: center;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  font-family: Arial, sans-serif;
-  // background-color: red;
-  // background-image: url("../../../assets/public/images/forgotPass.jpg"); /* Replace with your image URL */
-}
-
 .overlay {
   background-image: url("../../../assets/public/images/forgotPass.jpg"); /* Replace with your image URL */
-  // background-size: cover;
-  // background-position: center;
-  // background-repeat: no-repeat;
-  // background-color: rgba(255, 255, 255, 0.8);
-  // border-radius: 10px;
-  // margin: 20px;
+  background-size: cover;
+  background-repeat: no-repeat;
+  height: 95vh;
+  margin: 20px;
   position: relative;
-  background-size: 100%;
   /* Apply border-radius to specific corners */
   border-top-left-radius: 100px;
   border-bottom-right-radius: 100px;

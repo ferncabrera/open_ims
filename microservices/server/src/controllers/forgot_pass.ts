@@ -31,14 +31,11 @@ export const forgot_pass = async (req: Request, res: Response) => {
 
   defaultClient.authentications["api-key"].apiKey = process.env.BREVO_API_KEY;
   // this is for local development
-  // var resetLink = `http://localhost/forgot_pass?token=${encodeURIComponent(
-  //   token
-  // )}`;
+  // var resetLink = `http://localhost/forgot_pass/${btoa(token)}`;
+
 
   // this is for production
-  var resetLink = `http://146.190.188.248/forgot_pass?token=${encodeURIComponent(
-    token
-  )}`;
+  var resetLink = `http://146.190.188.248/forgot_pass/${btoa(token)}`;
   var apiInstance = new Brevo.TransactionalEmailsApi();
 
   const emailTemplate = `
@@ -82,15 +79,14 @@ export const forgot_pass = async (req: Request, res: Response) => {
     <p>Best regards,<br>Your Website Team</p>
   </div>
 </body>
-</html>  
+</html>
   `;
-  console.log(user.name);
 
   var sendSmtpEmail = new Brevo.SendSmtpEmail(); // SendSmtpEmail | Values to send a transactional email
   sendSmtpEmail.to = [{ email: userEmail.rows[0].email, name: user.name }];
   sendSmtpEmail.sender = {
     email: "ccg.ca.inquiries@gmail.com",
-    name: "Austin",
+    name: "CCG Admin Support",
   };
   sendSmtpEmail.subject = "Reset Password";
 
@@ -113,13 +109,13 @@ export const update_password = async (req: Request, res: Response) => {
     //using the jwt token we passed in the url above, we can decode it and get the user's email
     const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
     // const token2 = req.query.token;
-    if (isTokenRevoked(token as string)) {
+    if (isTokenRevoked(atob(token) as string)) {
       throw new customError({
         message: "Token has been revoked, please request a new one",
         code: 10,
       });
     }
-    const decoded = jwt.verify(token as string, `${secret2}`) as any;
+    const decoded = jwt.verify(atob(token) as string, `${secret2}`) as any;
     const userEmail = decoded.email;
     // using the email, find the user in the database
     // this format makes it less susceptible to SQL injection (directly injecting into the query)
@@ -134,7 +130,7 @@ export const update_password = async (req: Request, res: Response) => {
     if (validPassword) {
       throw new customError({
         message: "New password has to be different from your old password",
-        code: 101,
+        code: 10,
       });
     }
     const salt = await bcrypt.genSalt();
@@ -150,7 +146,6 @@ export const update_password = async (req: Request, res: Response) => {
     //password should be updated
     res.json({ message: "Password successfully updated" });
   } catch (err) {
-    console.log(err);
     res.status(500).json({ message: "Internal Server Error" });
   }
 };
@@ -162,7 +157,7 @@ export const check_password = async (req: Request, res: Response) => {
   //using the jwt token we passed in the url above, we can decode it and get the user's email
   const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
   // const token2 = req.query.token;
-  const decoded = jwt.verify(token as string, `${secret2}`) as any;
+  const decoded = jwt.verify(atob(token) as string, `${secret2}`) as any;
   const userEmail = decoded.email;
   // using the email, find the user in the database
   // this format makes it less susceptible to SQL injection (directly injecting into the query)
@@ -184,3 +179,25 @@ export const check_password = async (req: Request, res: Response) => {
     res.status(201).json({ message: "Lookup complete, password is good" });
   }
 };
+
+export const validate_reset_token = async (req: Request, res: Response) => {
+  const { password, token } = req.body;
+    const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
+    if (isTokenRevoked(atob(token) as string)) {
+      throw new customError({
+        message: "Token has been revoked, please request a new one",
+        code: 10,
+      });
+    }
+    try {
+      jwt.verify(atob(token) as string, `${secret2}`) as any;
+    } catch {
+      throw new customError({
+        message: "Reset URL is invalid or expired",
+        code: 10
+      })
+    }
+    res.status(200).json({message: 'Validated', status: 200})
+
+
+}

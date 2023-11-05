@@ -1,5 +1,5 @@
 import express from "express";
-import { forgot_pass, update_password, check_password } from "../controllers/forgot_pass";
+import { forgot_pass, update_password, check_password, validate_reset_token } from "../controllers/forgot_pass";
 import catchAsync from "../utils/catchAsync";
 import errorHandler from "../../middleware/errorHandler";
 
@@ -14,7 +14,11 @@ router
   .patch(catchAsync(update_password), errorHandler);
 
 router
-  .route("/api/server/get_password")
+  .route("/api/server/check_password")
   .post(catchAsync(check_password), errorHandler);
+
+router
+  .route("/api/server/validate_token")
+  .post(catchAsync(validate_reset_token), errorHandler);
   
 export default router;
