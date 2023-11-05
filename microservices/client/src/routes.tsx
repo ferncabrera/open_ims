@@ -21,7 +21,7 @@ const Routes = [
     },
     {
         path: '/ccg',
-        element: <MainContainer />, // this main container will handle our breadcrumbs https://reactrouter.com/en/main/hooks/use-matches
+        element: <MainContainer/>, // this main container will handle our breadcrumbs https://reactrouter.com/en/main/hooks/use-matches
         children: [
             {
                 path: '/ccg/dashboard',

@@ -1,12 +1,13 @@
 import React, { SyntheticEvent, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom';
-import { Form, Row, Button } from 'react-bootstrap'
+import { Form, Row, Button, Spinner } from 'react-bootstrap'
 import { Password } from '../../../components/forms/Password';
 import { CenteredModal } from '../../../components/modals/CenteredModal';
 import { MdOutlineEmail } from 'react-icons/md';
 import { fieldValidation } from '../../../utilities/validation';
 import { IValidate } from '../../../utilities/types/validationTypes';
 import { sendPostRequest, getJSONResponse } from '../../../utilities/apiHelpers';
+import { useNavigate } from 'react-router-dom';
 import _ from 'lodash';
 
 import styles from './index.module.scss';
@@ -33,6 +34,8 @@ export const Login = () => {
     const [emailSent, setEmailSent] = useState(false);
     const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
     const [resetEmail, setEmail] = useState('');
+    const [isSigningIn, setIsSigningIn] = useState(false);
+    const navigate = useNavigate();
 
     useEffect(() => {
         _.set(formData, keyPaths.email, "");
@@ -60,7 +63,7 @@ export const Login = () => {
         setEmailSent(true);
         e.preventDefault(); // Prevents the default form submission behavior
         // Send post request here
-        await sendPostRequest({endpoint: "/api/server/forgot_pass", data:{email: resetEmail}});
+        await sendPostRequest({ endpoint: "/api/server/forgot_pass", data: { email: resetEmail } });
 
     }
 
@@ -69,7 +72,7 @@ export const Login = () => {
             <div>
                 <h6 className='mb-3'>Enter the email associated with you CCG inventory account here:</h6>
                 <Form noValidate onSubmit={handleForgotPass}>
-                    <Form.Control type="email" placeholder='' value={resetEmail}  onChange={(e) => { setEmail(e.target.value) }}/>
+                    <Form.Control type="email" placeholder='' value={resetEmail} onChange={(e) => { setEmail(e.target.value) }} />
                     <Button
                         type='submit'
                         id="send-email"
@@ -107,7 +110,7 @@ export const Login = () => {
         return valid.isValid;
     }
 
-    const handleSignIn = async (e : SyntheticEvent) => {
+    const handleSignIn = async (e: SyntheticEvent) => {
         e.preventDefault();
         const loginData = _.get(formData, keyPaths.attributes);
         _.forIn(loginData, (value, key: string) => {
@@ -120,8 +123,18 @@ export const Login = () => {
             return
         }
         // Send post request here
-        const response = await sendPostRequest({endpoint:'/api/server/login', data: loginData});
+        try {
 
+            setIsSigningIn(true);
+            const response = await sendPostRequest({ endpoint: '/api/server/login', data: loginData });
+            if (_.get(response, 'token', '')) {
+                navigate('/ccg/dashboard');
+            }
+            setIsSigningIn(false);
+        } catch (e) {
+            //need our global state banner here to handle our errors
+            console.log('error', e);
+        }
     }
 
     return (
@@ -173,7 +186,12 @@ export const Login = () => {
                     </div>
                 </Row>
                 <div className='mt-5'>
-                    <Button type='submit' >Sign in</Button>
+                    <Button
+                        type='submit'
+                        disabled={isSigningIn}
+                    >
+                        {isSigningIn ? <Spinner animation='border'/> : "Sign In"}
+                    </Button>
                 </div>
             </Form>
             {/* Display Modal here */}

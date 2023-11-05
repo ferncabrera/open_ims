@@ -11,10 +11,14 @@ import {
     MdOutlineSupervisedUserCircle
 } from "react-icons/md"
 import { ProfileIcon } from './ProfileIcon';
-
+import _ from 'lodash';
 import styles from "./sidebar.module.scss";
 
-export const Sidebar = () => {
+interface ISidebarProps {
+    userData?: object;
+}
+
+export const Sidebar: React.FC<ISidebarProps> = (props) => {
     return (
         <>
 
@@ -52,10 +56,10 @@ export const Sidebar = () => {
                     <div className='d-flex flex-column'>
                         <div>
 
-                            <strong>{"[name]"}</strong>
+                            <strong>{_.get(props.userData, 'firstName', '[null]')}</strong>
                         </div>
                         <div>
-                            {"[permission]"}
+                            {_.get(props.userData, 'permission', '[null]')}
                         </div>
                     </div>
 
