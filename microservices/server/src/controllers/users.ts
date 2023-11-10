@@ -27,7 +27,6 @@ export const login = async (req: Request, res: Response) => {
     }
 
     const secret = process.env.JWT_SECRET_KEY;
-    console.log('this is our secret', secret)
     const currentDate = new Date();
     const expirationDate = new Date(currentDate.getTime() + 300000); //expires in 5 minutes
 
