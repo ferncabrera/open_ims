@@ -197,7 +197,6 @@ export const validate_reset_token = async (req: Request, res: Response) => {
       code: 10
     })
   }
-  console.log('made it?')
   res.status(200).json({ message: 'Validated', status: 200 })
 
 

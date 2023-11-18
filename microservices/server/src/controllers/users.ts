@@ -32,7 +32,7 @@ export const login = async (req: Request, res: Response) => {
 
     const token = jwt.sign({ email: user.email, first_name: user.first_name, permission: user.permission }, `${secret}`);
     res.cookie('authToken', token, { httpOnly: false, secure: false, expires: expirationDate });
-    res.json({ message: "Success", token: token })
+    res.json({ message: "Success", token: token });
 }
 
 export const register = async (req: Request, res: Response) => {
@@ -60,7 +60,7 @@ export const isAuthenticated = async (req: Request, res: Response) => {
     if (!userCookie) {
         res.status(401).json({ authenticated: false });
     } else {
-        const secret: any = process.env.JWT_SECRET_KEY; // We need to check our keys here, they are not working!!
+        const secret: any = process.env.JWT_SECRET_KEY;
         const tokenData: token = jwt.verify(userCookie, secret) as token
         const permission = tokenData.permission;
         const first_name = tokenData.first_name;
