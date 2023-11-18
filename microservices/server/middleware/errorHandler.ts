@@ -1,20 +1,27 @@
 import { Request, Response, NextFunction } from "express";
 
 const errorHandler = (error: any, req: Request, res: Response, next: NextFunction) => {
+    let statusCode;
+    let errorMessage;
 
-    console.log('our error', error);
-    // Handle specific error types and send relevant responses
-    if (error.code === 10) {
-        return res.status(401).json({message: error.message})
+    switch (error.code) {
+        case 10: // case 10 represents custom with 401
+            statusCode = 401;
+            errorMessage = error.message;
+            break;
+        
+        case 20:
+            statusCode = 400;
+            errorMessage = error.message;
+
+        default:
+            console.log(error);
+            statusCode = 500;
+            errorMessage = "Something went wrong on the server.";
+            break;
     }
 
-    if (error.code === "23505") {
-        return res.status(400).json({ message: "Email is already in use." });
-    }
-
-    // Handle other errors
-    console.log(error);
-    res.status(500).json({ message: "Something went wrong on the server." });
+    res.status(statusCode).json({ message: errorMessage });
 };
 
 export default errorHandler;

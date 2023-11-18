@@ -92,14 +92,15 @@ export const forgot_pass = async (req: Request, res: Response) => {
 
   sendSmtpEmail.htmlContent = emailTemplate;
 
-  apiInstance
+
+  await apiInstance
     .sendTransacEmail(sendSmtpEmail)
     .then((response: any) => {
       res.status(200).json({ message: "Success" });
     })
     .catch((error: any) => {
-      // console.error(error);
-      return;
+      res.status(error);
+      throw new customError({message: 'could not send email, possible auth issue', code: 10});
     });
 };
 
@@ -109,7 +110,7 @@ export const update_password = async (req: Request, res: Response) => {
     //using the jwt token we passed in the url above, we can decode it and get the user's email
     const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
     // const token2 = req.query.token;
-    if (isTokenRevoked(atob(token) as string)) {
+    if (await isTokenRevoked(atob(token) as string)) {
       throw new customError({
         message: "Token has been revoked, please request a new one",
         code: 10,
@@ -126,6 +127,7 @@ export const update_password = async (req: Request, res: Response) => {
     if (!user) {
       throw new customError({ message: "Something went wrong", code: 10 });
     }
+
     const validPassword = await bcrypt.compare(password, user.password);
     if (validPassword) {
       throw new customError({
@@ -139,12 +141,10 @@ export const update_password = async (req: Request, res: Response) => {
     await query("UPDATE user_table SET password = $1 WHERE email = $2", [
       hash,
       userEmail,
-    ]).then((response) => {
-      //once the password is updated, we invalidate the jwt token by invoking the addRevokedToken function
-      addRevokedToken(token as string);
-    });
+    ]);
+    addRevokedToken(token as string);
     //password should be updated
-    res.json({ message: "Password successfully updated" });
+    res.status(200).json({ message: "Password successfully updated" });
   } catch (err) {
     res.status(500).json({ message: "Internal Server Error" });
   }
@@ -176,28 +176,28 @@ export const check_password = async (req: Request, res: Response) => {
       message: "New password has to be different from your old password",
     });
   } else {
-    res.status(201).json({ message: "Lookup complete, password is good" });
+    res.status(200).json({ message: "Lookup complete, password is good" });
   }
 };
 
 export const validate_reset_token = async (req: Request, res: Response) => {
-  const { password, token } = req.body;
-    const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
-    if (isTokenRevoked(atob(token) as string)) {
-      throw new customError({
-        message: "Token has been revoked, please request a new one",
-        code: 10,
-      });
-    }
-    try {
-      jwt.verify(atob(token) as string, `${secret2}`) as any;
-    } catch {
-      throw new customError({
-        message: "Reset URL is invalid or expired",
-        code: 10
-      })
-    }
-    res.status(200).json({message: 'Validated', status: 200})
+  const {token } = req.body;
+  const secret2 = process.env.JWT_SECRET_KEY_FORGOT;
+  if (isTokenRevoked(atob(token) as string)) {
+    throw new customError({
+      message: "Token has been revoked, please request a new one",
+      code: 10,
+    });
+  }
+  try {
+    jwt.verify(atob(token) as string, `${secret2}`) as any;
+  } catch {
+    throw new customError({
+      message: "Reset URL is invalid or expired",
+      code: 10
+    })
+  }
+  res.status(200).json({ message: 'Validated', status: 200 })
 
 
 }

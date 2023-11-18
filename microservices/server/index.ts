@@ -19,3 +19,5 @@ app.get('*', (req: Request, res: Response) => {
 });
 
 app.listen(process.env.SERVER_PORT, () => { console.log('[server compiled]: Running on port ', process.env.SERVER_PORT, ` (http://localhost:${process.env.SERVER_PORT}/)`) });
+
+export const server = app;
