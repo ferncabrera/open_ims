@@ -20,7 +20,7 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-          
+
       - name: Build and validate containers
         uses: actions/checkout@v3
       # - run: docker run --rm --name client-test-container fcabrera01/client-image-under-test npm run coverage
@@ -28,5 +28,5 @@ jobs:
       - run: docker image pull fcabrera01/ccg-server:prod-latest
       - run: docker image pull fcabrera01/ccg-client:prod-latest
       # Build images
-      - run: docker image build -t fcabrera01/server-build-test -f ./microservices/server/Dockerfile  ./microservices/server
-      - run: docker image build -t fcabrera01/client-image-under-test -f ./microservices/client/Dockerfile ./microservices/client
+      - run: docker image build --cache-from ferncabrera01/ccg-server:prod-latest -t fcabrera01/server-build-test -f ./microservices/server/Dockerfile  ./microservices/server
+      - run: docker image build --cache-from ferncabrera01/ccg-client:prod-latest -t fcabrera01/client-image-under-test -f ./microservices/client/Dockerfile ./microservices/client
