@@ -13,6 +13,19 @@ CREATE TABLE user_table (
     password VARCHAR(128) NOT NULL CHECK (Password ~ '^.*(?=.{8,64})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).*$')
 );
 
+CREATE TABLE employee_table (
+    id SERIAL PRIMARY KEY,
+    emp_name VARCHAR(50),
+    emp_email VARCHAR(50),
+    emp_phone VARCHAR(15),
+    emp_sin VARCHAR(15),
+    hourly_rate INT,
+    commision INT,
+    emp_address VARCHAR(200),
+    notes VARCHAR(500)
+);
+
+
  -- CUSTOMER TABLE
 CREATE TABLE customer_table (
     id SERIAL PRIMARY KEY,
@@ -22,6 +35,7 @@ CREATE TABLE customer_table (
     company_name VARCHAR(50) NOT NULL,
     phone VARCHAR(15) NOT NULL,
     created_by INT,
+    net_terms INT,
     FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
@@ -34,6 +48,7 @@ CREATE TABLE vendor_table (
     company_name VARCHAR(50) NOT NULL,
     phone VARCHAR(15) NOT NULL,
     created_by INT,
+    net_terms INT,
     FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
@@ -79,20 +94,28 @@ CREATE TABLE vendor_and_customer (
     FOREIGN KEY (customer_id) REFERENCES customer_table (id) ON DELETE CASCADE
 );
 
--- SALES ORDERS
+-- INVOICES
 CREATE TYPE sales_order_delivery AS ENUM ('Not shipped', 'Shipped', 'Delivered');
 
 CREATE TYPE order_payment AS ENUM ('Not paid', 'Paid');
 
-CREATE TABLE sales_orders (
+CREATE TYPE order_status AS ENUM ('Draft', 'Confirmed');
+
+CREATE TABLE invoice_orders (
   id SERIAL PRIMARY KEY,
+  reference_number VARCHAR(35),
   customer_id INT REFERENCES customer_table(id) ON UPDATE CASCADE ON DELETE NO ACTION,
-  date DATE NOT NULL,
+  invoice_date DATE NOT NULL,
   product_quantity_rate_list JSONB[],
   delivery_status sales_order_delivery,
   payment_status order_payment,
+  order_status order_status,
+  payment_due DATE,
+  date_paid DATE,
   created_by INT,
-  FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION
+  FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION,
+  sales_rep INT,
+  FOREIGN KEY (sales_rep) REFERENCES employee_table (id) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
 --PURCHASE ORDERS
@@ -100,8 +123,9 @@ CREATE TYPE purchase_order_delivery AS ENUM ('Not Received', 'Received');
 
 CREATE TABLE purchase_orders (
   id SERIAL PRIMARY KEY,
+  reference_number VARCHAR(35),
   vendor_id INT REFERENCES vendor_table(id) ON UPDATE CASCADE ON DELETE NO ACTION,
-  date DATE NOT NULL,
+  purchase_date DATE NOT NULL,
   product_quantity_rate_list JSONB[],
   delivery_status purchase_order_delivery,
   payment_status order_payment,
