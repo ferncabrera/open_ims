@@ -14,8 +14,19 @@ jobs:
   user_branch_build_test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - run: docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+      # Login to Docker registry
+      - name: Login to DockerHub
+        uses: docker/login-action@v2
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          
+      - name: Build and validate containers
+        uses: actions/checkout@v3
       # - run: docker run --rm --name client-test-container fcabrera01/client-image-under-test npm run coverage
-      - run: docker build -t fcabrera01/server-build-test -f ./microservices/server/Dockerfile  ./microservices/server
-      - run: docker build -t fcabrera01/client-image-under-test -f ./microservices/client/Dockerfile ./microservices/client
+      # Pull the latest version of the images from Dockerhub before building to use cached layers...
+      - run: docker image pull fcabrera01/ccg-server:prod-latest
+      - run: docker image pull fcabrera01/ccg-client:prod-latest
+      # Build images
+      - run: docker image build -t fcabrera01/server-build-test -f ./microservices/server/Dockerfile  ./microservices/server
+      - run: docker image build -t fcabrera01/client-image-under-test -f ./microservices/client/Dockerfile ./microservices/client

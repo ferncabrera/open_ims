@@ -86,7 +86,9 @@ profiles:
   build:
     local:
       push: false
+      # push: true
     tagPolicy:
+      # sha256: {}
       gitCommit: 
         prefix: "prod-"
     artifacts:
@@ -142,7 +144,7 @@ profiles:
           # - "fcabrera01/ccg-migration-job:latest"
   deploy:
     kubectl: {}
-  # verify:s
+  # verify:
   #   - name: alpine-wget
   #     container:
   #       name: alpine-wget
