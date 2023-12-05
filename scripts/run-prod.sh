@@ -3,7 +3,7 @@
 echo "Running the PROD-LOCAL version of this app... all resources will be built using as many production resources as possible! Use this to debug prod-only issues :D!" 
 
 { # try
-    cd "$(dirname "$0")"
+    cd "$(dirname "../$0")"
 
     echo -e "\nCreate necessary secrets!"
     
