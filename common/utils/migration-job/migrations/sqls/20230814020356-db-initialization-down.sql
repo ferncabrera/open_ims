@@ -12,13 +12,13 @@ DROP TABLE IF EXISTS public.purchase_orders;
 
 DROP TABLE IF EXISTS public.products_table;
 
-DROP TABLE IF EXISTS public.customer_table;
-
 DROP TABLE IF EXISTS public.vendor_table;
 
-DROP TABLE IF EXISTS public.user_table;
+DROP TABLE IF EXISTS public.customer_table;
 
 DROP TABLE IF EXISTS public.employee_table;
+
+DROP TABLE IF EXISTS public.user_table;
 
 DROP TYPE IF EXISTS public.address_type;
 
