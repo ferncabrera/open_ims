@@ -51,6 +51,12 @@ Once you start seeing service logs, feel free to make changes (to relevant files
 #### Stopping the dev env
 In the same terminal that was used to run ```skaffold dev```, simply press ```CTRL+C``` to kill the process. Skaffold will take care of the rest and teardown all pods and services/prune any dangling images :D!
 
+#### Errors you may encounter
+If you ever face this error when running ```skaffold dev```:
+
+![image](https://github.com/ferncabrera/open_ims/assets/73137447/138d6587-0734-49f5-8e1d-8fb0bbd3e052)
+
+Then try running ```kubectl delete -A ValidatingWebhookConfiguration ingress-nginx-admission```, as per [this github issue thread](https://github.com/kubernetes/ingress-nginx/issues/8216). The app should startup as normal (should...).
 #### Using the database
 We use a self-maintained postgres instance built using an official image from the project. The pod containing the running postgres instance itself is maintained by a statefulset exposed to our applications cluster through a headless kubernetes service.
 <br/>
