@@ -1,4 +1,4 @@
-/* Replace with your SQL commands */
+/* Replace with your SQL DROP commands */
 
 DROP TABLE IF EXISTS public.customer_addresses;
 
