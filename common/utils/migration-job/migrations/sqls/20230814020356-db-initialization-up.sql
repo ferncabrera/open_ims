@@ -1,4 +1,4 @@
-/* Replace with your SQL commands */
+/* Replace with your SQL CREATE commands */
 
 -- USER TABLE
 CREATE TYPE user_permission AS ENUM ('Admin', 'Employee', 'Customer', 'Vendor', 'Unauthorized');
