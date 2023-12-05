@@ -86,22 +86,33 @@ profiles:
   build:
     local:
       push: false
+      # push: true
     tagPolicy:
+      # sha256: {}
       gitCommit: 
         prefix: "prod-"
     artifacts:
       - image: fcabrera01/ccg-client
         context: microservices/client
         docker:
+          # cacheFrom:    
           dockerfile: Dockerfile.staging
+          cacheFrom:
+          - "fcabrera01/ccg-client:prod-latest"
       - image: fcabrera01/ccg-server
         context: microservices/server
         docker:
+          # cacheFrom:    
           dockerfile: Dockerfile
+          cacheFrom:
+          - "fcabrera01/ccg-server:prod-latest"
       - image: fcabrera01/ccg-migration-job
         context: common/utils/migration-job
         docker:
+          # cacheFrom:    
           dockerfile: Dockerfile
+          cacheFrom:
+          - "fcabrera01/ccg-migration-job:prod-latest"
   deploy:
     kubectl: {}
 
@@ -126,23 +137,23 @@ profiles:
         context: microservices/client
         docker:
           dockerfile: Dockerfile
-          # cacheFrom:
-          # - "fcabrera01/ccg-client:latest"
+          cacheFrom:
+          - "fcabrera01/ccg-client:prod-latest"
       - image: fcabrera01/ccg-server
         context: microservices/server
         docker:
           dockerfile: Dockerfile
-          # cacheFrom:
-          # - "fcabrera01/ccg-server:latest"
+          cacheFrom:
+          - "fcabrera01/ccg-server:prod-latest"
       - image: fcabrera01/ccg-migration-job
         context: common/utils/migration-job
         docker:
           dockerfile: Dockerfile
-          # cacheFrom:
-          # - "fcabrera01/ccg-migration-job:latest"
+          cacheFrom:
+          - "fcabrera01/ccg-migration-job:prod-latest"
   deploy:
     kubectl: {}
-  # verify:s
+  # verify:
   #   - name: alpine-wget
   #     container:
   #       name: alpine-wget
