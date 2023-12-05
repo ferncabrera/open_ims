@@ -42,7 +42,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push to DockerHub
+      - name: Pull images from DockerHub
         run: |   
           docker image pull fcabrera01/ccg-server:prod-latest
           docker image pull fcabrera01/ccg-client:prod-latest
