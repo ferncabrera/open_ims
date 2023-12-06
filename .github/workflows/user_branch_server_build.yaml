@@ -27,10 +27,10 @@ jobs:
       # Pull the latest version of the images from Dockerhub before building to use cached layers...
       - name: Pull base images and validate new container builds
         run: | 
-             docker image pull fcabrera01/ccg-server:prod-builder
+             docker image pull ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder
              docker image ls -a
-             docker image build --target builder --cache-from fcabrera01/ccg-server:prod-builder -t fcabrera01/ccg-server:prod-builder -f ./microservices/server/Dockerfile ./microservices/server
-             docker image pull fcabrera01/ccg-server:prod-latest
-             docker image build --cache-from fcabrera01/ccg-server:prod-latest --cache-from fcabrera01/ccg-server-builder:prod-latest -t fcabrera01/ccg-server:prod-latest -f ./microservices/server/Dockerfile ./microservices/server
-             docker image push fcabrera01/ccg-server:prod-builder
-             docker image push fcabrera01/ccg-server:prod-latest
+             docker image build --target builder --cache-from ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder -t ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder -f ./microservices/server/Dockerfile ./microservices/server
+             docker image pull ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest
+             docker image build --cache-from ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest --cache-from ${{secrets.DOCKER_USERNAME}}/ccg-server-builder:prod-latest -t ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest -f ./microservices/server/Dockerfile ./microservices/server
+             docker image push ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder
+             docker image push ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest
