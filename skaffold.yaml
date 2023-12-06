@@ -136,14 +136,14 @@ profiles:
           dockerfile: Dockerfile
           cacheFrom:
           - "fcabrera01/ccg-client:prod-latest"
-          - "fcabrera01/ccg-client:prod-builder"
+          - "type=registry,ref=fcabrera01/ccg-client:prod-builder"
       - image: fcabrera01/ccg-server
         context: microservices/server
         docker:
           dockerfile: Dockerfile
           cacheFrom:
           - "fcabrera01/ccg-server:prod-latest"
-          - "fcabrera01/ccg-server:prod-builder"
+          - "type=registry,ref=fcabrera01/ccg-server:prod-builder"
       - image: fcabrera01/ccg-migration-job
         context: common/utils/migration-job
         docker:
