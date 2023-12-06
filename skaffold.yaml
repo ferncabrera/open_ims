@@ -124,26 +124,46 @@ profiles:
         - ./microservices/client/kustomize/overlays/prod
         - ./common/utils/migration-job/kustomize/overlays/prod
   build:
-    # local:
-    #   push: false
+    local:
+      push: true
     tagPolicy:
       gitCommit: 
         prefix: "prod-"
     artifacts:
       - image: fcabrera01/ccg-client
         context: microservices/client
-        docker:
-          dockerfile: Dockerfile
-          cacheFrom:
-          - "fcabrera01/ccg-client:prod-latest"
-          - "type=registry,ref=fcabrera01/ccg-client:prod-builder"
+        # docker:
+        #   dockerfile: Dockerfile
+        #   cacheFrom:
+        #   - "fcabrera01/ccg-client:prod-latest"
+        #   - "type=registry,ref=fcabrera01/ccg-client:prod-builder
+        custom:
+          buildCommand: |
+            echo
+            echo "Building CCG client image '${IMAGE}' for platforms '${PLATFORMS}' from context '${BUILD_CONTEXT}'"
+            echo "Image is expected to exist remotely: ${PUSH_IMAGE}"
+            echo
+            args=()
+            if [[ "${PUSH_IMAGE}" == true ]]; then
+              args+=("--push")
+            fi
+            docker buildx build \
+              --file "${BUILD_CONTEXT}/Dockerfile" \
+              --tag "${IMAGE}" \
+              --cache-to "type=inline" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-client:prod-builder" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-client:prod-latest" \
+              --platform "${PLATFORMS}" \
+              "${args[@]}" \
+              "${BUILD_CONTEXT}"
+
       - image: fcabrera01/ccg-server
         context: microservices/server
         docker:
           dockerfile: Dockerfile
           cacheFrom:
           - "fcabrera01/ccg-server:prod-latest"
-          - "type=registry,ref=fcabrera01/ccg-server:prod-builder"
+          # - "type=registry,ref=fcabrera01/ccg-server:prod-builder"
       - image: fcabrera01/ccg-migration-job
         context: common/utils/migration-job
         docker:
