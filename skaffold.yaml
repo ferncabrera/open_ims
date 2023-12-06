@@ -142,6 +142,7 @@ profiles:
             echo
             echo "Building CCG client image '${IMAGE}' for platforms '${PLATFORMS}' from context '${BUILD_CONTEXT}'"
             echo "Image is expected to exist remotely: ${PUSH_IMAGE}"
+            echo
             docker buildx build \
               --file "${BUILD_CONTEXT}/Dockerfile" \
               --tag "${IMAGE}" \
