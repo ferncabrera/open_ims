@@ -28,6 +28,7 @@ jobs:
       - name: Pull base images and validate new container builds
         run: | 
              docker image pull fcabrera01/ccg-server:prod-builder
+             docker image ls -a
              docker image build --target builder --cache-from fcabrera01/ccg-server:prod-builder -t fcabrera01/ccg-server:prod-builder -f ./microservices/server/Dockerfile ./microservices/server
              docker image pull fcabrera01/ccg-server:prod-latest
              docker image build --cache-from fcabrera01/ccg-server:prod-latest --cache-from fcabrera01/ccg-server-builder:prod-latest -t fcabrera01/ccg-server:prod-latest -f ./microservices/server/Dockerfile ./microservices/server
