@@ -55,9 +55,9 @@ jobs:
       #     echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
       #     echo "Sha: ${{ env.sha_short }}
 
-      - name: Checkout (pull) main branch onto Digital Ocean K8s Cluster
+      - name: Checkout main branch on Digital Ocean K8s Cluster
         uses: actions/checkout@v4
 
-      - name: Build images and push them to DockerHub with the 'prod-latest' tag
+      - name: Build images and push them (+metadata) to DockerHub with the correct tags
         run: |
-          skaffold build -p prod-do --tag='prod-latest'
+          skaffold build -p prod-do

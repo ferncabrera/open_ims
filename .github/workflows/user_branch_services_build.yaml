@@ -1,4 +1,4 @@
-name: Microservice image building
+name: "User branch workflow: Image building and testing"
 run-name: ${{ github.actor }}'s push - Image building and testing
 
 # env:
@@ -43,7 +43,7 @@ on:
 
 
 jobs:
-  user_branch_server_test:
+  build_server_image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -86,7 +86,7 @@ jobs:
       #       type=registry,ref=fcabrera01/ccg-server:prod-latest
           # cache-to: type=registry,ref=fcabrera01/ccg-server:prod-latest,mode=max
 
-  user_branch_client_test:
+  build_client_image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -110,7 +110,7 @@ jobs:
       #     cache-from: |
       #       type=registry,ref=fcabrera01/ccg-client:prod-builder
           # cache-to: type=registry,ref=fcabrera01/ccg-client:prod-builder,mode=max
-      - name: Build and push
+      - name: Build and verify
         uses: docker/build-push-action@v5
         with:
           context: ./microservices/client

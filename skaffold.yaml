@@ -27,8 +27,18 @@ profiles:
     artifacts:
       - image: fcabrera01/open-ims-client-dev
         context: microservices/client
-        docker:
-          dockerfile: Dockerfile.dev
+        # docker:
+          # dockerfile: Dockerfile.dev
+        custom:
+          buildCommand: |
+            echo
+            echo "Building '${IMAGE}' with context '${BUILD_CONTEXT}"
+            echo "Image is expected to exist remotely?: ${PUSH_IMAGE}"
+            echo
+            docker buildx build \
+              --file "${BUILD_CONTEXT}/Dockerfile.dev" \
+              --tag "${IMAGE}" \
+              "${BUILD_CONTEXT}"
         sync:
           manual:
             - src: "src/**/*.js"
@@ -45,8 +55,18 @@ profiles:
               dest: .
       - image: fcabrera01/open-ims-server-dev
         context: microservices/server
-        docker:
-          dockerfile: Dockerfile.dev
+        # docker:
+          # dockerfile: Dockerfile.dev
+        custom:
+          buildCommand: |
+            echo
+            echo "Building '${IMAGE}' with context '${BUILD_CONTEXT}"
+            echo "Image is expected to exist remotely?: ${PUSH_IMAGE}"
+            echo
+            docker buildx build \
+              --file "${BUILD_CONTEXT}/Dockerfile.dev" \
+              --tag "${IMAGE}" \
+              "${BUILD_CONTEXT}"
         sync:
           manual:
             - src: "src/**/*.js"
@@ -59,8 +79,18 @@ profiles:
               dest: .
       - image: fcabrera01/ccg-migration-job
         context: common/utils/migration-job
-        docker:
-          dockerfile: Dockerfile
+        # docker:
+          # dockerfile: Dockerfile
+        custom:
+          buildCommand: |
+            echo
+            echo "Building '${IMAGE}' with context '${BUILD_CONTEXT}"
+            echo "Image is expected to exist remotely?: ${PUSH_IMAGE}"
+            echo
+            docker buildx build \
+              --file "${BUILD_CONTEXT}/Dockerfile" \
+              --tag "${IMAGE}" \
+              "${BUILD_CONTEXT}"
         # sync:
         #   manual:
         #     - src: "index.js"
@@ -94,22 +124,58 @@ profiles:
     artifacts:
       - image: fcabrera01/ccg-client
         context: microservices/client
-        docker:
-          dockerfile: Dockerfile.staging
-          cacheFrom:
-          - "fcabrera01/ccg-client:prod-latest"
+        # docker:
+        #   dockerfile: Dockerfile.staging
+        custom:
+          buildCommand: |
+            echo
+            echo "Building '${IMAGE}' with context '${BUILD_CONTEXT}"
+            echo "Image is expected to exist remotely: ${PUSH_IMAGE}"
+            echo
+            docker buildx build \
+              --file "${BUILD_CONTEXT}/Dockerfile.staging" \
+              --tag "${IMAGE}" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-client:latest-metadata" \
+              --pull \
+              "${BUILD_CONTEXT}"
+
       - image: fcabrera01/ccg-server
         context: microservices/server
-        docker:
-          dockerfile: Dockerfile
-          cacheFrom:
-          - "fcabrera01/ccg-server:prod-latest"
+        # docker:
+        #   dockerfile: Dockerfile
+        #   cacheFrom:
+        #   - "fcabrera01/ccg-server:prod-latest"
+        custom:
+          buildCommand: |
+            echo
+            echo "Building '${IMAGE}' with context '${BUILD_CONTEXT}"
+            echo "Image is expected to exist remotely: ${PUSH_IMAGE}"
+            echo
+            docker buildx build \
+              --file "${BUILD_CONTEXT}/Dockerfile" \
+              --tag "${IMAGE}" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-server:latest-metadata" \
+              --pull \
+              "${BUILD_CONTEXT}"
+
       - image: fcabrera01/ccg-migration-job
         context: common/utils/migration-job
-        docker:
-          dockerfile: Dockerfile
-          cacheFrom:
-          - "fcabrera01/ccg-migration-job:prod-latest"
+        # docker:
+        #   dockerfile: Dockerfile
+        #   cacheFrom:
+        #   - "fcabrera01/ccg-migration-job:prod-latest"
+        custom:
+          buildCommand: |
+            echo
+            echo "Building '${IMAGE}' with context '${BUILD_CONTEXT}"
+            echo "Image is expected to exist remotely: ${PUSH_IMAGE}"
+            echo
+            docker buildx build \
+              --file "${BUILD_CONTEXT}/Dockerfile" \
+              --tag "${IMAGE}" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-migration-job:latest-metadata" \
+              --pull \
+              "${BUILD_CONTEXT}"
   deploy:
     kubectl: {}
 
@@ -141,31 +207,59 @@ profiles:
         custom:
           buildCommand: |
             echo
-            echo "Building CCG client image '${IMAGE}' from context '${BUILD_CONTEXT}'"
+            echo "Building '${IMAGE}' with context '${BUILD_CONTEXT}"
             echo "Image is expected to exist remotely: ${PUSH_IMAGE}"
             echo
             docker buildx build \
               --file "${BUILD_CONTEXT}/Dockerfile" \
               --tag "${IMAGE}" \
-              --cache-to "type=registry,ref=fcabrera01/ccg-client:prod-latest,mode=max" \
-              --cache-from "type=registry,ref=fcabrera01/ccg-client:prod-builder" \
-              --cache-from "type=registry,ref=fcabrera01/ccg-client:prod-latest" \
+              --cache-to "type=registry,ref=fcabrera01/ccg-client:latest-metadata,mode=max" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-client:latest-metadata" \
               --push \
+              --pull \
               "${BUILD_CONTEXT}"
 
       - image: fcabrera01/ccg-server
         context: microservices/server
-        docker:
-          dockerfile: Dockerfile
-          cacheFrom:
-          - "fcabrera01/ccg-server:prod-latest"
+        # docker:
+        #   dockerfile: Dockerfile
+        #   cacheFrom:
+        #   - "fcabrera01/ccg-server:prod-latest"
           # - "type=registry,ref=fcabrera01/ccg-server:prod-builder"
+        custom:
+          buildCommand: |
+            echo
+            echo "Building '${IMAGE}' with context '${BUILD_CONTEXT}"
+            echo "Image is expected to exist remotely: ${PUSH_IMAGE}"
+            echo
+            docker buildx build \
+              --file "${BUILD_CONTEXT}/Dockerfile" \
+              --tag "${IMAGE}" \
+              --cache-to "type=registry,ref=fcabrera01/ccg-server:latest-metadata,mode=max" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-server:latest-metadata" \
+              --push \
+              --pull \
+              "${BUILD_CONTEXT}"
       - image: fcabrera01/ccg-migration-job
         context: common/utils/migration-job
-        docker:
-          dockerfile: Dockerfile
-          cacheFrom:
-          - "fcabrera01/ccg-migration-job:prod-latest"
+        # docker:
+        #   dockerfile: Dockerfile
+        #   cacheFrom:
+        #   - "fcabrera01/ccg-migration-job:prod-latest"
+        custom:
+          buildCommand: |
+            echo
+            echo "Building '${IMAGE}' with context '${BUILD_CONTEXT}"
+            echo "Image is expected to exist remotely: ${PUSH_IMAGE}"
+            echo
+            docker buildx build \
+              --file "${BUILD_CONTEXT}/Dockerfile" \
+              --tag "${IMAGE}" \
+              --cache-to "type=registry,ref=fcabrera01/ccg-migration-job:latest-metadata,mode=max" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-migration-job:latest-metadata" \
+              --push \
+              --pull \
+              "${BUILD_CONTEXT}"
   deploy:
     kubectl: {}
   # verify:

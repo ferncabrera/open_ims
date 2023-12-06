@@ -42,13 +42,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Checkout (pull) main branch onto Do K8s Cluster
-        uses: actions/checkout@v3
-
-      - name: Pull previously built images from DockerHub
-        run: |   
-          docker image pull fcabrera01/ccg-server:prod-latest
-          docker image pull fcabrera01/ccg-client:prod-latest
-          docker image pull fcabrera01/ccg-migration-job:prod-latest
+        uses: actions/checkout@v4
 
       #! Noting this here for later, we can handle errors during GA execution with the following 3 lines!
       # - name: My backup step
