@@ -85,11 +85,12 @@ jobs:
           #? not affect our actual image in DockerHub 
           # push: true
           #? We need to make sure the image is present
-          pull: true
+          # pull: true
           # target: builder
           tags: fcabrera01/ccg-server:latest-test-build
           #? And provide the meta-data required to build it using cache
           cache-from: |
+            type=registry,ref=fcabrera01/ccg-server:latest-builder-metadata
             type=registry,ref=fcabrera01/ccg-server:latest-metadata
           #? Don't push metadata changes, this workflow/job will run on changes made to branches that may be experimental and should
           #? not affect our actual metadata cache in Dockerhub
