@@ -190,7 +190,7 @@ export const Login = () => {
                         type='submit'
                         disabled={isSigningIn}
                     >
-                        {isSigningIn ? <Spinner animation='border'/> : "Sign In"}
+                        {isSigningIn ? <Spinner animation='border'/> : "Sign in"}
                     </Button>
                 </div>
             </Form>
