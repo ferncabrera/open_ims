@@ -44,7 +44,6 @@ export const ForgotPass = () => {
     if (!token) {
       navigate('/')
     } else {
-      console.log('please tell me we are at least here??')
       validateToken(token)
     }
   })
@@ -143,10 +142,7 @@ export const ForgotPass = () => {
       }).then(
         //check status code
         async (response: Response) => {
-          // console.log("----------------------------------------------------");
-          // console.log("Response: ", response);
-          if (response.status === 201) {
-            // console.log("Passwords are different, carry on");
+          if (response.status === 200) {
             // Send patch request here
             await sendPatchRequest({
               endpoint: "/api/server/update_password",
