@@ -58,6 +58,7 @@ jobs:
       - name: Build first stage of server image (builder)
         uses: docker/build-push-action@v5
         with:
+          load: true
           context: ./microservices/server
           file: ./microservices/server/Dockerfile
           pull: true
@@ -122,6 +123,7 @@ jobs:
       - name: Build first stage of client image (builder)
         uses: docker/build-push-action@v5
         with:
+          load: true
           context: ./microservices/client
           file: ./microservices/client/Dockerfile
           # pull: true
