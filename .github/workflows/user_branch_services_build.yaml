@@ -66,16 +66,16 @@ jobs:
           #? We need to make sure the image is present
           pull: true
           target: builder
-          tags: fcabrera01/ccg-server:latest-builder
+          tags: fcabrera01/ccg-server:latest-tester
           #? And provide the meta-data required to build it using cache
           cache-from: |
-            type=registry,ref=fcabrera01/ccg-server:latest-builder-metadata
+            type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata
           #? Pushing metadata chnages for the builder stage since we are not pushing this anywhere else during our CI/CD process
           #? NOT affecting the latest-metadata cache which is used in production builds though
-          cache-to: type=registry,ref=fcabrera01/ccg-server:latest-builder-metadata,mode=min
+          # cache-to: type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata,mode=max
       - name: Run tests on builder stage
         run: | 
-             docker container run --rm fcabrera01/ccg-server:latest-builder sh -c "npm run test"
+             docker container run --rm fcabrera01/ccg-server:latest-tester sh -c "npm run test"
       - name: Finish building the server image
         uses: docker/build-push-action@v5
         with:
@@ -87,14 +87,13 @@ jobs:
           #? We need to make sure the image is present
           # pull: true
           # target: builder
-          tags: fcabrera01/ccg-server:latest-test-build
+          tags: fcabrera01/ccg-server:latest-tester
           #? And provide the meta-data required to build it using cache
           cache-from: |
-            type=registry,ref=fcabrera01/ccg-server:latest-builder-metadata
-            type=registry,ref=fcabrera01/ccg-server:latest-metadata
+            type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata
           #? Don't push metadata changes, this workflow/job will run on changes made to branches that may be experimental and should
           #? not affect our actual metadata cache in Dockerhub
-          # cache-to: type=registry,ref=fcabrera01/ccg-server:latest-metadata,mode=max
+          cache-to: type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata,mode=max
       # - name: Build and push src
       #   uses: docker/build-push-action@v5
       #   with:
