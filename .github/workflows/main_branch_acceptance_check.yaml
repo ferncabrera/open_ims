@@ -42,18 +42,18 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Pull images from DockerHub
-        run: |   
-          docker image pull fcabrera01/ccg-server:prod-latest
-          docker image pull fcabrera01/ccg-client:prod-latest
-          docker image pull fcabrera01/ccg-migration-job:prod-latest
+      # - name: Pull images from DockerHub
+      #   run: |   
+      #     docker image pull fcabrera01/ccg-server:prod-latest
+      #     docker image pull fcabrera01/ccg-client:prod-latest
+          # docker image pull fcabrera01/ccg-migration-job:prod-latest
       # - name: Pull images used in --cache-from
       #   run: |
       #     echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
       #     echo "Sha: ${{ env.sha_short }}
 
       - name: Checkout (pull) main branch onto Digital Ocean K8s Cluster
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Build images and push them to DockerHub with the 'prod-latest' tag
         run: |
