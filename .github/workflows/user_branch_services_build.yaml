@@ -60,13 +60,19 @@ jobs:
         with:
           context: ./microservices/server
           file: ./microservices/server/Dockerfile
+          #? Don't push image changes, these are made to branches that may be experimental and should
+          #? not affect our actual image in DockerHub 
           # push: true
+          #? We need to make sure the image is present
           pull: true
           # target: builder
-          tags: fcabrera01/ccg-server:prod-latest
+          tags: fcabrera01/ccg-server:latest-metadata
+          #? And provide the meta-data required to build it using cache
           cache-from: |
-            type=registry,ref=fcabrera01/ccg-server:prod-latest
-          cache-to: type=registry,ref=fcabrera01/ccg-server:prod-latest,mode=max
+            type=registry,ref=fcabrera01/ccg-server:latest-metadata
+          #? Don't push metadata changes, this workflow/job will run on changes made to branches that may be experimental and should
+          #? not affect our actual metadata cache in Dockerhub
+          # cache-to: type=registry,ref=fcabrera01/ccg-server:prod-latest,mode=max
       # - name: Build and push src
       #   uses: docker/build-push-action@v5
       #   with:
@@ -111,8 +117,8 @@ jobs:
           file: ./microservices/client/Dockerfile
           # push: true
           pull: true
-          target: builder
-          tags: fcabrera01/ccg-client:prod-latest
+          # target: builder
+          tags: fcabrera01/ccg-client:latest-metadata
           cache-from: |
-            type=registry,ref=fcabrera01/ccg-client:prod-latest
-          cache-to: type=registry,ref=fcabrera01/ccg-client:prod-latest,mode=max
+            type=registry,ref=fcabrera01/ccg-client:latest-metadata
+          # cache-to: type=registry,ref=fcabrera01/ccg-client:latest-metadata,mode=max
