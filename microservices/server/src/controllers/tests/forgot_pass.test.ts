@@ -1,5 +1,7 @@
 import { describe, it, jest, expect, beforeEach, afterEach, afterAll } from "@jest/globals";
 import { SpiedFunction } from "jest-mock";
+process.env.SERVER_PORT = "4455";
+jest.useFakeTimers();
 import { server } from "../../../index";
 const supertest = require('supertest');
 const requestWithSupertest = supertest(server);
@@ -54,10 +56,12 @@ describe("forgot password test bundle", () => {
 
     afterAll(() => {
         jest.resetAllMocks(); // reset all mocks and modules that were mocked
+        server.close();
     });
 
     describe("forgot password function", () => {
         it('should generate forgot password email', async () => {
+            jest.useFakeTimers();
             const postData = { email: 'email@123.com'}
             mockDB.mockReturnValue({ rows: [{ email: 'email@123.com', permission: 'admin' }] });
             const res = await requestWithSupertest.post('/api/server/forgot_pass').send(postData)

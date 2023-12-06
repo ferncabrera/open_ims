@@ -1,7 +1,8 @@
 import {Request, Response} from "express";
 import { describe, it, jest, expect, beforeEach, afterEach, afterAll } from "@jest/globals";
-
 import * as db from "../../db";
+process.env.SERVER_PORT = "4455";
+jest.useFakeTimers();
 import { server } from "../../../index";
 const supertest = require('supertest');
 const requestWithSupertest = supertest(server);
@@ -30,6 +31,7 @@ describe("User related tests", () => {
 
     afterAll(() => {
         jest.resetAllMocks(); // reset all mocks and modules that were mocked
+        server.close();
     });
 
 

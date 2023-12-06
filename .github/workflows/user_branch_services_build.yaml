@@ -55,7 +55,28 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push builder
+      - name: Build first stage of server image (builder)
+        uses: docker/build-push-action@v5
+        with:
+          context: ./microservices/server
+          file: ./microservices/server/Dockerfile
+          #? Don't push image changes, these are made to branches that may be experimental and should
+          #? not affect our actual image in DockerHub 
+          # push: true
+          #? We need to make sure the image is present
+          pull: true
+          target: builder
+          tags: fcabrera01/ccg-server:latest-builder-testing
+          #? And provide the meta-data required to build it using cache
+          cache-from: |
+            type=registry,ref=fcabrera01/ccg-server:latest-metadata
+          #? Don't push metadata changes, this workflow/job will run on changes made to branches that may be experimental and should
+          #? not affect our actual metadata cache in Dockerhub
+          # cache-to: type=registry,ref=fcabrera01/ccg-server:latest-metadata,mode=max
+      - name: Run tests on builder stage
+        run: | 
+             docker container run -it --rm fcabrera01/ccg-server:latest-builder-testing sh -c "npm run test"
+      - name: Finish building the server image
         uses: docker/build-push-action@v5
         with:
           context: ./microservices/server
@@ -66,7 +87,7 @@ jobs:
           #? We need to make sure the image is present
           pull: true
           # target: builder
-          tags: fcabrera01/ccg-server:latest-metadata
+          tags: fcabrera01/ccg-server:latest-testing
           #? And provide the meta-data required to build it using cache
           cache-from: |
             type=registry,ref=fcabrera01/ccg-server:latest-metadata
