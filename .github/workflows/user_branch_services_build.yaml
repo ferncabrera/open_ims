@@ -1,0 +1,124 @@
+name: "User branch workflow: Image building and testing"
+run-name: ${{ github.actor }}'s push - Image building and testing
+
+# env:
+#   SERVER: production
+
+on:
+  push:
+    # Sequence of patterns matched against refs/heads
+    branches-ignore: 
+      - main
+
+# jobs:
+#   user_branch_build_test:
+#     runs-on: ubuntu-latest
+#     steps:
+#       # Login to Docker registry
+#       - name: Login to DockerHub
+#         uses: docker/login-action@v2
+#         with:
+#           username: ${{ secrets.DOCKER_USERNAME }}
+#           password: ${{ secrets.DOCKER_PASSWORD }}
+
+#       - name: Checkout codebase
+#         uses: actions/checkout@v4
+#         with: 
+#           ref: 'main'
+#       # - run: docker run --rm --name client-test-container fcabrera01/client-image-under-test npm run coverage
+#       # Pull the latest version of the images from Dockerhub before building to use cached layers...
+#       - name: Pull base images and validate new container builds
+#         run: | 
+#              docker image build --pull --push --target builder --cache-from "${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder" -t ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder -f ./microservices/server/Dockerfile ./microservices/server
+#              docker image build --pull --push --cache-from "${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest" --cache-from "${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder" -t ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest -f ./microservices/server/Dockerfile ./microservices/server
+
+  # docker image push ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder
+  # docker image push ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest
+  #  docker image pull ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder
+  #  docker image ls -a
+
+  #  docker image build --target builder --cache-from "${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder" -t ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder -f ./microservices/server/Dockerfile ./microservices/server
+  #  docker image pull ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest
+# docker image build --pull --push --target builder --cache-from "fcabrera01/ccg-server:prod-builder" -t fcabrera01/ccg-server:prod-builder -f ./microservices/server/Dockerfile ./microservices/server
+
+
+jobs:
+  build_server_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      - name: Build and push builder
+        uses: docker/build-push-action@v5
+        with:
+          context: ./microservices/server
+          file: ./microservices/server/Dockerfile
+          #? Don't push image changes, these are made to branches that may be experimental and should
+          #? not affect our actual image in DockerHub 
+          # push: true
+          #? We need to make sure the image is present
+          pull: true
+          # target: builder
+          tags: fcabrera01/ccg-server:latest-metadata
+          #? And provide the meta-data required to build it using cache
+          cache-from: |
+            type=registry,ref=fcabrera01/ccg-server:latest-metadata
+          #? Don't push metadata changes, this workflow/job will run on changes made to branches that may be experimental and should
+          #? not affect our actual metadata cache in Dockerhub
+          # cache-to: type=registry,ref=fcabrera01/ccg-server:latest-metadata,mode=max
+      # - name: Build and push src
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./microservices/server
+      #     file: ./microservices/server/Dockerfile
+      #     # push: true
+      #     pull: true
+      #     tags: fcabrera01/ccg-server:prod-latest
+      #     cache-from: |
+      #       type=registry,ref=fcabrera01/ccg-server:prod-builder
+      #       type=registry,ref=fcabrera01/ccg-server:prod-latest
+          # cache-to: type=registry,ref=fcabrera01/ccg-server:prod-latest,mode=max
+
+  build_client_image:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+      # - name: Build and push builder
+      #   uses: docker/build-push-action@v5
+      #   with:
+      #     context: ./microservices/client
+      #     file: ./microservices/client/Dockerfile
+      #     # push: true
+      #     pull: true
+      #     target: builder
+      #     tags: fcabrera01/ccg-client:prod-builder
+      #     cache-from: |
+      #       type=registry,ref=fcabrera01/ccg-client:prod-builder
+          # cache-to: type=registry,ref=fcabrera01/ccg-client:prod-builder,mode=max
+      - name: Build and verify
+        uses: docker/build-push-action@v5
+        with:
+          context: ./microservices/client
+          file: ./microservices/client/Dockerfile
+          # push: true
+          pull: true
+          # target: builder
+          tags: fcabrera01/ccg-client:latest-metadata
+          cache-from: |
+            type=registry,ref=fcabrera01/ccg-client:latest-metadata
+          # cache-to: type=registry,ref=fcabrera01/ccg-client:latest-metadata,mode=max

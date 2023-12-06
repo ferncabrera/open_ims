@@ -36,25 +36,28 @@ jobs:
           path: ~/.skaffold/
           key: fixed-${{ github.sha }}
 
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Build and Push to DockerHub
-        run: |   
-          docker image pull fcabrera01/ccg-server:prod-latest
-          docker image pull fcabrera01/ccg-client:prod-latest
-          docker image pull fcabrera01/ccg-migration-job:prod-latest
+      # - name: Pull images from DockerHub
+      #   run: |   
+      #     docker image pull fcabrera01/ccg-server:prod-latest
+      #     docker image pull fcabrera01/ccg-client:prod-latest
+          # docker image pull fcabrera01/ccg-migration-job:prod-latest
       # - name: Pull images used in --cache-from
       #   run: |
       #     echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
       #     echo "Sha: ${{ env.sha_short }}
 
-      - name: Checkout (pull) main branch onto Digital Ocean K8s Cluster
-        uses: actions/checkout@v3
+      - name: Checkout main branch on Digital Ocean K8s Cluster
+        uses: actions/checkout@v4
 
-      - name: Build images and push them to DockerHub with the 'prod-latest' tag
+      - name: Build images and push them (+metadata) to DockerHub with the correct tags
         run: |
-          skaffold build -p prod-do --tag='prod-latest'
+          skaffold build -p prod-do
