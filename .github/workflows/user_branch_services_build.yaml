@@ -60,15 +60,15 @@ jobs:
         with:
           context: ./microservices/server
           file: ./microservices/server/Dockerfile
-          # pull: true
+          pull: true
           target: builder
           tags: fcabrera01/ccg-server:latest-tester
-          # cache-from: |
-          #   type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata
+          cache-from: |
+            type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata
           # cache-to: type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata,mode=max
       - name: Run tests on builder stage
         run: | 
-             docker container run --rm fcabrera01/ccg-server:latest-tester sh -c "npm run ci-test"
+             docker container run --rm --pull=never fcabrera01/ccg-server:latest-tester sh -c "npm run ci-test"
 
       - name: Finish building the server image
         uses: docker/build-push-action@v5
@@ -127,12 +127,12 @@ jobs:
           # pull: true
           target: builder
           tags: fcabrera01/ccg-client:latest-tester
-          # cache-from: |
-          #   type=registry,ref=fcabrera01/ccg-client:latest-tester-metadata
+          cache-from: |
+            type=registry,ref=fcabrera01/ccg-client:latest-tester-metadata
           # cache-to: type=registry,ref=fcabrera01/ccg-client:latest-tester-metadata,mode=max
       - name: Run tests on builder stage
         run: | 
-             docker container run --rm fcabrera01/ccg-client:latest-tester sh -c "npm run ci-test"
+             docker container run --pull=never --rm fcabrera01/ccg-client:latest-tester sh -c "npm run ci-test"
              
       - name: Finish building the client image
         uses: docker/build-push-action@v5
