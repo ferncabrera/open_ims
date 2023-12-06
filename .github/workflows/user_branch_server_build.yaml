@@ -62,8 +62,8 @@ jobs:
           file: ./microservices/server/Dockerfile
           push: true
           pull: true
+          target: builder
           tags: fcabrera01/ccg-server:prod-latest
           cache-from: |
             type=registry,ref=fcabrera01/ccg-server:prod-builder
-            type=registry,ref=fcabrera01/ccg-server:prod-latest
-          cache-to: type=registry,ref=fcabrera01/ccg-server:prod-latest,mode=max
+          cache-to: type=registry,ref=fcabrera01/ccg-server:prod-builder,mode=max
