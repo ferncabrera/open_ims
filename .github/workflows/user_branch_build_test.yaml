@@ -31,10 +31,10 @@ jobs:
              docker image pull fcabrera01/ccg-server:prod-latest
              docker image pull fcabrera01/ccg-client-builder:prod-latest
              docker image pull fcabrera01/ccg-client:prod-latest
-             docker image build --cache-from ferncabrera01/ccg-server:prod-latest --cache-from ferncabrera01/ccg-server-builder:prod-latest -t fcabrera01/ccg-server:prod-latest -f ./microservices/server/Dockerfile ./microservices/server
-             docker image build --cache-from ferncabrera01/ccg-client:prod-latest --cache-from ferncabrera01/ccg-client-builder:prod-latest -t fcabrera01/ccg-client:prod-latest -f ./microservices/client/Dockerfile ./microservices/client
-             docker image build --target builder --cache-from ferncabrera01/ccg-server-builder:prod-latest -t fcabrera01/ccg-server-builder:prod-latest -f ./microservices/server/Dockerfile ./microservices/server
-             docker image build --target builder --cache-from ferncabrera01/ccg-client-builder:prod-latest -t fcabrera01/ccg-client-builder:prod-latest -f ./microservices/client/Dockerfile ./microservices/client
+             docker image build --cache-from fcabrera01/ccg-server:prod-latest --cache-from fcabrera01/ccg-server-builder:prod-latest -t fcabrera01/ccg-server:prod-latest -f ./microservices/server/Dockerfile ./microservices/server
+             docker image build --cache-from fcabrera01/ccg-client:prod-latest --cache-from fcabrera01/ccg-client-builder:prod-latest -t fcabrera01/ccg-client:prod-latest -f ./microservices/client/Dockerfile ./microservices/client
+             docker image build --target builder --cache-from fcabrera01/ccg-server-builder:prod-latest -t fcabrera01/ccg-server-builder:prod-latest -f ./microservices/server/Dockerfile ./microservices/server
+             docker image build --target builder --cache-from fcabrera01/ccg-client-builder:prod-latest -t fcabrera01/ccg-client-builder:prod-latest -f ./microservices/client/Dockerfile ./microservices/client
              docker image push fcabrera01/ccg-server-builder:prod-latest
              docker image push fcabrera01/ccg-client-builder:prod-latest
              docker image push fcabrera01/ccg-server:prod-latest
