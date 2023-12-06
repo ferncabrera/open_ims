@@ -140,7 +140,7 @@ profiles:
         custom:
           buildCommand: |
             echo
-            echo "Building CCG client image '${IMAGE}' for platforms '${PLATFORMS}' from context '${BUILD_CONTEXT}'"
+            echo "Building CCG client image '${IMAGE}' from context '${BUILD_CONTEXT}'"
             echo "Image is expected to exist remotely: ${PUSH_IMAGE}"
             echo
             docker buildx build \
@@ -149,7 +149,6 @@ profiles:
               --cache-to "type=inline" \
               --cache-from "type=registry,ref=fcabrera01/ccg-client:prod-builder" \
               --cache-from "type=registry,ref=fcabrera01/ccg-client:prod-latest" \
-              --platform "${PLATFORMS}" \
               --push \
               "${BUILD_CONTEXT}"
 
