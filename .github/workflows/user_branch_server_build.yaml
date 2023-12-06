@@ -29,8 +29,11 @@ jobs:
         run: | 
              docker image pull ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder
              docker image ls -a
-             docker image build --target builder --cache-from ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder -t ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder -f ./microservices/server/Dockerfile ./microservices/server
+             docker image build --target builder --cache-from "${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder" -t ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder -f ./microservices/server/Dockerfile ./microservices/server
              docker image pull ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest
-             docker image build --cache-from ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest --cache-from ${{secrets.DOCKER_USERNAME}}/ccg-server-builder:prod-latest -t ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest -f ./microservices/server/Dockerfile ./microservices/server
+             docker image build --cache-from "${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest" --cache-from "${{secrets.DOCKER_USERNAME}}/ccg-server-builder:prod-latest" -t ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest -f ./microservices/server/Dockerfile ./microservices/server
              docker image push ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-builder
-             docker image push ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-latest
+             docker image push ${{secrets.DOCKER_USERNAME}}/ccg-server:prod-lates
+
+
+# docker image build --pull --push --target builder --cache-from "fcabrera01/ccg-server:prod-builder" -t fcabrera01/ccg-server:prod-builder -f ./microservices/server/Dockerfile ./microservices/server
