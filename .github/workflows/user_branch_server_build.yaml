@@ -63,7 +63,7 @@ jobs:
           push: true
           pull: true
           target: builder
-          tags: fcabrera01/ccg-server:prod-latest
+          tags: fcabrera01/ccg-server:prod-builder
           cache-from: |
             type=registry,ref=fcabrera01/ccg-server:prod-builder
           cache-to: type=registry,ref=fcabrera01/ccg-server:prod-builder,mode=max
