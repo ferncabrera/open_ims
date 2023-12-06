@@ -126,7 +126,7 @@ profiles:
   build:
     local:
       push: true
-      useBuildkit: true
+      # useBuildkit: true
     tagPolicy:
       gitCommit: 
         prefix: "prod-"
