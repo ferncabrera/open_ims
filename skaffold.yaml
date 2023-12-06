@@ -146,10 +146,8 @@ profiles:
             docker buildx build \
               --file "${BUILD_CONTEXT}/Dockerfile" \
               --tag "${IMAGE}" \
-              --cache-to "type=inline" \
-              --cache-from "type=registry,ref=fcabrera01/ccg-client:prod-builder" \
+              --cache-to "type=registry,ref=fcabrera01/ccg-client:prod-latest,mode=max" \
               --cache-from "type=registry,ref=fcabrera01/ccg-client:prod-latest" \
-              --push \
               "${BUILD_CONTEXT}"
 
       - image: fcabrera01/ccg-server
