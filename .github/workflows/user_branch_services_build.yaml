@@ -60,7 +60,7 @@ jobs:
         with:
           context: ./microservices/server
           file: ./microservices/server/Dockerfile
-          pull: true
+          # pull: true
           target: builder
           tags: fcabrera01/ccg-server:latest-tester
           cache-from: |
@@ -124,7 +124,7 @@ jobs:
         with:
           context: ./microservices/client
           file: ./microservices/client/Dockerfile
-          pull: true
+          # pull: true
           target: builder
           tags: fcabrera01/ccg-client:latest-tester
           cache-from: |
