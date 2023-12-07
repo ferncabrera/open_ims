@@ -58,7 +58,7 @@ jobs:
 
       - name: test
         run: |
-          ${{github.workspace}} ls
+          ls ${{github.workspace}}
           cd ${{github.workspace}}/ccg-prod-tags
           ls
         # with:
