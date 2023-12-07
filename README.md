@@ -14,6 +14,9 @@ Our development stack consists of:
   <li><a href="https://docs.docker.com/desktop/">Docker Desktop</a> with (ideally):</li>
   <ul>
     <li>Docker Engine v24.0.0 <em>or greater</em></li>
+    <ul>
+        <li>Docker buildx - this should come with the version of Docker Engine recommended above.</li>
+    </ul>
     <li>Kubernetes v1.27.0 <em>or greater</em></li>
   </ul>
   <li><a href="https://skaffold.dev/">Skaffold</a> v2.6.0 </li>
