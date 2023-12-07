@@ -28,4 +28,11 @@ export const handlers = [
             return (res(ctx.status(401), ctx.json({ message: 'Un-Authorized User' })))
         }
     }),
+    rest.post(`${baseURL}/api/server/forgot_pass`, async (req, res, ctx) => {
+        const body = await req.json()
+        console.log("body sent (empty email for now) --> ", JSON.stringify(body));
+            return (res((ctx.status(200)), ctx.json({ message: 'Success' })));
+            // return (res(ctx.status(401), ctx.json({ message: 'Un-Authorized User' })))
+        
+    }),
 ]

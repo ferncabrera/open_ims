@@ -176,6 +176,11 @@ profiles:
               --cache-from "type=registry,ref=fcabrera01/ccg-migration-job:latest-metadata" \
               --pull \
               "${BUILD_CONTEXT}"
+  # test:
+  #   - image: fcabrera01/ccg-client
+  #     structureTests:
+  #     - './structure-test/*'
+
   deploy:
     kubectl: {}
 

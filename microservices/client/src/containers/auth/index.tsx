@@ -36,7 +36,6 @@ export const Authentication: React.FC<IAuthenticationProps> = (props) => {
     })
   }, []);
 
-
   return (
     <>
       {isAuthenticated &&

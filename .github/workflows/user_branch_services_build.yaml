@@ -43,7 +43,7 @@ on:
 
 
 jobs:
-  build_server_image:
+  build_and_test_server_image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -55,24 +55,34 @@ jobs:
         with:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Build and push builder
+      - name: Build first stage of server image (builder)
+        uses: docker/build-push-action@v5
+        with:
+          load: true
+          context: ./microservices/server
+          file: ./microservices/server/Dockerfile
+          pull: true
+          target: builder
+          tags: fcabrera01/ccg-server:latest-tester
+          cache-from: |
+            type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata
+          # cache-to: type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata,mode=max
+      - name: Run tests on builder stage
+        run: | 
+             docker container run --rm --pull=never fcabrera01/ccg-server:latest-tester sh -c "npm run ci-test"
+
+      - name: Finish building the server image
         uses: docker/build-push-action@v5
         with:
           context: ./microservices/server
           file: ./microservices/server/Dockerfile
-          #? Don't push image changes, these are made to branches that may be experimental and should
-          #? not affect our actual image in DockerHub 
-          # push: true
-          #? We need to make sure the image is present
-          pull: true
+          push: true
+          # pull: true
           # target: builder
-          tags: fcabrera01/ccg-server:latest-metadata
-          #? And provide the meta-data required to build it using cache
+          tags: fcabrera01/ccg-server:latest-tester
           cache-from: |
-            type=registry,ref=fcabrera01/ccg-server:latest-metadata
-          #? Don't push metadata changes, this workflow/job will run on changes made to branches that may be experimental and should
-          #? not affect our actual metadata cache in Dockerhub
-          # cache-to: type=registry,ref=fcabrera01/ccg-server:latest-metadata,mode=max
+            type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata
+          cache-to: type=registry,ref=fcabrera01/ccg-server:latest-tester-metadata,mode=max
       # - name: Build and push src
       #   uses: docker/build-push-action@v5
       #   with:
@@ -86,7 +96,7 @@ jobs:
       #       type=registry,ref=fcabrera01/ccg-server:prod-latest
           # cache-to: type=registry,ref=fcabrera01/ccg-server:prod-latest,mode=max
 
-  build_client_image:
+  build_and_test_client_image:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -110,15 +120,31 @@ jobs:
       #     cache-from: |
       #       type=registry,ref=fcabrera01/ccg-client:prod-builder
           # cache-to: type=registry,ref=fcabrera01/ccg-client:prod-builder,mode=max
-      - name: Build and verify
+      - name: Build first stage of client image (builder)
+        uses: docker/build-push-action@v5
+        with:
+          load: true
+          context: ./microservices/client
+          file: ./microservices/client/Dockerfile
+          # pull: true
+          target: builder
+          tags: fcabrera01/ccg-client:latest-tester
+          cache-from: |
+            type=registry,ref=fcabrera01/ccg-client:latest-tester-metadata
+          # cache-to: type=registry,ref=fcabrera01/ccg-client:latest-tester-metadata,mode=max
+      - name: Run tests on builder stage
+        run: | 
+             docker container run --pull=never --rm fcabrera01/ccg-client:latest-tester sh -c "npm run ci-test"
+             
+      - name: Finish building the client image
         uses: docker/build-push-action@v5
         with:
           context: ./microservices/client
           file: ./microservices/client/Dockerfile
-          # push: true
-          pull: true
+          push: true
+          # pull: true
           # target: builder
-          tags: fcabrera01/ccg-client:latest-metadata
+          tags: fcabrera01/ccg-client:latest-tester
           cache-from: |
-            type=registry,ref=fcabrera01/ccg-client:latest-metadata
-          # cache-to: type=registry,ref=fcabrera01/ccg-client:latest-metadata,mode=max
+            type=registry,ref=fcabrera01/ccg-client:latest-tester-metadata
+          cache-to: type=registry,ref=fcabrera01/ccg-client:latest-tester-metadata,mode=max
