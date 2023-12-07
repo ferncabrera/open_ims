@@ -35,8 +35,8 @@ jobs:
           path: ~/.skaffold/
           key: fixed-${{ github.sha }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
+      # - name: Set up Docker Buildx
+      #   uses: docker/setup-buildx-action@v3
 
       - name: Login to DockerHub
         uses: docker/login-action@v2
@@ -44,17 +44,27 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Checkout (pull) main branch onto Do K8s Cluster
+      - name: Checkout on Digital Ocean K8s Cluster
         uses: actions/checkout@v4
+        with:
+          path: main
+
+      - name: Checkout repository with production tags
+        uses: actions/checkout@v4
+        with:
+          repository: ferncabrera/ccg-prod-tags
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+          ref: 'master'
+          path: ccg-prod-tags
+
+      # - name: Build and Push to DockerHub
+      #   run: |
+      #     skaffold build -p prod-do --file-output='production-tags.json'
 
       #! Noting this here for later, we can handle errors during GA execution with the following 3 lines!
       # - name: My backup step
       #   if: ${{ failure() }}
       #   uses: actions/heroku@1.0.0
-
-      - name: Build and Push to DockerHub
-        run: |
-          skaffold build -p prod-do --file-output='production-tags.json'
 
       - name: Install doctl
         uses: digitalocean/action-doctl@v2
@@ -65,7 +75,9 @@ jobs:
         run: doctl kubernetes cluster kubeconfig save --expiry-seconds 600 k8s-ccg-ims
 
       - name: Deploy to DigitalOcean Kubernetes
-        run: skaffold deploy -p prod-do --build-artifacts='production-tags.json'
+        run: |
+          cd ${{github.workspace}}/main
+          skaffold deploy -p prod-do --build-artifacts='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
 
       #? We should look into verifying the deployments after, this way we can also roll-back on deployments perhaps...
       # - name: Verify deployment

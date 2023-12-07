@@ -71,7 +71,7 @@ jobs:
           # SSH_DEPLOY_KEY: ${{ secrets.SSH_DEPLOY_KEY }}
           API_TOKEN_GITHUB: ${{ secrets.GH_PAT }}
         with:
-          source-directory: '${{github.workspace}}/ccg-prod-tags/'
+          source-directory: ccg-prod-tags/
           destination-github-username: 'ferncabrera'
           destination-repository-name: 'ccg-prod-tags'
           target-branch: master
