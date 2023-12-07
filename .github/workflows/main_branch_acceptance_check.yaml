@@ -1,5 +1,5 @@
-name: Main branch container structure test
-run-name: ${{ github.actor }}'s main branch PR - Container structure test
+name: Main branch image building and tagging
+run-name: ${{ github.actor }}'s main branch PR - Push images and update prod deployment tags 
 
 # env:
 #   SERVER: production
@@ -11,7 +11,7 @@ on:
       - main
 
 jobs:
-  main_branch_container_structure_test:
+  build_images_and_update_tags_for_main:
     runs-on: ubuntu-latest
     steps:
 
@@ -59,4 +59,4 @@ jobs:
 
       - name: Build images and push them (+metadata) to DockerHub with the correct tags
         run: |
-          skaffold build --cache-artifacts=false -p prod-do --file-output='../ccg-prod-tags/production-deployment-tags.json'
+          skaffold build --cache-artifacts=false -p prod-do --file-output=${{$GITHUB_WORKSPACE}}/ccg-prod-tags/production-deployment-tags.json'
