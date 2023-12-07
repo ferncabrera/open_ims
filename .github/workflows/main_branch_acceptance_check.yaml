@@ -54,12 +54,12 @@ jobs:
           repository: ferncabrera/ccg-prod-tags
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
           ref: master
-          path: ccg-prod-tags
+          path: ../ccg-prod-tags
 
       - name: test
         run: |
           ls ${{github.workspace}}
-          cd ${{github.workspace}}/ccg-prod-tags
+          cd ${{github.workspace}}../
           ls
         # with:
         #   path: ${{ vars.PROD_BRANCH }}
