@@ -70,4 +70,4 @@ jobs:
 
       - name: Build images and push them (+metadata) to DockerHub with the correct tags
         run: |
-          skaffold build --cache-artifacts=false -p prod-do --filename='${{github.workspace}}/main/production-deployment-tags.json' --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
+          skaffold build --cache-artifacts=false -p prod-do --filename='${{github.workspace}}/main/skaffold.yaml' --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
