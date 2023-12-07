@@ -61,7 +61,9 @@ jobs:
       - name: tst
         run: |
           ls ${{github.workspace}}
+          echo 'DONE'
           ls ${{github.workspace}}/main
+          echo 'DONE'
           ls ${{github.workspace}}/ccg-prod-tags
         # with:
         #   path: ${{ vars.PROD_BRANCH }}
