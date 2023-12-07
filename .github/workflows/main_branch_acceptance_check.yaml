@@ -1,5 +1,5 @@
-name: Main branch acceptance check
-run-name: ${{ github.actor }}'s main branch PR - Skaffold Build Test
+name: Main branch container structure test
+run-name: ${{ github.actor }}'s main branch PR - Container structure test
 
 # env:
 #   SERVER: production
@@ -11,7 +11,7 @@ on:
       - main
 
 jobs:
-  main_branch_acceptance_check:
+  main_branch_container_structure_test:
     runs-on: ubuntu-latest
     steps:
 
@@ -45,19 +45,18 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      # - name: Pull images from DockerHub
-      #   run: |   
-      #     docker image pull fcabrera01/ccg-server:prod-latest
-      #     docker image pull fcabrera01/ccg-client:prod-latest
-          # docker image pull fcabrera01/ccg-migration-job:prod-latest
-      # - name: Pull images used in --cache-from
-      #   run: |
-      #     echo "sha_short=$(git rev-parse --short "$GITHUB_SHA")" >> "$GITHUB_ENV"
-      #     echo "Sha: ${{ env.sha_short }}
-
-      - name: Checkout main branch on Digital Ocean K8s Cluster
+      - name: Checkout prod branch on Digital Ocean K8s Cluster
         uses: actions/checkout@v4
+
+      - name: Checkout repository with production tags
+        uses: actions/checkout@v4
+        with:
+          repository: ferncabrera/ccg-prod-tags
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+          path: master
+        # with:
+        #   path: ${{ vars.PROD_BRANCH }}
 
       - name: Build images and push them (+metadata) to DockerHub with the correct tags
         run: |
-          skaffold build -p prod-do
+          skaffold build --cache-artifacts=false -p prod-do --file-output='../ccg-prod-tags/production-deployment-tags.json'
