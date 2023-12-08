@@ -25,5 +25,5 @@ spec:
                 name: postgres-credentials
                 key: POSTGRES_USER
       restartPolicy: Never
-
+  activeDeadlineSeconds: 100
   backoffLimit: 5
