@@ -59,6 +59,11 @@ jobs:
           path: ccg-prod-tags
         # with:
         #   path: ${{ vars.PROD_BRANCH }}
+      
+      - name: Test what env vars contains
+        run: |
+          echo github ref --> ${{github.ref}}
+          echo github headref -> ${{github.head_ref}}
 
       - name: Build prod images and push them (+metadata) to DockerHub with the updated tags
         run: |

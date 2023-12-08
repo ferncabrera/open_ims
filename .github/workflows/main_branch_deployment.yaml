@@ -56,6 +56,7 @@ jobs:
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
           ref: 'master'
           path: ccg-prod-tags
+          # need some flags to cherry pick commit with the correct SHA
 
       # - name: Build and Push to DockerHub
       #   run: |
@@ -76,8 +77,12 @@ jobs:
 
       - name: Deploy to DigitalOcean Kubernetes
         run: |
-          cd ${{github.workspace}}/main
-          skaffold deploy -p prod-do --build-artifacts='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
+          echo github.ref ${{github.ref}}
+      # echo ${{github.head_ref}}
+      # echo ${{github.head_ref}}
+      # echo ${{github.head_ref}}
+      #     cd ${{github.workspace}}/main
+      #     skaffold deploy -p prod-do --build-artifacts='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
 
       #? We should look into verifying the deployments after, this way we can also roll-back on deployments perhaps...
       # - name: Verify deployment
