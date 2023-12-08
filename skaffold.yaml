@@ -135,7 +135,8 @@ profiles:
             docker buildx build \
               --file "${BUILD_CONTEXT}/Dockerfile.staging" \
               --tag "${IMAGE}" \
-              --cache-from "type=registry,ref=fcabrera01/ccg-client:latest-metadata" \
+              --cache-from "type=registry,ref=${IMAGE}" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-client:latest-cache" \
               --pull \
               "${BUILD_CONTEXT}"
 
@@ -154,7 +155,8 @@ profiles:
             docker buildx build \
               --file "${BUILD_CONTEXT}/Dockerfile" \
               --tag "${IMAGE}" \
-              --cache-from "type=registry,ref=fcabrera01/ccg-server:latest-metadata" \
+              --cache-from "type=registry,ref=${IMAGE}" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-server:latest-cache" \
               --pull \
               "${BUILD_CONTEXT}"
 
@@ -173,7 +175,8 @@ profiles:
             docker buildx build \
               --file "${BUILD_CONTEXT}/Dockerfile" \
               --tag "${IMAGE}" \
-              --cache-from "type=registry,ref=fcabrera01/ccg-migration-job:latest-metadata" \
+              --cache-from "type=registry,ref=${IMAGE}" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-migration-job:latest-cache" \
               --pull \
               "${BUILD_CONTEXT}"
   # test:
@@ -218,8 +221,10 @@ profiles:
             docker buildx build \
               --file "${BUILD_CONTEXT}/Dockerfile" \
               --tag "${IMAGE}" \
-              --cache-to "type=registry,ref=fcabrera01/ccg-client:latest-metadata,mode=max" \
-              --cache-from "type=registry,ref=fcabrera01/ccg-client:latest-metadata" \
+              --cache-to "type=registry,ref=${IMAGE},mode=max" \
+              --cache-to "type=registry,ref=fcabrera01/ccg-client:latest-cache,mode=max" \
+              --cache-from "type=registry,ref=${IMAGE}" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-client:latest-cache" \
               --push \
               --pull \
               "${BUILD_CONTEXT}"
@@ -240,8 +245,10 @@ profiles:
             docker buildx build \
               --file "${BUILD_CONTEXT}/Dockerfile" \
               --tag "${IMAGE}" \
-              --cache-to "type=registry,ref=fcabrera01/ccg-server:latest-metadata,mode=max" \
-              --cache-from "type=registry,ref=fcabrera01/ccg-server:latest-metadata" \
+              --cache-to "type=registry,ref=${IMAGE},mode=max" \
+              --cache-to "type=registry,ref=fcabrera01/ccg-server:latest-cache,mode=max" \
+              --cache-from "type=registry,ref=${IMAGE}" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-server:latest-cache" \
               --push \
               --pull \
               "${BUILD_CONTEXT}"
@@ -260,8 +267,10 @@ profiles:
             docker buildx build \
               --file "${BUILD_CONTEXT}/Dockerfile" \
               --tag "${IMAGE}" \
-              --cache-to "type=registry,ref=fcabrera01/ccg-migration-job:latest-metadata,mode=max" \
-              --cache-from "type=registry,ref=fcabrera01/ccg-migration-job:latest-metadata" \
+              --cache-to "type=registry,ref=${IMAGE},mode=max" \
+              --cache-to "type=registry,ref=fcabrera01/ccg-migration-job:latest-cache,mode=max" \
+              --cache-from "type=registry,ref=${IMAGE}" \
+              --cache-from "type=registry,ref=fcabrera01/ccg-migration-job:latest-cache" \
               --push \
               --pull \
               "${BUILD_CONTEXT}"
