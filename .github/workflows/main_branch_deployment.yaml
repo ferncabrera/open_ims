@@ -59,13 +59,13 @@ jobs:
 
       - name: Checkout repository with production tags
         uses: actions/checkout@v4
-      - run: |
-          git checkout ':/**${{github.event.number}}**'   
         with:
           repository: ferncabrera/ccg-prod-tags
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
           ref: 'master'
           path: ccg-prod-tags
+      - run: |
+          git checkout ':/**${{github.event.number}}**'   
 
       # - name: Build and Push to DockerHub
       #   run: |
