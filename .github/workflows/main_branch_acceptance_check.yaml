@@ -83,4 +83,4 @@ jobs:
           destination-github-username: 'ferncabrera'
           destination-repository-name: 'ccg-prod-tags'
           target-branch: master
-          commit-message: "PR **${{github.event.number}}**;${{github.repository}}@${{github.sha}}"
+          commit-message: "PR **${{github.event.number}}**; ${{github.repository}}@${{github.sha}}"
