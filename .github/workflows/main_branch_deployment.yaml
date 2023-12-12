@@ -4,13 +4,21 @@ run-name: ${{ github.actor }}'s merge - Deployment to Digital Ocean
 # env:
 #   SERVER: production
 
+# on:
+#   push:
+#     branches:
+#       - main
+
 on:
-  push:
+  pull_request:
+    types:
+      - closed
     branches:
       - main
-
 jobs:
-  main_branch_deployment:
+  if_merged:
+    if: github.event.pull_request.merged == true
+    # main_branch_deployment:
     runs-on: ubuntu-latest
     steps:
 

@@ -7,6 +7,7 @@ run-name: ${{ github.actor }}'s main branch PR - Push images and update prod dep
 on:
   pull_request:
     # Sequence of patterns matched against refs/heads
+    types: [opened, reopened, synchronize]
     branches: 
       - main
 
