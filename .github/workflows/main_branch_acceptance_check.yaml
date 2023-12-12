@@ -66,6 +66,7 @@ jobs:
           echo "github ref --> ${{github.sha}}"
           echo "github ref --> ${{github.ref}}"
           echo "github headref -> ${{github.head_ref}}"
+          echo "github headref -> ${{github.event.number}}"
 
       - name: Build prod images and push them (+metadata) to DockerHub with the updated tags
         run: |

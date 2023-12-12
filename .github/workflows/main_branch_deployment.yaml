@@ -87,6 +87,7 @@ jobs:
         run: |
           echo github.ref ${{github.ref}}
           echo github.ref ${{github.sha}}
+          echo github.ref ${{github.event.number}}
       # echo ${{github.head_ref}}
       # echo ${{github.head_ref}}
       # echo ${{github.head_ref}}
