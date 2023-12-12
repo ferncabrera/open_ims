@@ -65,7 +65,7 @@ jobs:
           ref: 'master'
           path: ccg-prod-tags
       - run: |
-          git checkout ':/**${{github.event.number}}**'   
+          git checkout ":/<${{github.event.number}}>"   
 
       # - name: Build and Push to DockerHub
       #   run: |

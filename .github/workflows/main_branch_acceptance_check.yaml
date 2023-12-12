@@ -60,13 +60,6 @@ jobs:
           path: ccg-prod-tags
         # with:
         #   path: ${{ vars.PROD_BRANCH }}
-      
-      - name: Test what env vars contains
-        run: |
-          echo "github ref --> ${{github.sha}}"
-          echo "github ref --> ${{github.ref}}"
-          echo "github headref -> ${{github.head_ref}}"
-          echo "github headref -> ${{github.event.number}}"
 
       - name: Build prod images and push them (+metadata) to DockerHub with the updated tags
         run: |
@@ -83,4 +76,4 @@ jobs:
           destination-github-username: 'ferncabrera'
           destination-repository-name: 'ccg-prod-tags'
           target-branch: master
-          commit-message: "PR **${{github.event.number}}**; ${{github.repository}}@${{github.sha}}"
+          commit-message: "PR <${{github.event.number}}>; ${{github.repository}}@${{github.sha}}"
