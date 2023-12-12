@@ -16,7 +16,7 @@ on:
     branches:
       - main
 jobs:
-  if_merged:
+  main_branch_deployment:
     if: github.event.pull_request.merged == true
     # main_branch_deployment:
     runs-on: ubuntu-latest
@@ -59,12 +59,13 @@ jobs:
 
       - name: Checkout repository with production tags
         uses: actions/checkout@v4
+      - run: |
+          git checkout ':/**${{github.event.number}}**'   
         with:
           repository: ferncabrera/ccg-prod-tags
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
           ref: 'master'
           path: ccg-prod-tags
-          # need some flags to cherry pick commit with the correct SHA
 
       # - name: Build and Push to DockerHub
       #   run: |

@@ -71,7 +71,7 @@ jobs:
       - name: Build prod images and push them (+metadata) to DockerHub with the updated tags
         run: |
           cd ${{github.workspace}}/main
-          skaffold build --cache-artifacts=false -p prod-do --tag='${{github.sha}}' --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
+          skaffold build --cache-artifacts=false -p prod-do --tag='${{github.event.number}}' --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
 
       - name: Push new tags (and migrations in the future) to repository for deployment
         uses: cpina/github-action-push-to-another-repository@main
@@ -83,3 +83,4 @@ jobs:
           destination-github-username: 'ferncabrera'
           destination-repository-name: 'ccg-prod-tags'
           target-branch: master
+          commit-message: "PR **${{github.event.number}}**; ${{repository}}@${{github.sha}}"
