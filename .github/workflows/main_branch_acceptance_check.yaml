@@ -54,7 +54,7 @@ jobs:
       # - name: Checkout repository with production tags
       - uses: actions/checkout@v4
       - run: |
-          git checkout ":/<${{github.event.number}}>"
+          git checkout ":/117"
         # with:
         #   repository: ferncabrera/ccg-prod-tags
         #   token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
