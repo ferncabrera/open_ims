@@ -86,6 +86,7 @@ jobs:
       - name: Deploy to DigitalOcean Kubernetes
         run: |
           echo github.ref ${{github.ref}}
+          echo github.ref ${{github.sha}}
       # echo ${{github.head_ref}}
       # echo ${{github.head_ref}}
       # echo ${{github.head_ref}}
