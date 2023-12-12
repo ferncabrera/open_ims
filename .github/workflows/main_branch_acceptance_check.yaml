@@ -55,11 +55,11 @@ jobs:
       - uses: actions/checkout@v4
       - run: |
           git checkout ":/<${{github.event.number}}>"
-        with:
-          repository: ferncabrera/ccg-prod-tags
-          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
-          ref: 'master'
-          path: ccg-prod-tags
+        # with:
+        #   repository: ferncabrera/ccg-prod-tags
+        #   token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+        #   ref: 'master'
+        #   path: ccg-prod-tags
         # with:
         #   path: ${{ vars.PROD_BRANCH }}
 
