@@ -51,8 +51,10 @@ jobs:
         with:
           path: main
 
-      - name: Checkout repository with production tags
-        uses: actions/checkout@v4
+      # - name: Checkout repository with production tags
+      - uses: actions/checkout@v4
+      - run: |
+          git checkout ":/<${{github.event.number}}>"
         with:
           repository: ferncabrera/ccg-prod-tags
           token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
@@ -63,6 +65,7 @@ jobs:
 
       - name: Build prod images and push them (+metadata) to DockerHub with the updated tags
         run: |
+          echo " head sha -> ${{ github.event.pull_request.head.sha }}"
           cd ${{github.workspace}}/main
           skaffold build --cache-artifacts=false -p prod-do --tag='${{github.event.number}}' --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
 

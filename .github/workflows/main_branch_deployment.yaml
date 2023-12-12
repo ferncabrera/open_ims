@@ -67,6 +67,9 @@ jobs:
       - run: |
           git checkout ":/<${{github.event.number}}>"   
 
+      - name: Test
+        run: |
+          echo "head sha -> ${{ github.event.pull_request.head.sha }}"
       # - name: Build and Push to DockerHub
       #   run: |
       #     skaffold build -p prod-do --file-output='production-tags.json'
