@@ -7,6 +7,7 @@ run-name: ${{ github.actor }}'s main branch PR - Push images and update prod dep
 on:
   pull_request:
     # Sequence of patterns matched against refs/heads
+    types: [opened, reopened, synchronize]
     branches: 
       - main
 
@@ -59,11 +60,17 @@ jobs:
           path: ccg-prod-tags
         # with:
         #   path: ${{ vars.PROD_BRANCH }}
+      
+      - name: Test what env vars contains
+        run: |
+          echo "github ref --> ${{github.sha}}"
+          echo "github ref --> ${{github.ref}}"
+          echo "github headref -> ${{github.head_ref}}"
 
       - name: Build prod images and push them (+metadata) to DockerHub with the updated tags
         run: |
           cd ${{github.workspace}}/main
-          skaffold build --cache-artifacts=false -p prod-do --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
+          skaffold build --cache-artifacts=false -p prod-do --tag='${{github.sha}}' --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
 
       - name: Push new tags (and migrations in the future) to repository for deployment
         uses: cpina/github-action-push-to-another-repository@main

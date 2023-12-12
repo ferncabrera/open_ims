@@ -16,7 +16,7 @@ spec:
       - name: "job-wait-initcontainer"
         imagePullPolicy: Always
         image: "groundnuty/k8s-wait-for:v2.0"
-        # imagePullPolicy: {{ .Values.image.pullPolicy }}
+        # command: ["/usr/bin/timeout", "3", "wait_for.sh"]
         args: 
         - "job-wr"
         - "migration-job"
