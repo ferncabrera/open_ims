@@ -16,7 +16,32 @@ on:
     branches:
       - main
 jobs:
+  update_deployed_tags_branch:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      #! If there has been a lot of commits made to the tag repository after a PR has been opened 
+      #! then we may face the issue that 20 commits back may not contain the correct commit for the "old" PR
+      #? We can most likely just catch this step if it errors and then re-try with a higher fetch depth (example in comment below), like 50, 100, 200, 500, 
+      #? and then 0 incase this project is so massive lol and this will fetch all the commit history for the branch
+      #? The commit history required to be fetched can be reduced in the future by using release branches for the production-image-tag repo but
+      #? we'll cross that bridge when we get to it......
+      - name: Checkout repository with production tags
+        uses: actions/checkout@v4
+        with:
+          repository: ferncabrera/ccg-prod-tags
+          token: ${{ secrets.GH_PAT }}
+          ref: master
+          path: ccg-prod-tags
+          fetch-depth: 25
+      - run: |
+          cd ${{github.workspace}}/ccg-prod-tags
+          git checkout ccg-deployed-tags 
+          git checkout ":/\*${{github.event.number}}\*" production-deployment-tags.json
+          git commit -m "PR *${{github.event.number}}* MERGE!; ${{github.repository}}@${{github.sha}}"
+
   main_branch_deployment:
+    needs: update_deployed_tags_branch
     if: github.event.pull_request.merged == true
     # main_branch_deployment:
     runs-on: ubuntu-latest
@@ -57,15 +82,23 @@ jobs:
         with:
           path: main
 
+      #! If there has been a lot of commits made to the tag repository after a PR has been opened 
+      #! then we may face the issue that 20 commits back may not contain the correct commit for the "old" PR
+      #? We can most likely just catch this step if it errors and then re-try with a higher fetch depth (example in comment below), like 50, 100, 200, 500, 
+      #? and then 0 incase this project is so massive lol and this will fetch all the commit history for the branch
+      #? The commit history required to be fetched can be reduced in the future by using release branches for the production-image-tag repo but
+      #? we'll cross that bridge when we get to it......
       - name: Checkout repository with production tags
         uses: actions/checkout@v4
         with:
           repository: ferncabrera/ccg-prod-tags
-          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
-          ref: 'master'
+          token: ${{ secrets.GH_PAT }}
+          ref: ccg-deployed-tags
           path: ccg-prod-tags
+          fetch-depth: 25
       - run: |
-          git checkout ":/<${{github.event.number}}>"   
+          cd ${{github.workspace}}/ccg-prod-tags
+          git checkout ":/PR \*${{github.event.number}}\* MERGE!;"
 
       - name: Test
         run: |
