@@ -99,7 +99,9 @@ jobs:
           fetch-depth: 1
       - run: |
           cd ${{github.workspace}}/ccg-prod-tags
-          git checkout ":/PR \*${{github.event.number}}\* MERGE!;"
+          git checkout ":/PR \*${{github.event.number}}\* MERGE;"
+          echo "Deploying the following JSON production tags file:"
+          cat production-deployment-tags.json
 
       - name: Test
         run: |
