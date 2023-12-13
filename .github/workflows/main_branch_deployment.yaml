@@ -38,7 +38,7 @@ jobs:
           cd ${{github.workspace}}/ccg-prod-tags
           git fetch origin ccg-deployed-tags 
           git checkout ccg-deployed-tags 
-          git checkout ":/PR *\${{github.event.number}}\* COMMIT;" production-deployment-tags.json
+          git checkout ":/PR \*${{github.event.number}}\* COMMIT;" production-deployment-tags.json
           git commit -m "PR *${{github.event.number}}* MERGE; ${{github.repository}}@${{github.sha}}"
           git push
 
