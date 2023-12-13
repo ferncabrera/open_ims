@@ -16,7 +16,36 @@ on:
     branches:
       - main
 jobs:
-  if_merged:
+  update_deployed_tags_branch:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      #! If there has been a lot of commits made to the tag repository after a PR has been opened 
+      #! then we may face the issue that 20 commits back may not contain the correct commit for the "old" PR
+      #? We can most likely just catch this step if it errors and then re-try with a higher fetch depth (example in comment below), like 50, 100, 200, 500, 
+      #? and then 0 incase this project is so massive lol and this will fetch all the commit history for the branch
+      #? The commit history required to be fetched can be reduced in the future by using release branches for the production-image-tag repo but
+      #? we'll cross that bridge when we get to it......
+      - name: Checkout repository with production tags
+        uses: actions/checkout@v4
+        with:
+          repository: ferncabrera/ccg-prod-tags
+          token: ${{ secrets.GH_PAT }}
+          ref: master
+          path: ccg-prod-tags
+          fetch-depth: 25
+      - run: |
+          cd ${{github.workspace}}/ccg-prod-tags
+          git config user.name ferncabrera
+          git config user.email ferncabreradeveloper@gmail.com
+          git fetch origin ccg-deployed-tags --depth=1
+          git checkout ccg-deployed-tags 
+          git checkout ":/HEAD_COMMIT ${{github.event.pull_request.head.sha}}" production-deployment-tags.json
+          git commit -m "PR #${{github.event.number}} (ref: ${{github.repository}}@${{github.sha}}) @ HEAD_COMMIT ${{github.event.pull_request.head.sha}} (ref: ${{github.repository}}@${{github.event.pull_request.head.sha}}) merged into ${{github.event.pull_request.base.ref}}!"
+          git push
+
+  main_branch_deployment:
+    needs: update_deployed_tags_branch
     if: github.event.pull_request.merged == true
     # main_branch_deployment:
     runs-on: ubuntu-latest
@@ -57,15 +86,29 @@ jobs:
         with:
           path: main
 
+      #! If there has been a lot of commits made to the tag repository after a PR has been opened 
+      #! then we may face the issue that 20 commits back may not contain the correct commit for the "old" PR
+      #? We can most likely just catch this step if it errors and then re-try with a higher fetch depth (example in comment below), like 50, 100, 200, 500, 
+      #? and then 0 incase this project is so massive lol and this will fetch all the commit history for the branch
+      #? The commit history required to be fetched can be reduced in the future by using release branches for the production-image-tag repo but
+      #? we'll cross that bridge when we get to it......
       - name: Checkout repository with production tags
         uses: actions/checkout@v4
         with:
           repository: ferncabrera/ccg-prod-tags
-          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
-          ref: 'master'
+          token: ${{ secrets.GH_PAT }}
+          ref: ccg-deployed-tags
           path: ccg-prod-tags
-          # need some flags to cherry pick commit with the correct SHA
+          fetch-depth: 1
+      - run: |
+          cd ${{github.workspace}}/ccg-prod-tags
+          git checkout ":/HEAD_COMMIT ${{github.event.pull_request.head.sha}} (ref: ${{github.repository}}@${{github.event.pull_request.head.sha}}) merged into ${{github.event.pull_request.base.ref}}!"
+          echo "Deploying the following JSON production tags file:"
+          cat production-deployment-tags.json
 
+      - name: Test
+        run: |
+          echo "head sha -> ${{ github.event.pull_request.head.sha }}"
       # - name: Build and Push to DockerHub
       #   run: |
       #     skaffold build -p prod-do --file-output='production-tags.json'
