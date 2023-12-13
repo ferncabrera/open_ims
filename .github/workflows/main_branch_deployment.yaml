@@ -38,10 +38,10 @@ jobs:
           cd ${{github.workspace}}/ccg-prod-tags
           git config user.name ferncabrera
           git config user.email ferncabreradeveloper@gmail.com
-          git fetch origin ccg-deployed-tags 
+          git fetch origin ccg-deployed-tags --depth=1
           git checkout ccg-deployed-tags 
-          git checkout ":/PR \*${{github.event.number}}\* COMMIT;" production-deployment-tags.json
-          git commit -m "PR *${{github.event.number}}* MERGE; ${{github.repository}}@${{github.sha}}"
+          git checkout ":/PR ${{github.event.number}} @ HEAD_COMMIT ${{github.event.pull_request.head.sha}};" production-deployment-tags.json
+          git commit -m "Updating tags: PR ${{github.event.number}} MERGED @ HEAD_COMMIT ${{github.event.pull_request.head.sha}}; ${{github.repository}}@${{github.sha}}"
           git push
 
   main_branch_deployment:
@@ -102,7 +102,7 @@ jobs:
           fetch-depth: 1
       - run: |
           cd ${{github.workspace}}/ccg-prod-tags
-          git checkout ":/PR \*${{github.event.number}}\* MERGE;"
+          git checkout ":/PR ${{github.event.number}} MERGED @ HEAD_COMMIT ${{github.event.pull_request.head.sha}};"
           echo "Deploying the following JSON production tags file:"
           cat production-deployment-tags.json
 
