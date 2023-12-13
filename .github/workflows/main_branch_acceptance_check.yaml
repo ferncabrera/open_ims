@@ -65,8 +65,9 @@ jobs:
       - name: Build prod images and push them (+metadata) to DockerHub with the updated tags
         run: |
           echo " head sha -> ${{ github.event.pull_request.head.sha }}"
+          SHORTENED_SHA=$(git rev-parse --short ${{github.event.pull_request.head.sha}})
+          echo "${SHORTENED_SHA}"
           cd ${{github.workspace}}/main
-          echo "git rev-parse --short ${{ github.event.pull_request.head.sha }}"
           git rev-parse --short ${{ github.event.pull_request.head.sha }}
           skaffold build --cache-artifacts=false -p prod-do --tag='${{github.event.number}}-${{github.event.pull_request.head.sha}}' --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
 
