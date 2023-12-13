@@ -66,9 +66,9 @@ jobs:
         run: |
           echo " head sha -> ${{ github.event.pull_request.head.sha }}"
           cd ${{github.workspace}}/main
-          echo "git rev-parse --short ${{ github.event.pull_request.base.sha }}"
-          git rev-parse --short ${{ github.event.pull_request.base.sha }}
-          skaffold build --cache-artifacts=false -p prod-do --tag='${{github.event.number}}-${{github.event.pull_request.base.sha}}' --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
+          echo "git rev-parse --short ${{ github.event.pull_request.head.sha }}"
+          git rev-parse --short ${{ github.event.pull_request.head.sha }}
+          skaffold build --cache-artifacts=false -p prod-do --tag='${{github.event.number}}-${{github.event.pull_request.head.sha}}' --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
 
       - name: Push new tags (and migrations in the future) to repository for deployment
         uses: cpina/github-action-push-to-another-repository@main
