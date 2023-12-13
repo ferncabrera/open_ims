@@ -109,13 +109,6 @@ jobs:
           echo "Deploying the following JSON production tags file:"
           cat production-deployment-tags.json
 
-      - name: Test
-        run: |
-          echo "head sha -> ${{ github.event.pull_request.head.sha }}"
-      # - name: Build and Push to DockerHub
-      #   run: |
-      #     skaffold build -p prod-do --file-output='production-tags.json'
-
       #! Noting this here for later, we can handle errors during GA execution with the following 3 lines!
       # - name: My backup step
       #   if: ${{ failure() }}
@@ -131,14 +124,8 @@ jobs:
 
       - name: Deploy to DigitalOcean Kubernetes
         run: |
-          echo github.ref ${{github.ref}}
-          echo github.ref ${{github.sha}}
-          echo github.ref ${{github.event.number}}
-      # echo ${{github.head_ref}}
-      # echo ${{github.head_ref}}
-      # echo ${{github.head_ref}}
-      #     cd ${{github.workspace}}/main
-      #     skaffold deploy -p prod-do --build-artifacts='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
+          cd ${{github.workspace}}/main
+          skaffold deploy -p prod-do --build-artifacts='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
 
       #? We should look into verifying the deployments after, this way we can also roll-back on deployments perhaps...
       # - name: Verify deployment
