@@ -42,8 +42,9 @@ jobs:
           git fetch origin ccg-deployed-tags --depth=1
           git checkout ccg-deployed-tags 
           git checkout ":/PR ${{github.repository}}#${{github.event.number}} now @ HEAD_COMMIT ${{github.repository}}@${{github.event.pull_request.head.sha}}" production-deployment-tags.json
-          git commit -m "MERGED PR #${{github.event.number}} @ HEAD_COMMIT ${SHA_SHORT} into ${{github.event.pull_request.head.ref}}!" -m "Merged PR ref: ${{github.repository}}#${{github.event.number}}; HEAD_COMMIT ref: ${{github.repository}}@${{github.event.pull_request.head.sha}}"
+          git commit -m "MERGE for PR ${{github.repository}}#${{github.event.number}} @ HEAD_COMMIT ${{github.repository}}@${{github.event.pull_request.head.sha}}"
           git push
+        # git commit -m "MERGED PR #${{github.event.number}} @ HEAD_COMMIT ${SHA_SHORT} into ${{github.event.pull_request.head.ref}}!" -m "Merged PR ref: ${{github.repository}}#${{github.event.number}}; HEAD_COMMIT ref: ${{github.repository}}@${{github.event.pull_request.head.sha}}"
 
   main_branch_deployment:
     needs: update_deployed_tags_branch
@@ -104,7 +105,7 @@ jobs:
       - run: |
           cd ${{github.workspace}}/ccg-prod-tags
           SHA_SHORT=$(git rev-parse --short ${{github.event.pull_request.head.sha}})
-          git checkout ":/MERGED PR #${{github.event.number}} @ HEAD_COMMIT ${SHA_SHORT} into ${{github.event.pull_request.head.ref}}!"
+          git checkout ":/MERGE for PR ${{github.repository}}#${{github.event.number}} @ HEAD_COMMIT ${{github.repository}}@${{github.event.pull_request.head.sha}}"
           echo "Deploying the following JSON production tags file:"
           cat production-deployment-tags.json
 
