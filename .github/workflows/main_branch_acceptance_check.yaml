@@ -66,8 +66,6 @@ jobs:
         run: |
           echo " head sha -> ${{ github.event.pull_request.head.sha }}"
           cd ${{github.workspace}}/main
-          SHORTENED_SHA=$(git rev-parse --short ${{github.event.pull_request.head.sha}})
-          echo "${SHORTENED_SHA}"
           git rev-parse --short ${{ github.event.pull_request.head.sha }}
           skaffold build --cache-artifacts=false -p prod-do --tag='${{github.event.number}}-${{github.event.pull_request.head.sha}}' --file-output='${{github.workspace}}/ccg-prod-tags/production-deployment-tags.json'
 
