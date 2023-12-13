@@ -147,4 +147,4 @@ jobs:
     # skaffold deploy -p prod --build-artifacts='production-tags.json' --tail
 # skaffold verify -p staging
 # skaffold delete -p staging 
-#test
+#test2
