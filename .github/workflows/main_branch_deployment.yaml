@@ -36,6 +36,8 @@ jobs:
           fetch-depth: 25
       - run: |
           cd ${{github.workspace}}/ccg-prod-tags
+          git config user.name ferncabrera
+          git config user.email ferncabreradeveloper@gmail.com
           git fetch origin ccg-deployed-tags 
           git checkout ccg-deployed-tags 
           git checkout ":/PR \*${{github.event.number}}\* COMMIT;" production-deployment-tags.json
