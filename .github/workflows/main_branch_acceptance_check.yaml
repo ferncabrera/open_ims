@@ -53,13 +53,15 @@ jobs:
 
       # - name: Checkout repository with production tags
       - uses: actions/checkout@v4
+        with:
+          repository: ferncabrera/ccg-prod-tags
+          token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
+          ref: master
+          path: ccg-prod-tags
+          fetch-depth: 20
       - run: |
+          cd ${{github.workspace}}/ccg-prod-tags
           git checkout ":/117"
-        # with:
-        #   repository: ferncabrera/ccg-prod-tags
-        #   token: ${{ secrets.GH_PAT }} # `GH_PAT` is a secret that contains your PAT
-        #   ref: 'master'
-        #   path: ccg-prod-tags
         # with:
         #   path: ${{ vars.PROD_BRANCH }}
 
