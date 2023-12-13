@@ -101,7 +101,7 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           ref: ccg-deployed-tags
           path: ccg-prod-tags
-          fetch-depth: 1
+          fetch-depth: 5
       - run: |
           cd ${{github.workspace}}/ccg-prod-tags
           SHA_SHORT=$(git rev-parse --short ${{github.event.pull_request.head.sha}})

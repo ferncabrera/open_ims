@@ -5,6 +5,8 @@ import './styles/general/index.scss'
 import Routes from './routes';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
+// triggering client cache bust
+
 const router = createBrowserRouter(Routes, {
     future: {
         // Normalize `useNavigation()`/`useFetcher()` `formMethod` to uppercase
