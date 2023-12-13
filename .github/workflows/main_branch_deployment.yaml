@@ -37,11 +37,12 @@ jobs:
       - run: |
           cd ${{github.workspace}}/ccg-prod-tags
           git config user.name ferncabrera
+          SHA_SHORT=$(git rev-parse --short ${{github.event.pull_request.head.sha}})
           git config user.email ferncabreradeveloper@gmail.com
           git fetch origin ccg-deployed-tags --depth=1
           git checkout ccg-deployed-tags 
-          git checkout ":/HEAD_COMMIT ${{github.event.pull_request.head.sha}}" production-deployment-tags.json
-          git commit -m "PR #${{github.event.number}} (ref: ${{github.repository}}@${{github.sha}}) @ HEAD_COMMIT ${{github.event.pull_request.head.sha}} (ref: ${{github.repository}}@${{github.event.pull_request.head.sha}}) merged into ${{github.event.pull_request.base.ref}}!"
+          git checkout ":/PR ${{github.repository}}#${{github.event.number}} now @ HEAD_COMMIT ${{github.repository}}@${{github.event.pull_request.head.sha}}" production-deployment-tags.json
+          git commit -m "MERGED PR #${{github.event.number}} @ HEAD_COMMIT ${SHA_SHORT} into ${{github.event.pull_request.head.ref}}!" -m "Merged PR ref: ${{github.repository}}#${{github.event.number}; HEAD_COMMIT ref: ${{github.repository}}@${{github.event.pull_request.head.sha}}"
           git push
 
   main_branch_deployment:
@@ -102,7 +103,8 @@ jobs:
           fetch-depth: 1
       - run: |
           cd ${{github.workspace}}/ccg-prod-tags
-          git checkout ":/HEAD_COMMIT ${{github.event.pull_request.head.sha}} (ref: ${{github.repository}}@${{github.event.pull_request.head.sha}}) merged into ${{github.event.pull_request.base.ref}}!"
+          SHA_SHORT=$(git rev-parse --short ${{github.event.pull_request.head.sha}})
+          git checkout ":/MERGED PR #${{github.event.number}} @ HEAD_COMMIT ${SHA_SHORT} into ${{github.event.pull_request.head.ref}}!"
           echo "Deploying the following JSON production tags file:"
           cat production-deployment-tags.json
 
