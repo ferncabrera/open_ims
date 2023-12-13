@@ -37,8 +37,9 @@ jobs:
       - run: |
           cd ${{github.workspace}}/ccg-prod-tags
           git checkout ccg-deployed-tags 
-          git checkout ":/\*${{github.event.number}}\*" production-deployment-tags.json
-          git commit -m "PR *${{github.event.number}}* MERGE!; ${{github.repository}}@${{github.sha}}"
+          git checkout ":/PR *\${{github.event.number}}\* COMMIT;" production-deployment-tags.json
+          git commit -m "PR *${{github.event.number}}* MERGE; ${{github.repository}}@${{github.sha}}"
+          git push
 
   main_branch_deployment:
     needs: update_deployed_tags_branch
@@ -95,7 +96,7 @@ jobs:
           token: ${{ secrets.GH_PAT }}
           ref: ccg-deployed-tags
           path: ccg-prod-tags
-          fetch-depth: 25
+          fetch-depth: 1
       - run: |
           cd ${{github.workspace}}/ccg-prod-tags
           git checkout ":/PR \*${{github.event.number}}\* MERGE!;"
