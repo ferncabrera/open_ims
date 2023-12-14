@@ -1,5 +1,5 @@
-name: Deploy to digital ocean
-run-name: ${{ github.actor }}'s merge - Deployment to Digital Ocean
+name: Deployment to DO Server
+run-name: Merged ${{github.event.pull_request.head.ref}} into ${{github.event.pull_request.base.ref}} - ${{github.triggering_actor}}'s run
 
 # env:
 #   SERVER: production
@@ -15,6 +15,10 @@ on:
       - closed
     branches:
       - main
+
+#TODO In the future we should find a way to make the main_branch_deployment job run whenever a merge into the ccg-deployment-tags
+#TODO branch occurs instead of manually triggering it after pushing, this way we can also handle deploying our rollbacks automatically....
+#TODO Looks like we can use GHA event dispatchers for this! Shouldn't be too hard..... :D!
 jobs:
   update_deployed_tags_branch:
     if: github.event.pull_request.merged == true
