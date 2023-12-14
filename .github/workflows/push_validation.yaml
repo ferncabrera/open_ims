@@ -1,5 +1,5 @@
 name: Image testing and validation
-run-name: Testing and validating ${{ github.ref }} branch - ${{github.triggering_actor}}'s run
+run-name: Testing and validating ${{ github.ref_name }} branch - ${{github.triggering_actor}}'s run
 
 # env:
 #   SERVER: production
