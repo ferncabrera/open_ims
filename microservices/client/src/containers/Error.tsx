@@ -13,7 +13,7 @@ const Error = () => {
 
     return (
         <>
-            <h1>Oops! Looks like we need a better error screen! LOL</h1>
+            <h1>Oops! Looks like we need a better error screen!</h1>
             <p>Sorry, an unexpected error has occured.</p>
             <p>
                 <i>{error.statusText || error.message}</i>

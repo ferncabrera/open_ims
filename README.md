@@ -14,6 +14,9 @@ Our development stack consists of:
   <li><a href="https://docs.docker.com/desktop/">Docker Desktop</a> with (ideally):</li>
   <ul>
     <li>Docker Engine v24.0.0 <em>or greater</em></li>
+    <ul>
+        <li>Docker buildx - this should come with the version of Docker Engine recommended above.</li>
+    </ul>
     <li>Kubernetes v1.27.0 <em>or greater</em></li>
   </ul>
   <li><a href="https://skaffold.dev/">Skaffold</a> v2.6.0 </li>
@@ -155,9 +158,9 @@ Then, you should be able to select the **open-ims-dev** db to start messing arou
 There may be instances in which you wish to run the production version of our application on your local machine for debugging purposes (since our production builds differ in some cases, look at the Dockerfiles used in the Skaffold profiles "build" section). We have two different "production" profiles in our Skaffold config, namely __prod-local__ and __prod-do__ for prod deployments on a local env and prod deployments on our digital ocean cluster. The __prod-local__ image is designed so that you can run a **fully functional** version of the production app on local, for example, if you were to run the **prod-do** profile on local, you would notice all of the client calls being redirected to the IP of our ingress-nginx controller running on Digital Ocean. In some cases this behaviour may be intended in case you want to test calls directly against our prod APIs (SSL certs for instance differ when using localhost vs internet IPs). Note that as we begin adding security to our prod service APIs, calls that are made may be blocked due to unauthorization errors etc.
 <br/>
 <br/>
-These steps have been drastically simplified! - to run the prod-local instance of the app simply run the bash script called _run-prod.sh_ located at the root of the open_ims project!
+These steps have been drastically simplified! - to run the prod-local instance of the app simply run the bash script called _run-prod.sh_ located inside the _scripts/_ directory which is at the root of the open_ims project!
 ```
-bash run-prod.sh
+bash scripts/run-prod.sh
 ```
  This script will create all the necessary server and postgres secrets required for your local prod app. You can then just hit `CTRL+C` to kill the process and remove all of the K8s resources created as part of the deployment! :D happy prod-ding
 

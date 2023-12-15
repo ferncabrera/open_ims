@@ -52,4 +52,3 @@ After running these two commands (step 2 and 3), you will have to go through the
 - What is the URL/IP I need to access to see the app?
   - http://192.168.49.2:31957/ This is the one you want to use! Refresh the page after running skaffold dev. Ensure you followed all set-up steps correctly.
   - Run `sudo kubectl port-forward svc/ingress-nginx-controller 80:80 -n ingress-nginx` this will ensure that the IP you are hosting on will forward the port to localhost:8080
-
