@@ -2,6 +2,9 @@ import React from 'react'
 import ReactDOM from 'react-dom/client'
 import './styles/general/index.scss'
 
+import { RecoilRoot} from 'recoil';
+
+
 import Routes from './routes';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 
@@ -15,10 +18,12 @@ const router = createBrowserRouter(Routes, {
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <div className='open-ims-styling'>
-            <RouterProvider
-                router={router}
-                fallbackElement={<><p>Spinner here lol</p></>}
-            />
+            <RecoilRoot>
+                <RouterProvider
+                    router={router}
+                    fallbackElement={<><p>Need a spinner here or something</p></>}
+                />
+            </RecoilRoot>
         </div>
 
     </React.StrictMode>,
