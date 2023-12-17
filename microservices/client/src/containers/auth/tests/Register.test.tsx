@@ -5,16 +5,15 @@ import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from "react-router";
 import { Register } from "../Register";
-import { RecoilRoot } from "recoil";
 
 function tree() {
-    return render(<MemoryRouter><RecoilRoot><Register /></RecoilRoot></MemoryRouter>)
+    return render(<MemoryRouter><Register /></MemoryRouter>)
 }
 
 describe("Register Component", () => {
 
     it("Register renders correctly", () => {
-        const tree = renderer.create(<MemoryRouter><RecoilRoot><Register /></RecoilRoot></MemoryRouter>).toJSON();
+        const tree = renderer.create(<MemoryRouter><Register /></MemoryRouter>).toJSON();
         expect(tree).toMatchSnapshot();
 
     });
