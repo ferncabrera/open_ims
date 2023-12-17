@@ -47,7 +47,7 @@ export const register = async (req: Request, res: Response) => {
     await query("INSERT INTO user_table(first_name, last_name, email, password) VALUES($1, $2, $3, $4)", values);
     // User created!
 
-    res.json({ message: "registration successful!" });
+    res.status(201).json({ message: "registration successful!" });
 
 
 }

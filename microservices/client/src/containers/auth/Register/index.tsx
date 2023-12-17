@@ -1,10 +1,12 @@
 import React, { useState, useEffect, SyntheticEvent } from 'react'
 import { Link } from 'react-router-dom';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, Spinner } from 'react-bootstrap';
 import { Password } from '../../../components/forms/Password';
 import { IValidate } from '../../../utilities/types/validationTypes';
 import { fieldValidation } from '../../../utilities/validation';
 import { sendPostRequest } from '../../../utilities/apiHelpers';
+import { bannerState } from '../../../atoms/state';
+import { useRecoilState } from 'recoil';
 import _ from 'lodash';
 
 import styles from './index.module.scss';
@@ -30,6 +32,8 @@ export const Register = () => {
     }
 
     const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
+    const [isLoading, setIsLoading] = useState(false);
+    const [bannerTextState, setBannerTextState] = useRecoilState(bannerState);
 
     useEffect(() => {
         _.set(formData, keyPaths.email, "");
@@ -38,7 +42,7 @@ export const Register = () => {
         _.set(formData, keyPaths.lastName, "");
     }, []);
 
-    
+
 
     const validate = (data: IValidate) => {
         const valid = fieldValidation(data)
@@ -63,9 +67,17 @@ export const Register = () => {
             trackErrorList = [];
             return
         }
-        // Send post request here
-        await sendPostRequest({endpoint: "/api/server/register", data: registrationData });
+        setIsLoading(true);
 
+        // Send post request here
+        const response: IResponse = await sendPostRequest({ endpoint: "/api/server/register", data: registrationData });
+        // need to put some sort of spinner here
+        if (response.status === 201) {
+            setBannerTextState({ message: response.message, variant: 'success' })
+        } else {
+            setBannerTextState({ message: response.message, variant: 'danger' })
+        }
+        setIsLoading(false);
     }
 
     return (
@@ -154,7 +166,17 @@ export const Register = () => {
 
                 />
                 <div className='mt-5'>
-                    <Button type='submit' >Create account</Button>
+                    <Button type='submit' >
+                        {isLoading ?
+                            <Spinner
+                                as="span"
+                                animation="border"
+                                role="status"
+                                aria-hidden="true"
+                            />
+                            : "Create account"}
+
+                    </Button>
                 </div>
             </Form>
 
