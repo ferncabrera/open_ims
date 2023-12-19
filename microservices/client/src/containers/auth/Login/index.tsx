@@ -8,6 +8,8 @@ import { fieldValidation } from '../../../utilities/validation';
 import { IValidate } from '../../../utilities/types/validationTypes';
 import { sendPostRequest, getJSONResponse } from '../../../utilities/apiHelpers';
 import { useNavigate } from 'react-router-dom';
+import { bannerState } from '../../../atoms/state';
+import { useRecoilState } from 'recoil';
 import _ from 'lodash';
 
 import styles from './index.module.scss';
@@ -21,7 +23,7 @@ const formData = {};
 let trackErrorList = [];
 
 
-export const Login = () => {
+export const Login = () => { // test comment
 
 
     const keyPaths = {
@@ -35,6 +37,7 @@ export const Login = () => {
     const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
     const [resetEmail, setEmail] = useState('');
     const [isSigningIn, setIsSigningIn] = useState(false);
+    const [bannerText, setBannerTextState] = useRecoilState(bannerState);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -126,14 +129,17 @@ export const Login = () => {
         try {
 
             setIsSigningIn(true);
-            const response = await sendPostRequest({ endpoint: '/api/server/login', data: loginData });
+            const response: IResponse = await sendPostRequest({ endpoint: '/api/server/login', data: loginData });
             if (_.get(response, 'token', '')) {
                 navigate('/ccg/dashboard');
+            } else {
+                setBannerTextState({variant: 'danger', message: response.message})
             }
             setIsSigningIn(false);
         } catch (e) {
             //need our global state banner here to handle our errors
             console.log('error', e);
+            setBannerTextState({variant: 'danger', message: e})
         }
     }
 
@@ -181,7 +187,7 @@ export const Login = () => {
 
                 <Row>
                     <div className={'d-flex justify-content-between' + ` ${styles.flex_wrapper}`}>
-                        <Form.Check label='Remember me for 30 days' />
+                        <Form.Check label='Remember me' />
                         <a className='no-underline' onClick={() => setShowResetPassword(true)}>forgot password</a>
                     </div>
                 </Row>

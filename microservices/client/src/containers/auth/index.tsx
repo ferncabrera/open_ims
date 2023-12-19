@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Container, Row, Col, Image } from 'react-bootstrap'
 import { Login } from './Login';
 import { Register } from './Register';
+import { GlobalBanner } from '../../components/banners/GlobalBanner';
 
 import { isUserAuth } from '../../utilities/helpers/functions';
 import { useNavigate } from 'react-router';
@@ -33,6 +34,8 @@ export const Authentication: React.FC<IAuthenticationProps> = (props) => {
         setIsAuthenticated(true);
         return
       }
+    }).catch((error) => {
+      return
     })
   }, []);
 
@@ -40,6 +43,7 @@ export const Authentication: React.FC<IAuthenticationProps> = (props) => {
     <>
       {isAuthenticated &&
         <Container fluid className={styles.auth_page_paddings}>
+          <GlobalBanner/>
           <Row>
             <Col className={`me-5 ${!isLogin ? styles.left_auth_formatting_register : styles.left_auth_formatting}`}>
               <div className='title-heading d-flex justify-content-center mb-2'>

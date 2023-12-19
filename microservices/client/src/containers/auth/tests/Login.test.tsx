@@ -4,10 +4,11 @@ import renderer from 'react-test-renderer';
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from "react-router";
+import { RecoilRoot } from "recoil";
 import { Login } from "../Login";
 
 function tree() {
-    return render(<MemoryRouter><Login /></MemoryRouter>)
+    return render(<MemoryRouter><RecoilRoot><Login /></RecoilRoot></MemoryRouter>)
 }
 
 
@@ -16,7 +17,7 @@ describe("Login Component", () => {
 
     // This first test case takes a snapshot. Compares and makes sure no previous styles or html changes were made from its last snapshot.
     it("Login renders correctly", () => {
-        const tree = renderer.create(<MemoryRouter><Login /></MemoryRouter>).toJSON();
+        const tree = renderer.create(<MemoryRouter><RecoilRoot><Login /></RecoilRoot></MemoryRouter>).toJSON();
         expect(tree).toMatchSnapshot();
 
     });

@@ -127,7 +127,7 @@ exports[`Login Component > Login renders correctly 1`] = `
             className="form-check-label"
             title=""
           >
-            Remember me for 30 days
+            Remember me
           </label>
         </div>
         <a
