@@ -1,0 +1,54 @@
+@import "./general/colors.scss";
+
+.open-ims-styling {
+
+    table {
+        width: 100%;
+        background-color: $white;
+    }
+
+    .table-border-wrapper {
+        border: 1px solid $light-grey;
+        border-radius: 10px;
+        overflow: hidden;
+    }
+
+    table {
+        // border: 1px solid black;
+        // border-spacing: 0;
+        // border-radius: 10px;
+        border-collapse: collapse;
+
+      }
+      th, td {
+        padding: 10px;
+      }
+      th {
+        border-bottom: 1px solid $light-grey;
+      }
+
+      thead {
+        background-color: $lightest-blue;
+      }
+
+      tr:nth-child(even) {
+        background-color: $page-grey;
+      }
+
+      .size-select {
+        background-color: $lightest-blue;
+        border-radius: 10px;
+        border: none;
+
+      }
+
+      .filter-size-section {
+        border-top: 1px solid $light-grey;
+      }
+
+      .filter-header-section {
+        div {
+            width: 300px;
+        }
+      }
+}

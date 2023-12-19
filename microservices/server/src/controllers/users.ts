@@ -28,7 +28,7 @@ export const login = async (req: Request, res: Response) => {
 
     const secret = process.env.JWT_SECRET_KEY;
     const currentDate = new Date();
-    const expirationDate = new Date(currentDate.getTime() + 300000); //expires in 5 minutes
+    const expirationDate = new Date(currentDate.getTime() + 3.6e6); //expires in 60 minutes
 
     const token = jwt.sign({ email: user.email, first_name: user.first_name, permission: user.permission }, `${secret}`);
     res.cookie('authToken', token, { httpOnly: false, secure: false, expires: expirationDate });
