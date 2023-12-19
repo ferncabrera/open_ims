@@ -1,0 +1,12 @@
+[
+    {
+        "op": "replace",
+        "path": "/spec/template/spec/containers/0/envFrom/0/configMapRef/name",
+        "value": "prod-open-ims-config-map"
+    },
+    {
+        "op": "replace",
+        "path": "/spec/template/spec/containers/0/envFrom/1/secretRef/name",
+        "value": "prod-open-ims-secrets"
+    }
+]

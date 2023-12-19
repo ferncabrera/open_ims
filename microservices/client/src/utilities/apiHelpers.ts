@@ -1,13 +1,7 @@
 import { apiCall } from "./apiCall";
 import { IGetResponse, IPostRequest } from "./types/types";
 
-let HOST: string | undefined;
-
-if (import.meta.env.DEV) {
-  HOST = import.meta.env.VITE_HOST_DEV;
-} else {
-  HOST = import.meta.env.VITE_HOST_PROD;
-}
+const HOST: string | undefined = import.meta.env.VITE_HOST_IP;
 
 export const getJSONResponse = async (props: IGetResponse) => {
   const { endpoint, params } = props;

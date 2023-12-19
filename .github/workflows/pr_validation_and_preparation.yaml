@@ -1,5 +1,5 @@
-name: Main branch image building and tagging
-run-name: ${{ github.actor }}'s main branch PR - Push images and update prod deployment tags 
+name: Deployment preparation
+run-name: Preparing to merge ${{github.event.pull_request.head.ref}} into ${{github.event.pull_request.base.ref}} - ${{github.triggering_actor}}'s run
 
 # env:
 #   SERVER: production

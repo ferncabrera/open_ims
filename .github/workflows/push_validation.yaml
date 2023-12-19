@@ -1,5 +1,5 @@
-name: "User branch workflow: Image building and testing"
-run-name: ${{ github.actor }}'s push - Image building and testing
+name: Image testing and validation
+run-name: Testing and validating ${{ github.ref_name }} - ${{github.triggering_actor}}'s run
 
 # env:
 #   SERVER: production

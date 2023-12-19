@@ -4,13 +4,13 @@ resources:
 namePrefix: 
   dev-
 
-configMapGenerator:
-  - name: migration-job-config
-    envs:
-    - .env
+# configMapGenerator:
+#   - name: migration-job-config
+#     envs:
+#     - .env
 
 patches:
-- path: postgres-credentials-patch.json
+- path: open-ims-config-patches.json
   target:
     group: batch
     version: v1
