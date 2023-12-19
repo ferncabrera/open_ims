@@ -38,24 +38,45 @@ _Confirm that you have the ingress-nginx service running or else application sta
 
 If you don't see this or are not sure if it is running, just re-run the command in the <a href="https://github.com/ferncabrera/open_ims/blob/main/README.md#pre-requisites">Pre-requisites section</a> used to set up ingress-nginx.
 
-Finally, go to common -> database -> kustomize -> overlays -> dev -> postgres-credentials.yaml and add your Brevo api key.
+Now that you are ready, in the root of the project run: 
+```sh
+./start.sh
 
-Now that you are ready, in the root of the project, run: 
+# NOTE: This script also accepts 1 OPTIONAL argument, which would be the name of the Skaffold environment to start
+./start.sh dev # To run the app in DEV mode (Default)
+./start.sh prod # To run the app in PROD mode (Read more about runnning the application in PROD mode below)
 ```
-skaffold dev
-```
-<strong>The terminal should now be streaming logs.</strong> Tack on the ```--keep-running-on-failure``` to prevent Skaffolds default behaviour of exiting on failuire and live-debug the app.
+<strong>The terminal should now be streaming logs.</strong> If an error is encountered during startup, the script will attempt to clean up any created resources and then exit. 
 <br/>
 <br/>
-This command will run the application in dev mode. Skaffold will deploy our application and (based on configurations) re-deploy the applications services as it picks up changes to the code. At first, this may take a couple of minutes as images may have to be pulled from <a href="https://hub.docker.com/">Docker Hub</a>, please be patient as Skaffold sets up the environment for the first time.
+This command will execute the _start.sh_ file that will ensure the Kubernetes _config-map_ (which contains our apps environment variables) and _secrets_ objects are created before actually launching the application using Skaffold. Skaffold will deploy the application and continue to re-deploy the applications services as it picks up changes to the code (if you are running in __DEV__ mode). Starting the application for the first time may take a couple of minutes as images may have to be pulled from <a href="https://hub.docker.com/">Docker Hub</a> and build on your machine. Please be patient as Skaffold sets up the environment for the first time (any actual errors *should* be clearly indicated on your terminal).
 <br/>
 <br/>
 Once you start seeing service logs, feel free to make changes (to relevant files) as you usually would and observe the logs Skaffold outputs as it re-builds our application (or in our case specifically, "injects" the changes directly into our running containers). 
 #### Stopping the dev env
-In the same terminal that was used to run ```skaffold dev```, simply press ```CTRL+C``` to kill the process. Skaffold will take care of the rest and teardown all pods and services/prune any dangling images :D!
+In the same terminal that was used to run ```./start.sh```, simply press ```CTRL+C``` to kill the process. Skaffold will take care of the rest and teardown all pods and services/prune any dangling images :D!
+*TIP*: In the case that you have *lost* or do not know where the terminal used to start the app is, you may run ```skaffold delete -p dev_or_prod``` at any time to stop all the Kubernetes services for the desired environment from any terminal (dev_or_prod should be either "dev" or "prod").
+
+#### Running the production instance of open_ims on your local
+There may be instances in which you wish to run the production version of our application on your local machine for debugging purposes (since our production builds differ in some cases, look at the Dockerfiles used in the Skaffold env/profiles "build" section). We have two different "production" profiles in our Skaffold config, namely __prod-local__ and __prod-do__ for prod deployments on a local development machine and prod deployments on our DigitalOcean cluster, respectively. The __prod-local__ image is designed so that you can run a **fully functional** version of the production app on local, for example, if you were to run the **prod-do** profile on local, you would notice all of the client calls being redirected to the IP of our ingress-nginx controller running on Digital Ocean (as a result of VITEs env var processing :( ). But, in some cases this behaviour may be intended in case you want to test calls directly against our prod APIs (SSL certs for instance differ when using localhost vs internet IPs). Note that as we begin adding security to our prod service APIs, calls that are made may be blocked due to unauthorization errors etc.
+<br/>
+<br/>
+To run the application in prod-local mode (which should be the production mode you *should* be using most of the time), simply run:
+```
+./start.sh prod
+```
+This will start the _prod-local_ profile of our app. You can then just hit `CTRL+C` to kill the process and remove all of the K8s resources created as part of the deployment! :D happy prod-ding.
+
+In the rare case that you want to run the _prod_do_ profile on your local, instead run from the root dir:
+```
+./scripts/create-secrets-and-config-map.sh prod
+# to create the required secrets manually, and then run
+skaffold -p prod-do --tail
+```
+This will start the _prod-do_ profile of our app. You can then just hit `CTRL+C` to kill it as normal.
 
 #### Errors you may encounter
-If you ever face this error when running ```skaffold dev```:
+If you ever face this error when running ```./start.sh```:
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/138d6587-0734-49f5-8e1d-8fb0bbd3e052)
 
@@ -153,44 +174,3 @@ Once you are in, click on the "Servers" dropdown to the left, it should automati
 Then, you should be able to select the **open-ims-dev** db to start messing around with it! _(Note that you will find TWO databases under the Open IMS Server list. The database named "postgres" is always created by default and we do not need to use it, just stick to messing with open-ims-dev, the database which our applications server is connected to and using.)_
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/3b772f46-1c88-4bdd-9c91-9b04332a3560)
-
-#### Running the production instance of open_ims on your local
-There may be instances in which you wish to run the production version of our application on your local machine for debugging purposes (since our production builds differ in some cases, look at the Dockerfiles used in the Skaffold profiles "build" section). We have two different "production" profiles in our Skaffold config, namely __prod-local__ and __prod-do__ for prod deployments on a local env and prod deployments on our digital ocean cluster. The __prod-local__ image is designed so that you can run a **fully functional** version of the production app on local, for example, if you were to run the **prod-do** profile on local, you would notice all of the client calls being redirected to the IP of our ingress-nginx controller running on Digital Ocean. In some cases this behaviour may be intended in case you want to test calls directly against our prod APIs (SSL certs for instance differ when using localhost vs internet IPs). Note that as we begin adding security to our prod service APIs, calls that are made may be blocked due to unauthorization errors etc.
-<br/>
-<br/>
-These steps have been drastically simplified! - to run the prod-local instance of the app simply run the bash script called _run-prod.sh_ located inside the _scripts/_ directory which is at the root of the open_ims project!
-```
-bash scripts/run-prod.sh
-```
- This script will create all the necessary server and postgres secrets required for your local prod app. You can then just hit `CTRL+C` to kill the process and remove all of the K8s resources created as part of the deployment! :D happy prod-ding
-
-## FAQ
-
-1. How do I add a secret key to the environment variables?
-
-      Step 1: Stop the skaffold dev environment (Ctrl + c)
-      
-      Step 2: Goto common -> database -> kustomize -> overlays -> dev -> postgres-credentials.yaml
-    
-      Step 3: Add the secret key to the file (example below)
-      ![image](./img/image-3.png)
-    
-      Step 4: Goto server -> kustomize -> base -> server-deployment.yaml
-    
-      Step 5: Add this to the file
-      ![image](./img/image-1.png)
-
-
-      Step 6: Goto server -> kustomize -> overlays -> dev -> server-deployment.yaml
-    
-      Step 7: Add this to the file and make sure to change the ../3/.. to the right position of your variable
-      ![image](./img/image-2.png)
-    
-      Step 8: Repeat step 6 - 7 but for prod, which is right under the dev folder
-
-      Step 9: You can call the variable you made by using this code anywhere in the project:
-             ```
-                 process.env.your_variable_name
-             ```
-
-   
