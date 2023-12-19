@@ -16,8 +16,20 @@ const pool = new pg.Pool();
 // first require the package
 const DBMigrate = require('db-migrate');
 
+// some misc helper stuff for logging purposes
+const CYAN="\x1b[96m";
+const CYAN_BOLD="\x1b[1;96m";
+const BLUE="\x1b[94m";
+const BLUE_BOLD="\x1b[1;94m";
+const GREEN="\x1b[92m";
+const GREEN_BOLD="\x1b[1;92m";
+const RED="\x1b[91m";
+const RED_BOLD="\x1b[1;91m";
+const END="\x1b[0m";
+const JOB_ID = process.env.JOB_ID;
+
 // The next step is to get a new instance of DBMigrate
-console.log("attempting to connect to instance!");
+console.log(`${CYAN_BOLD + JOB_ID + END} is attempting to connect to the DB!`);
 const dbmigrate = DBMigrate.getInstance(true);
 const log = console.log;
 
@@ -31,11 +43,11 @@ const createDummyMigration = async function () {
             id, name, run_on)
             VALUES (5, '/20230814020356-db-initialization', '2023-08-20 22:36:00.294');`);
         
-        console.log("\x1b[96mSuccessfully created dummy migration, your down.sql file should run as expected :) (fix the err and continue devving!)\x1b[0");
+        console.log(`\x1b[96mSuccessfully created dummy migration, your down.sql file should run as expected :) (fix the err and continue devving!)\x1b[0`);
     } catch (error) {
-        console.log("\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0");
+        console.log(`\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0`);
         console.log(`\x1b[91mThere was an error running the migration-seed function!! This is unusual and means that your DB resets/down functionality won't work properly... please let me know if you encounter this issue!!!\n\n${error}\x1b[0`);
-        console.log("\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0");
+        console.log(`\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0`);
     }
       
 }
@@ -72,15 +84,15 @@ module.exports.init = function () {
         
 \x1b[92mHappy migrating!!!!!!\x1b[0m
             `);
-                    console.log("\x1b[92m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0");
-                    console.log("Process ended successfully, exiting with CODE 0");
+                    console.log(`\x1b[92m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0`);
+                    console.log(`\n${GREEN_BOLD + JOB_ID +END} completed successfully, exiting with CODE 0\n`);
                     // await createDummyMigration();
                     process.exit(0);
                 })
                 .catch(async (err) => {
                     if (err.toString().includes('prod-postgres-stateful-set-0.prod-postgres-headless-service') || err.toString().includes('dev-postgres-stateful-set-0.dev-postgres-headless-service')) {
-                        console.log("Not a valid SQL err, retrying the job!");
-                        console.log("Process FAILED, exiting with ERR CODE 1");
+                        console.log(`\n${RED_BOLD + JOB_ID + END} failed to connect to the DB!, re-trying migration.... exiting with ERR CODE 1\n`);
+                        // console.log(`Process FAILED, exiting with ERR CODE 1`);
                         process.exit(1);
                     }
                     log(`
@@ -110,7 +122,7 @@ module.exports.init = function () {
                     
 -> \x1b[91m${err}\x1b[0
                         `);
-                      console.log("\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0");
+                      console.log(`\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0`);
                       await createDummyMigration();
                     });
                     
@@ -139,7 +151,7 @@ This means that \x1b[91mthere was an error running your down.sql file (The one c
                 dbmigrate.create(process.env.MIGRATION_NAME)
                 .then(() => {
                     log('All migrations completed!\n');
-                    console.log("Process ended successfully, exiting with CODE 0");
+                    console.log(`Process ended successfully, exiting with CODE 0`);
                     process.exit(0);
                 });
             };

@@ -4,13 +4,8 @@ resources:
 
 namePrefix: prod-
 
-configMapGenerator:
-  - name: postgres-config
-    envs: 
-    - .env
-
 patches:
-- path: postgres-credentials-patch.json
+- path: open-ims-config-patches.json
   target:
     group: apps
     version: v1

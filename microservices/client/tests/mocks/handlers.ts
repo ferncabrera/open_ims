@@ -1,12 +1,6 @@
 import { rest } from "msw";
 
-let HOST: string | undefined;
-
-if (import.meta.env.DEV) {
-    HOST = import.meta.env.VITE_HOST_DEV;
-} else {
-    HOST = import.meta.env.VITE_HOST_PROD;
-}
+const HOST: string | undefined = import.meta.env.VITE_HOST_IP;
 
 const baseURL = `http://${HOST}`;
 

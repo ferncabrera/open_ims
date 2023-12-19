@@ -12,18 +12,20 @@ spec:
         command: ["npm",  "run", "migrate"]
         envFrom:
           - configMapRef:
-              name: migration-job-config
+              name: open-ims-config-map
+          - secretRef:
+              name: open-ims-secrets
         env:
           - name: PGPASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: postgres-credentials
-                key: POSTGRES_PASSWORD
+            value: "$(POSTGRES_PASSWORD)"
           - name: PGUSER
+            value: "$(POSTGRES_USER)"
+          - name: PGDATABASE
+            value: "$(POSTGRES_DB)"
+          - name: JOB_ID
             valueFrom:
-              secretKeyRef:
-                name: postgres-credentials
-                key: POSTGRES_USER
+              fieldRef:
+                fieldPath: metadata.name
       restartPolicy: Never
-  activeDeadlineSeconds: 100
+  activeDeadlineSeconds: 120
   backoffLimit: 5

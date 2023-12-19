@@ -31,30 +31,13 @@ spec:
         - containerPort: 3000
         envFrom:
           - configMapRef:
-              name: server-config
+              name: open-ims-config-map
+          - secretRef:
+              name: open-ims-secrets
         env:
           - name: PGPASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: postgres-credentials
-                key: POSTGRES_PASSWORD
+            value: "$(POSTGRES_PASSWORD)"
           - name: PGUSER
-            valueFrom:
-              secretKeyRef:
-                name: postgres-credentials
-                key: POSTGRES_USER
-          - name: JWT_SECRET_KEY
-            valueFrom:
-              secretKeyRef:
-                name: server-secrets
-                key: JWT_SECRET_KEY
-          - name: BREVO_API_KEY
-            valueFrom:
-              secretKeyRef:
-                name: server-secrets
-                key: BREVO_API_KEY
-          - name: JWT_SECRET_KEY_FORGOT
-            valueFrom:
-              secretKeyRef:
-                name: server-secrets
-                key: JWT_SECRET_KEY_FORGOT
+            value: "$(POSTGRES_USER)"
+          - name: PGDATABASE
+            value: "$(POSTGRES_DB)"

@@ -1,0 +1,1 @@
+** This should contain instructions on how to make edits to the kubernetes configurations! Environment variables across all pods basically! **
