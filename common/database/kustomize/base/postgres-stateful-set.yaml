@@ -32,15 +32,6 @@ spec:
           - containerPort: 5432
         envFrom:
           - configMapRef:
-              name: postgres-config
-        env:
-          - name: POSTGRES_PASSWORD
-            valueFrom:
-              secretKeyRef:
-                name: postgres-credentials
-                key: POSTGRES_PASSWORD
-          - name: POSTGRES_USER
-            valueFrom:
-              secretKeyRef:
-                name: postgres-credentials
-                key: POSTGRES_USER
+              name: open-ims-config-map
+          - secretRef:
+              name: open-ims-secrets

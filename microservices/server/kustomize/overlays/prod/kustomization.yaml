@@ -4,17 +4,17 @@ resources:
 namePrefix: 
   prod-
 
-configMapGenerator:
-  - name: server-config
-    envs:
-    - .env
+# configMapGenerator:
+#   - name: server-config
+#     envs:
+#     - .env
 
 images:
 - name: fcabrera01/open-ims-server
   newName: fcabrera01/ccg-server
 
 patches:
-- path: postgres-credentials-patch.json
+- path: open-ims-config-patches.json
   target:
     group: apps
     version: v1
