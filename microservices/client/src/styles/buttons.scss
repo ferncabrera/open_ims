@@ -1,4 +1,3 @@
-
 @import './general/colors.scss';
 
 .open-ims-styling {
@@ -6,14 +5,90 @@
         width: 100%;
         border-radius: 15px;
         height: 45px;
+
         &.btn-primary {
             background-color: $primary-blue;
             color: $white;
+
             &:hover {
                 background-color: $secondary-blue;
                 border-color: $secondary-blue;
             }
         }
 
+    }
+
+    .container1 {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .button-container {
+        display: flex;
+        padding: 10px;
+    }
+
+    /* PillButton.css */
+    .pill-button1 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 6px 10px;
+        margin-right: 8px;
+        border: $light-grey solid 1px;
+        border-radius: 16px;
+        background-color: $white;
+        color: $dark-text;
+        cursor: pointer;
+        outline: $light-grey;
+        transition: background-color 0.3s;
+    }
+
+    .pill-button1:last-child {
+        margin-right: 20px;
+        /* Remove margin from the last button */
+    }
+
+    .pill-button1:hover {
+        background-color: $light-grey;
+    }
+
+    .icon-container {
+        margin-right: 20px;
+    }
+
+    .label1 {
+        align-items: center;
+        margin-right: 20px;
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    .pill-button2 {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 8px 16px;
+        margin-right: 8px;
+        border-radius: 16px;
+        background-color: $primary-blue;
+        color: $white;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .pill-button2:hover {
+        background-color: $secondary-blue;
+    }
+
+    .label2 {
+        align-items: center;
+        font-size: 18px;
+        font-weight: bold;
+        margin-left: 30px;
+        margin-right: 30px;
+        width: fit-content;
     }
 }

@@ -18,14 +18,14 @@ export const BasicSearchFilters = () => {
         >
           {<MdOutlineSearch />}
         </span>
-          <Form.Control
-            id='password'
-            className={styles.searchFilter}
-            name="tableSearch"
-            onChange={(e) => setFilterQuery(e.target.value)} // need to handle search filtering from back-end
-            value={filterQuery}
-            placeholder='Search by parameter'
-          />
+        <Form.Control
+          id='password'
+          className={styles.searchFilter}
+          name="tableSearch"
+          onChange={(e) => setFilterQuery(e.target.value)} // need to handle search filtering from back-end
+          value={filterQuery}
+          placeholder='Search by parameter'
+        />
       </InputGroup>
     </div >
   )

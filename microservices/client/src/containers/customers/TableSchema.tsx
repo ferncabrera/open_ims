@@ -3,23 +3,23 @@ import { createColumnHelper } from "@tanstack/react-table";
 const columnHelper = createColumnHelper();
 
 export const Columns = [
-    columnHelper.accessor("company_name",{
+    columnHelper.accessor("company_name", {
         header: 'Company Name',
-    }, ),
+    },),
 
-    columnHelper.accessor("contact_name",{
+    columnHelper.accessor("contact_name", {
         header: 'Contact Name',
-    }, ),
-    
-    columnHelper.accessor("email",{
+    },),
+
+    columnHelper.accessor("email", {
         header: 'Email',
-    }, ),
+    },),
 
-    columnHelper.accessor("phone",{
+    columnHelper.accessor("phone", {
         header: 'Phone',
-    }, ),
+    },),
 
-    columnHelper.accessor("customer_id",{
+    columnHelper.accessor("customer_id", {
         header: 'Customer Id',
-    }, ),
+    },),
 ]

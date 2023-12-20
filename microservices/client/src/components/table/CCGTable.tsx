@@ -5,12 +5,16 @@ import {
   flexRender,
   getPaginationRowModel
 } from '@tanstack/react-table';
-import { Row, Col } from 'react-bootstrap';
+import { Row, Col, BreadcrumbItem } from 'react-bootstrap';
 import Mock_DATA from "../../assets/public/mockData/MOCK_DATA.json"; // use this as a data prop
 import { Columns } from "../../containers/customers/TableSchema"; // use this as a columns prop
 import { BasicSearchFilters } from './BasicSearchFilters';
+import { PillButtons1, PillButtons2 } from '../buttons/PillButtons';
+import { MdOutlinePictureAsPdf, MdOutlineMailOutline, MdOutlineLocalPrintshop, MdDeleteOutline, MdOutlineHome } from "react-icons/md";
+import { Breadcrumb } from 'react-bootstrap';
 
 export const CCGTable = () => {
+  const handleClick = () => { };
 
   const columns = useMemo(() => Columns, []);
   const data = useMemo(() => Mock_DATA, []);
@@ -25,10 +29,28 @@ export const CCGTable = () => {
   })
   return (
     <div>
+      <h5>
+        <Breadcrumb>
+          <Breadcrumb.Item href='#"'><MdOutlineHome /></Breadcrumb.Item>
+          <Breadcrumb.Item active>Customers</Breadcrumb.Item>
+        </Breadcrumb>
+      </h5>
+      <h2>
+        <div className='container1'>
+          <span className='font-48'>Customers</span>
+          <div className='button-container'>
+            <PillButtons1 label="Export" icon={MdOutlinePictureAsPdf} onClick={handleClick} />
+            <PillButtons1 label="Email" icon={MdOutlineMailOutline} onClick={handleClick} />
+            <PillButtons1 label="Print" icon={MdOutlineLocalPrintshop} onClick={handleClick} />
+            <PillButtons1 label="Delete" icon={MdDeleteOutline} onClick={handleClick} />
+            <PillButtons2 label="+    Create Customer" onClick={handleClick} />
+          </div>
+        </div>
+      </h2>
       <div className='table-border-wrapper'>
         {/* Need to make an insertable component header here */}
         <div className='bg-white filter-header-section'>
-          <BasicSearchFilters/>
+          <BasicSearchFilters />
         </div>
         <div className='px-4 py-3 bg-white filter-size-section'>
           <Row>
