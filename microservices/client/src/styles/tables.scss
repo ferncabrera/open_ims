@@ -51,4 +51,16 @@
             width: 300px;
         }
       }
+
+      .page-input {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        input {
+          width: 10%;
+          margin-left: 4px;
+          margin-right: 4px;
+        }
+      }
 }

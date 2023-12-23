@@ -16,4 +16,20 @@
         }
 
     }
+
+    button.pagination {
+        background-color: transparent;
+        border: none;
+        color: $secondary-blue;
+        width: auto;
+        height: auto;
+        display: block;
+        align-items: center;
+        &:hover {
+            color: $lightest-blue;
+        }
+        &:active {
+            background-color: transparent;
+        }
+    }
 }
