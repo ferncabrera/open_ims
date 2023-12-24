@@ -14,7 +14,7 @@ END="\e[m"
 SCRIPT_NAME=$(basename "$0")
 
 handle_error() {
-    echo -e $RED_BOLD"\nFATAL ERROR: "$END"OPEN IMS has failed to start!!! There was an "$CYAN"issue executing line $1"$END", cleaning up any created resources..."
+    echo -e $RED_BOLD"\nFATAL ERROR: "$END"OPEN IMS has failed to start!!! There was an "$CYAN"issue executing line $1"$END" of the start.sh file, cleaning up any created resources..."
     skaffold delete -p $MODE && echo -e "\nAll "$CYAN_BOLD$MODE$END" services deleted!"
     echo -e "\n"$BLUE$SCRIPT_NAME$END$RED_BOLD" FAILED!"$END"\n"
     exit 1
