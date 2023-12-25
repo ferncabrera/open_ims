@@ -1,8 +1,8 @@
 /* Replace with your SQL CREATE commands */
 
--- USER TABLE
 CREATE TYPE user_permission AS ENUM ('Admin', 'Employee', 'Unauthorized');
 
+-- USER TABLE
 CREATE TABLE user_table (
     id SERIAL PRIMARY KEY,
     email VARCHAR(100) UNIQUE NOT NULL,
@@ -13,6 +13,7 @@ CREATE TABLE user_table (
     password VARCHAR(128) NOT NULL CHECK (Password ~ '^.*(?=.{8,64})(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).*$')
 );
 
+-- EMPLOYEE TABLE
 CREATE TABLE employee_table (
     emp_id INT REFERENCES user_table(id) UNIQUE,
     emp_sin VARCHAR(15),
@@ -32,8 +33,8 @@ CREATE TABLE customer_table (
     last_name VARCHAR(50) NOT NULL,
     company_name VARCHAR(50) NOT NULL,
     phone VARCHAR(15) NOT NULL,
-    created_by INT,
     net_terms INT DEFAULT 30 NOT NULL,
+    created_by INT,
     FOREIGN KEY (created_by) REFERENCES employee_table (emp_id) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
@@ -45,8 +46,8 @@ CREATE TABLE vendor_table (
     last_name VARCHAR(50) NOT NULL,
     company_name VARCHAR(50) NOT NULL,
     phone VARCHAR(15) NOT NULL,
-    created_by INT,
     net_terms INT DEFAULT 30 NOT NULL,
+    created_by INT,
     FOREIGN KEY (created_by) REFERENCES employee_table (emp_id) ON UPDATE CASCADE ON DELETE NO ACTION
 );
 
@@ -196,10 +197,12 @@ BEFORE UPDATE ON user_table
 FOR EACH ROW
 EXECUTE FUNCTION deactivate_employee_trigger_function();
 
--- Creating default user:-- Inserting a realistic entry into user_table
+-- Creating default user:-- Inserting a realistic entry into user_table (PASSWORD is Admin123! but hashed!)
+-- ! Since the password is "salted" and hashed (not encrypted) we cannot just store the plain text and expect our Auth to work, or even a previously hashed version of the same password....
+-- TODO: Find a way to pre-enter the admin users password. (entering Test123! on the UI while correct will not work right now, for instance).
 INSERT INTO user_table (email, first_name, last_name, phone, password)
 VALUES
-  ('admin@openims.com', 'Admin', 'User', '+1234567890', 'Admin123!');
+  ('admin@openims.com', 'Admin', 'User', '+1234567890', 'Test123!');
 
 -- Updating the permission to 'Admin' for the user with a specific email (will cause trigger to create corresponding emp_id entry)
 UPDATE user_table
