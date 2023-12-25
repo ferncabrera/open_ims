@@ -14,7 +14,7 @@ spec:
     spec:
       initContainers:
       - name: "job-wait-initcontainer"
-        imagePullPolicy: Always
+        imagePullPolicy: IfNotPresent
         image: "groundnuty/k8s-wait-for:v2.0"
         # command: ["/usr/bin/timeout", "3", "wait_for.sh"]
         args: 
