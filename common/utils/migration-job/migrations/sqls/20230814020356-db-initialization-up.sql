@@ -196,10 +196,12 @@ BEFORE UPDATE ON user_table
 FOR EACH ROW
 EXECUTE FUNCTION deactivate_employee_trigger_function();
 
--- Creating default user:-- Inserting a realistic entry into user_table
+-- Creating default user:-- Inserting a realistic entry into user_table (PASSWORD is Admin123! but encoded!)
+-- ! Since the password is "salted" and hashed (not encrypted) we cannot just store the plain text, or even a previously hashed version of the same password....
+-- TODO: Find a way to pre-enter the admin users password. (entering Test123! will not work right now, for instance).
 INSERT INTO user_table (email, first_name, last_name, phone, password)
 VALUES
-  ('admin@openims.com', 'Admin', 'User', '+1234567890', 'Admin123!');
+  ('admin@openims.com', 'Admin', 'User', '+1234567890', 'Test123!');
 
 -- Updating the permission to 'Admin' for the user with a specific email (will cause trigger to create corresponding emp_id entry)
 UPDATE user_table
