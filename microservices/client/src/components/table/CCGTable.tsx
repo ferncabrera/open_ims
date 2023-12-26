@@ -1,32 +1,74 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState, useEffect } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
   flexRender,
   getPaginationRowModel
 } from '@tanstack/react-table';
-import { Row, Col, BreadcrumbItem } from 'react-bootstrap';
-import Mock_DATA from "../../assets/public/mockData/MOCK_DATA.json"; // use this as a data prop
-import { Columns } from "../../containers/customers/TableSchema"; // use this as a columns prop
+import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
 import { BasicSearchFilters } from './BasicSearchFilters';
 import { PillButtons1, PillButtons2 } from '../buttons/PillButtons';
-import { MdOutlinePictureAsPdf, MdOutlineMailOutline, MdOutlineLocalPrintshop, MdDeleteOutline, MdOutlineHome } from "react-icons/md";
+import { MdArrowForward, MdArrowBack, MdOutlinePictureAsPdf, MdOutlineMailOutline, MdOutlineLocalPrintshop, MdDeleteOutline, MdOutlineHome } from "react-icons/md";
 import { Breadcrumb } from 'react-bootstrap';
+import _ from 'lodash';
 
-export const CCGTable = () => {
-  const handleClick = () => { };
+interface ICCGTableProps {
+  columns: any;
+  data: any;
+  // columns and data must be compatible with eachother when passed in as props
+  totalCount: number;
+  fetchDataFunction: (pageSize, pageIndex, searchQuery?) => void;
+  pageSize: number,
+  pageIndex: number,
+}
 
-  const columns = useMemo(() => Columns, []);
-  const data = useMemo(() => Mock_DATA, []);
+export const CCGTable: React.FC<ICCGTableProps> = (props) => {
+
+  const {
+    columns,
+    data,
+    totalCount,
+    fetchDataFunction,
+    pageSize,
+    pageIndex,
+
+  } = props;
+
+  const columnSchema = useMemo(() => columns, []);
+  // const tableData = useMemo(() => data, []);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchValue, setSearchValue] = useState('');
+  const [rowSelection, setRowSelection] = useState({});
+
 
   const table = useReactTable({
 
-    data,
-    columns,
+    data: data,
+    columns: columnSchema,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    // manualPagination: true // We will need this!!
-  })
+    manualPagination: true,
+    enableRowSelection: true,
+    enableMultiRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    getRowId: (row: any) => row.id,
+    state: { rowSelection }
+  });
+
+
+  useEffect(() => {
+    if (data) {
+      setIsLoading(false);
+    }
+  }, [data, isLoading]);
+
+  const handleSearch = (searchQuery: string) => {
+    setSearchValue(searchQuery)
+    fetchDataFunction(10, 0, searchQuery)
+  }
+
   return (
     <div>
       <h5>
@@ -39,135 +81,146 @@ export const CCGTable = () => {
         <div className='container1'>
           <span className='font-48'>Customers</span>
           <div className='button-container'>
-            <PillButtons1 label="Export" icon={MdOutlinePictureAsPdf} onClick={handleClick} />
-            <PillButtons1 label="Email" icon={MdOutlineMailOutline} onClick={handleClick} />
-            <PillButtons1 label="Print" icon={MdOutlineLocalPrintshop} onClick={handleClick} />
-            <PillButtons1 label="Delete" icon={MdDeleteOutline} onClick={handleClick} />
-            <PillButtons2 label="+    Create Customer" onClick={handleClick} />
+            <PillButtons1 label="Export" icon={MdOutlinePictureAsPdf} onClick={() => null} />
+            <PillButtons1 label="Email" icon={MdOutlineMailOutline} onClick={() => null} />
+            <PillButtons1 label="Print" icon={MdOutlineLocalPrintshop} onClick={() => null} />
+            <PillButtons1 label="Delete" icon={MdDeleteOutline} onClick={() => null} />
+            <PillButtons2 label="+    Create Customer" onClick={() => null} />
           </div>
         </div>
       </h2>
       <div className='table-border-wrapper'>
         {/* Need to make an insertable component header here */}
         <div className='bg-white filter-header-section'>
-          <BasicSearchFilters />
+          <BasicSearchFilters
+            search={handleSearch}
+          />
         </div>
         <div className='px-4 py-3 bg-white filter-size-section'>
           <Row>
             <Col>
-              Showing 0 - {table.getRowModel().rows.length} results out of **total rows**
+              {data &&
+                `Showing 0 - ${table.getRowModel().rows.length} results out of ${totalCount}`
+              }
             </Col>
             <Col className='d-flex justify-content-end'>
               <span className='pe-2'>Results Per Page </span>
               <select
                 className='size-select'
-                value={table.getState().pagination.pageSize}
+                value={pageSize}
                 onChange={e => {
-                  table.setPageSize(Number(e.target.value))
+                  const pageSize = e.target.value;
+                  setIsLoading(true);
+                  fetchDataFunction(pageSize, 0, searchValue);
                 }}
               >
-                {[10, 20, 30, 40, 50].map(pageSize => (
-                  <option key={pageSize} value={pageSize}>
-                    {pageSize}
+                {[10, 20, 30, 40, 50].map(pageSizeOption => (
+                  <option key={pageSizeOption} value={pageSizeOption}>
+                    {pageSizeOption}
                   </option>
                 ))}
               </select>
             </Col>
           </Row>
         </div>
-        <table>
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => {
-              return (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    return (
-                      <th key={header.id} id={header.id}>
-                        {" "}
-                        {header.isPlaceholder
-                          ? null
-                          : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                      </th>
-                    );
-                  })}
-                </tr>
-              )
-            })}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => {
-              return (
-                <tr key={row.id}>
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <td key={cell.id}>
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+        {isLoading &&
+          <div className='d-flex justify-content-center'>
+            <Spinner />
+          </div>
+        }
+        {(data && !isLoading) &&
+          <table>
+            <thead>
+              {table.getHeaderGroups().map((headerGroup) => {
+                return (
+                  <tr key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => {
+                      return (
+                        <th key={header.id} id={header.id}>
+                          {" "}
+                          {header.isPlaceholder
+                            ? null
+                            : flexRender(
+                              header.column.columnDef.header,
+                              header.getContext()
+                            )}
+                        </th>
+                      );
+                    })}
+                  </tr>
+                )
+              })}
+            </thead>
+            <tbody>
+              {table.getRowModel().rows.map((row) => {
+                return (
+                  <tr key={row.id}>
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <td key={cell.id}>
+                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        }
+        <div className='bg-white pt-3 pb-2'>
+          <Row>
+            <Col className='ms-3'>
+              <Button
+                className='pagination'
+                variant='info'
+                onClick={() => {
+                  setIsLoading(true)
+                  setCurrentPage(1);
+                  fetchDataFunction(pageSize, Number(pageIndex) - 1, searchValue)
+                }}
+                disabled={(Number(pageIndex) === 0) ? true : false}
+              >
+                <MdArrowBack /> Previous
+              </Button>
+            </Col>
+            <Col>
+              <span className="flex items-center page-input">
+                Go to page:
+                <Form.Control
+                  size='sm'
+                  value={!currentPage ? '' : (Number(pageIndex) + 1)}
+                  onChange={(e) => {
+                    const input = Number(e.target.value);
+                    if (!isNaN(input) && (input >= 1) && ((input + (Number(pageIndex) + 1) >= 1) && (input <= Math.ceil(totalCount / pageSize)))) {
+                      setIsLoading(true);
+                      setCurrentPage(1);
+                      fetchDataFunction(pageSize, input - 1, searchValue);
+                    } else {
+                      setCurrentPage(null);
+                    }
+                  }}
+                />
+                of {Math.ceil(totalCount / pageSize)}
+              </span>
+            </Col>
+            <Col className='d-flex justify-content-end me-3'>
+              <Button
+                className='pagination'
+                variant='info'
+                onClick={() => {
+                  setIsLoading(true);
+                  setCurrentPage(1);
+                  fetchDataFunction(pageSize, Number(pageIndex) + 1, searchValue)
+                }}
+                disabled={(Number(pageIndex) + 1 >= Math.ceil(totalCount / pageSize)) ? true : false}
+              >
+                Next <MdArrowForward />
+              </Button>
+            </Col>
+          </Row>
+        </div>
       </div>
-      {/* pagination options below here */}
-      <div className="h-2" />
-      <div className="flex items-center gap-2">
-        <button
-          className="border rounded p-1"
-          onClick={() => table.setPageIndex(0)}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'<<'}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {'<'}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {'>'}
-        </button>
-        <button
-          className="border rounded p-1"
-          onClick={() => table.setPageIndex(table.getPageCount() - 1)}
-          disabled={!table.getCanNextPage()}
-        >
-          {'>>'}
-        </button>
-        <span className="flex items-center gap-1">
-          <div>Page</div>
-          <strong>
-            {table.getState().pagination.pageIndex + 1} of{' '}
-            {table.getPageCount()}
-          </strong>
-        </span>
-        <span className="flex items-center gap-1">
-          | Go to page:
-          <input
-            type="number"
-            defaultValue={table.getState().pagination.pageIndex + 1}
-            onChange={e => {
-              const page = e.target.value ? Number(e.target.value) - 1 : 0
-              table.setPageIndex(page)
-            }}
-            className="border p-1 rounded w-16"
-          />
-        </span>
-
-      </div>
-      <div>{table.getRowModel().rows.length} Rows</div>
-      <pre>{JSON.stringify(table.getState().pagination, null, 2)}</pre>
-    </div>
+    </div >
   )
 }

@@ -15,7 +15,6 @@
                 border-color: $secondary-blue;
             }
         }
-
     }
 
     .container1 {
@@ -27,6 +26,7 @@
     .button-container {
         display: flex;
         padding: 10px;
+        flex-wrap: wrap;
     }
 
     /* PillButton.css */
@@ -43,16 +43,16 @@
         cursor: pointer;
         outline: $light-grey;
         transition: background-color 0.3s;
+
+        &:last-child {
+            margin-right: 20px;
+        }
+
+        &:hover {
+            background-color: $light-grey;
+        }
     }
 
-    .pill-button1:last-child {
-        margin-right: 20px;
-        /* Remove margin from the last button */
-    }
-
-    .pill-button1:hover {
-        background-color: $light-grey;
-    }
 
     .icon-container {
         margin-right: 20px;
@@ -77,10 +77,10 @@
         border: none;
         cursor: pointer;
         transition: background-color 0.3s;
-    }
 
-    .pill-button2:hover {
-        background-color: $secondary-blue;
+        &:hover {
+            background-color: $secondary-blue;
+        }
     }
 
     .label2 {
@@ -90,5 +90,23 @@
         margin-left: 30px;
         margin-right: 30px;
         width: fit-content;
+    }
+
+    button.pagination {
+        background-color: transparent;
+        border: none;
+        color: $secondary-blue;
+        width: auto;
+        height: auto;
+        display: block;
+        align-items: center;
+
+        &:hover {
+            color: $lightest-blue;
+        }
+
+        &:active {
+            background-color: transparent;
+        }
     }
 }

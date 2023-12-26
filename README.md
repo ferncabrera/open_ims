@@ -53,6 +53,9 @@ This command will execute the _start.sh_ file that will ensure the Kubernetes _c
 <br/>
 <br/>
 Once you start seeing service logs, feel free to make changes (to relevant files) as you usually would and observe the logs Skaffold outputs as it re-builds our application (or in our case specifically, "injects" the changes directly into our running containers). 
+
+__To see how we handle secrets and environment variables check out the README.md in the ./common/config! directory!__
+
 #### Stopping the dev env
 In the same terminal that was used to run ```./start.sh```, simply press ```CTRL+C``` to kill the process. Skaffold will take care of the rest and teardown all pods and services/prune any dangling images :D!
 *TIP*: In the case that you have *lost* or do not know where the terminal used to start the app is, you may run ```skaffold delete -p dev_or_prod``` at any time to stop all the Kubernetes services for the desired environment from any terminal (dev_or_prod should be either "dev" or "prod").
@@ -161,13 +164,13 @@ Wait until you see logs like the ones in the image below (or just a minute or tw
 Once the page loads, you will be prompted to enter a PGAdmin email and password. There are default values set (for your local dev environment) which you can use to log in:
 <ul>
   <li>Email: **admin@openims.com**</li>
-  <li>Password: **pgadmin**</li>
+  <li>Password: **admin**</li>
 </ul>
 Like the postgres container, you can also view the login information required for this container by clicking on the Inspect tab:
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/1ff50848-52a4-421f-92bf-eaf9420a6721)
 
-Once you are in, click on the "Servers" dropdown to the left, it should automatically show an **Open IMS Server** which lists the databases in our postgres instance that you can connect to. Click on it and then enter our Postgres password, which is **admin**.
+Once you are in, click on the "Servers" dropdown to the left, it should automatically show an **Open IMS Server** which lists the databases in our postgres instance that you can connect to. Click on it and then enter our Postgres password, which is also **admin**.
 
 ![image](https://github.com/ferncabrera/open_ims/assets/73137447/3ec69e2d-ebc4-4ef8-82b3-d9eceb8ecd5d)
 

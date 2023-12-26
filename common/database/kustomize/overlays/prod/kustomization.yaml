@@ -1,6 +1,5 @@
 resources:
   - ../../base
-  # - postgres-credentials.yaml
 
 namePrefix: prod-
 
@@ -15,4 +14,4 @@ patches:
 images:
 - name: postgres
   newName: postgres
-  newTag: '15.3'
+  newTag: '16.1'

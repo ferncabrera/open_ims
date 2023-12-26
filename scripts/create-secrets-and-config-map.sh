@@ -38,7 +38,7 @@ if [ $# -eq 0 ]
     fi
 fi
 
-echo -e "\n"$BLUE$SCRIPT_NAME$END" has been started!\n"
+echo -e $BLUE$SCRIPT_NAME$END" has been started!\n"
 
 echo -e $BLUE_BOLD"\nIMPORTANT NOTICE:"$END" Secrets used in the application during development are created by referencing the .secrets.env file found in your $SCRIPT_DIR/../common/config/$ENV_MODE directory."
 echo -e "   If this file is not found while starting the application (using the start.bat script, not skaffold dev/prod-local) it *should* create one for you and copy the contents found inside of the $PWD/../common/config/.secrets.template.env file."
