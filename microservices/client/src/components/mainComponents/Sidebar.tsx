@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useEffect} from 'react'
 import { Nav, Image, Row, Col } from 'react-bootstrap';
 import logoWithText from "../../assets/public/svgs/logoWithText.svg"
+import { useLocation } from 'react-router';
 import {
     MdOutlineHome,
     MdOutlineFace,
@@ -19,12 +20,13 @@ interface ISidebarProps {
 }
 
 export const Sidebar: React.FC<ISidebarProps> = (props) => {
+    const location = useLocation();
     return (
         <>
 
             <Nav className={`col-md-12 d-none d-md-block ${styles.sidebar}`}
-                defaultActiveKey="/ccg/dashboard"
-                onSelect={selectedKey => alert(`selected ${selectedKey}`)}
+                defaultActiveKey={location.pathname}
+                // onSelect={selectedKey => alert(`selected ${selectedKey}`)}
             >
                 <div className='mt-2 mb-4 pb-1 ps-3 pe-5'>
                     <Image className={styles.logo} src={logoWithText} />
@@ -33,7 +35,7 @@ export const Sidebar: React.FC<ISidebarProps> = (props) => {
                     <Nav.Link href="/ccg/dashboard"><span><MdOutlineHome /></span>Dashboard</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="customers"><span><MdOutlineFace /></span>Customers</Nav.Link>
+                    <Nav.Link href="/ccg/customers"  eventKey="/ccg/customers"><span><MdOutlineFace /></span>Customers</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                     <Nav.Link eventKey="salesOrders"><span><MdOutlineSell /></span>Sales Orders</Nav.Link>

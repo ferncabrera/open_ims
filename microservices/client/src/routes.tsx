@@ -4,6 +4,7 @@ import { Authentication } from "./containers/auth";
 import Error from "./containers/Error";
 import { ForgotPass } from "./containers/auth/ResetPass";
 import { MainContainer } from "./containers/main/MainContainer";
+import { DefaultCustomers } from "./containers/customers/DefaultCustomers";
 
 const Routes = [
     {
@@ -26,6 +27,10 @@ const Routes = [
             {
                 path: '/ccg/dashboard',
                 element: <div>This is a good burger!</div>
+            },
+            {
+                path:'/ccg/customers',
+                element: <DefaultCustomers/>
             }
         ]
     }
