@@ -1,6 +1,5 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { Form } from "react-bootstrap";
-import { HandleTableCheckbox } from "../../utilities/helpers/functions";
 import { GoPencil } from "react-icons/go";
 import _ from "lodash";
 
