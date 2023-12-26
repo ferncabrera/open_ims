@@ -1,6 +1,5 @@
 resources:
   - ../../base
-  # - postgres-credentials.yaml
 
 namePrefix: prod-
 
