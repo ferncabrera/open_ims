@@ -12,6 +12,8 @@ DROP TABLE IF EXISTS public.purchase_orders CASCADE;
 
 DROP TABLE IF EXISTS public.products_table CASCADE;
 
+DROP TABLE IF EXISTS public.unique_products_table CASCADE;
+
 DROP TABLE IF EXISTS public.vendor_table CASCADE;
 
 DROP TABLE IF EXISTS public.customer_table CASCADE;
@@ -31,3 +33,11 @@ DROP TYPE IF EXISTS public.order_payment CASCADE;
 DROP TYPE IF EXISTS public.user_permission CASCADE;
 
 DROP TYPE IF EXISTS public.order_status CASCADE;
+
+-- Drop the triggers
+DROP TRIGGER IF EXISTS create_employee_trigger ON user_table;
+DROP TRIGGER IF EXISTS deactivate_employee_trigger ON user_table;
+
+-- Drop the trigger functions
+DROP FUNCTION IF EXISTS create_employee_trigger_function();
+DROP FUNCTION IF EXISTS deactivate_employee_trigger_function();
