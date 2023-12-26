@@ -1,7 +1,6 @@
 import React, {useEffect, useState} from 'react'
 import { CCGTable } from '../../components/table/CCGTable';
 import { Columns } from "./TableSchema";
-import MOCK_DATA from "../../assets/public/mockData/MOCK_DATA.json";
 import { getJSONResponse } from '../../utilities/apiHelpers';
 import _ from 'lodash';
 

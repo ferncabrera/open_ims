@@ -15,7 +15,7 @@ interface ICCGTableProps {
   data: any;
   // columns and data must be compatible with eachother when passed in as props
   totalCount: number;
-  fetchDataFunction: (pageSize, pageIndex, searchQuery? ) => void;
+  fetchDataFunction: (pageSize, pageIndex, searchQuery?) => void;
   pageSize: number,
   pageIndex: number,
 }
@@ -35,6 +35,12 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
   const columnSchema = useMemo(() => columns, []);
   // const tableData = useMemo(() => data, []);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
+  const [searchValue, setSearchValue] = useState('');
+  const [rowSelection, setRowSelection] = useState({});
+
+
   const table = useReactTable({
 
     data: data,
@@ -42,17 +48,19 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     manualPagination: true,
+    enableRowSelection: true,
+    enableMultiRowSelection: true,
+    onRowSelectionChange: setRowSelection,
+    getRowId: (row: any) => row.id,
+    state: { rowSelection }
   });
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
-  const [searchValue, setSearchValue] = useState('');
 
   useEffect(() => {
     if (data) {
       setIsLoading(false);
     }
-  }, [data, isLoading])
+  }, [data, isLoading]);
 
   const handleSearch = (searchQuery: string) => {
     setSearchValue(searchQuery)
