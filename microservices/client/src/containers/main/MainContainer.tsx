@@ -25,6 +25,8 @@ export const MainContainer = (props: any) => {
         setSidebarProps({firstName, permission})
         return
       }
+    }).catch((err) => {
+      return
     })
   }, []);
 
