@@ -35,13 +35,13 @@ export const get_customers = async (req: Request, res: Response) => {
             FROM
               customer_table
             WHERE
-              id::text LIKE '%' || $1 || '%'
-              OR email LIKE '%' || $1 || '%'
-              OR first_name LIKE '%' || $1 || '%'
-              OR last_name LIKE '%' || $1 || '%'
-              OR (first_name LIKE '%' || $4 || '%' AND last_name LIKE '%' || $5 || '%')
-              OR company_name LIKE '%' || $1 || '%'
-              OR phone LIKE '%' || $1 || '%'
+              id::text ILIKE '%' || $1 || '%'
+              OR email ILIKE '%' || $1 || '%'
+              OR first_name ILIKE '%' || $1 || '%'
+              OR last_name ILIKE '%' || $1 || '%'
+              OR (first_name ILIKE '%' || $4 || '%' AND last_name ILIKE '%' || $5 || '%')
+              OR company_name ILIKE '%' || $1 || '%'
+              OR phone ILIKE '%' || $1 || '%'
           ),
           total_count AS (
             SELECT COUNT(*) AS count FROM filtered_rows
