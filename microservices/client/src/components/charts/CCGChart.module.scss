@@ -1,0 +1,21 @@
+@import "../../styles/general/colors.scss";
+
+
+.chartBorderWrapper {
+    border: 1px solid $light-grey;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.chartBackground {
+    background-color: white;
+}
+
+.chartTitle {
+    font-family: Rubik;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    color: $dark-text;
+}

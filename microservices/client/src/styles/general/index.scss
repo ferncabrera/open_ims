@@ -9,6 +9,7 @@
 @import '../buttons.scss';
 @import '../modal.scss';
 @import '../tables.scss';
+// @import '../charts.scss';
 
 html, body {
     margin: 0;
@@ -67,6 +68,10 @@ html, body {
 
     .font-24 {
         font-size: 24px;
+    }
+
+    .font-30 {
+        font-size: 30px;
     }
 
     .font-36 {
