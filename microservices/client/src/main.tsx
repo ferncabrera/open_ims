@@ -17,7 +17,7 @@ const router = createBrowserRouter(Routes, {
 })
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
+    // <React.StrictMode>
         <div className='open-ims-styling'>
             <RecoilRoot>
                 <DebugObserver/>
@@ -28,5 +28,5 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
             </RecoilRoot>
         </div>
 
-    </React.StrictMode>,
+    // </React.StrictMode>,
 )
