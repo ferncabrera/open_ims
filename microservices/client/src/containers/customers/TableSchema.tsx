@@ -1,6 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table";
 import { Form } from "react-bootstrap";
 import { GoPencil } from "react-icons/go";
+import { TableLink } from "../../components/table/TableLink";
 import _ from "lodash";
 
 const columnHelper = createColumnHelper();
@@ -9,38 +10,41 @@ const columnHelper = createColumnHelper();
 
 
 export const Columns = [
-    columnHelper.accessor("select",{
+    columnHelper.accessor("select", {
         header: '',
         cell: ({ row }) => (
             <div className="px-1">
-              <Form.Check
-                {...{
-                  checked: row.getIsSelected(),
-                  disabled: !row.getCanSelect(),
-                //   indeterminate: row.getIsSomeSelected(),
-                  onChange: row.getToggleSelectedHandler(),
-                }}
-              />
+                <Form.Check
+                    {...{
+                        checked: row.getIsSelected(),
+                        disabled: !row.getCanSelect(),
+                        //   indeterminate: row.getIsSomeSelected(),
+                        onChange: row.getToggleSelectedHandler(),
+                    }}
+                />
             </div>
-          ),
-    }, ),
+        ),
+    },),
 
-    columnHelper.accessor("company_name",{
+    columnHelper.accessor("company_name", {
         header: 'Company Name',
         cell: (props) => {
-            
+
             const companyName: string = _.get(props.row.original, 'company_name', null);
+            const id: string = _.get(props.row.original, 'id', '');
             return (
                 <div className="d-flex">
-                    {/* <Form.Check
-                    onClick={(e) => HandleTableCheckbox(e, props)}
-                    className="me-3"
-                    /> */}
-                    {companyName}
+                    <TableLink
+                        redirectTo={`/ccg/customers/read/${id}`}
+                        action="read"
+                        category="customers"
+                    >
+                        {companyName}
+                    </TableLink>
                 </div>
             )
         }
-    }, ),
+    },),
 
     columnHelper.accessor("contact_name", {
         header: 'Contact Name',
@@ -50,9 +54,9 @@ export const Columns = [
 
             return `${firstName} ${lastName}`
         }
-    }, ),
-    
-    columnHelper.accessor("email",{
+    },),
+
+    columnHelper.accessor("email", {
         header: 'Email',
     },),
 
@@ -60,23 +64,26 @@ export const Columns = [
         header: 'Phone',
     },),
 
-    columnHelper.accessor("id",{
+    columnHelper.accessor("id", {
         size: 30,
         header: 'Customer Id',
-    }, ),
+    },),
 
-    columnHelper.accessor("edit",{
+    columnHelper.accessor("edit", {
         header: '',
         maxSize: 30,
-        cell: (row) => {
+        cell: (props) => {
+            const id: string = _.get(props.row.original, 'id', '')
             return (
-                <a
-                className="no-underline"
-                // onClick={}
+
+                <TableLink
+                    redirectTo={`/ccg/customers/edit/${id}`}
+                    action="update"
+                    category="customers"
                 >
-                    <GoPencil/>
-                </a>
+                    <GoPencil />
+                </TableLink>
             )
         }
-    }, ),
+    },),
 ]

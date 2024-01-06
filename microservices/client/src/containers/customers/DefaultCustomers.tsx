@@ -9,10 +9,10 @@ export const DefaultCustomers = () => {
   const [responseData, setResponseData] = useState<any>([]);
 
   useEffect(() => {
-    getData(10, 0).catch((e) => console.log(e))
+    getDataList(10, 0).catch((e) => console.log(e))
   }, []);
 
-  const getData = async (pageSize, pageIndex, searchQuery = '') => {
+  const getDataList = async (pageSize, pageIndex, searchQuery = '') => {
     const response: any = await getJSONResponse({endpoint: '/api/server/customers', params: {pageSize, pageIndex, searchQuery}});
     setResponseData(response);
   };
@@ -24,7 +24,7 @@ export const DefaultCustomers = () => {
         columns={Columns}
         data={_.get(responseData, 'data', [])}
         totalCount={_.get(responseData, 'total', 0)}
-        fetchDataFunction={getData}
+        fetchDataFunction={getDataList}
         pageSize={_.get(responseData, 'pagesize', 0)}
         pageIndex={_.get(responseData, 'pageindex', 0)}
       />
