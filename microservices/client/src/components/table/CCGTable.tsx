@@ -7,7 +7,9 @@ import {
 } from '@tanstack/react-table';
 import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
 import { BasicSearchFilters } from './BasicSearchFilters';
-import { MdArrowForward, MdArrowBack } from "react-icons/md";
+import { PillButtons1, PillButtons2 } from '../buttons/PillButtons';
+import { MdArrowForward, MdArrowBack, MdOutlinePictureAsPdf, MdOutlineMailOutline, MdOutlineLocalPrintshop, MdDeleteOutline, MdOutlineHome } from "react-icons/md";
+import { Breadcrumb } from 'react-bootstrap';
 import _ from 'lodash';
 
 interface ICCGTableProps {
@@ -69,6 +71,24 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
 
   return (
     <div>
+      <h5>
+        <Breadcrumb>
+          <Breadcrumb.Item href='#"'><MdOutlineHome /></Breadcrumb.Item>
+          <Breadcrumb.Item active>Customers</Breadcrumb.Item>
+        </Breadcrumb>
+      </h5>
+      <h2>
+        <div className='container1'>
+          <span className='font-48'>Customers</span>
+          <div className='button-container'>
+            <PillButtons1 label="Export" icon={MdOutlinePictureAsPdf} onClick={() => null} />
+            <PillButtons1 label="Email" icon={MdOutlineMailOutline} onClick={() => null} />
+            <PillButtons1 label="Print" icon={MdOutlineLocalPrintshop} onClick={() => null} />
+            <PillButtons1 label="Delete" icon={MdDeleteOutline} onClick={() => null} />
+            <PillButtons2 label="+    Create Customer" onClick={() => null} />
+          </div>
+        </div>
+      </h2>
       <div className='table-border-wrapper'>
         {/* Need to make an insertable component header here */}
         <div className='bg-white filter-header-section'>

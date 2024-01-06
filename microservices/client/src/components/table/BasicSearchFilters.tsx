@@ -37,7 +37,7 @@ export const BasicSearchFilters: React.FC<IBasicSearchFiltersProps> = (props) =>
           {<MdOutlineSearch />}
         </span>
         <Form.Control
-          id='password'
+          id='searchFilter'
           className={styles.searchFilter}
           name="tableSearch"
           onChange={handleSearchChange}
