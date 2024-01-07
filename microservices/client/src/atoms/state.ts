@@ -10,6 +10,7 @@ export const entityState = atom({
     default: {
         action: null,
         category: '',
-        path: ''
+        path: '',
+        id: null,
     }
 });

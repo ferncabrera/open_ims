@@ -2,28 +2,32 @@ import { Request, Response } from "express";
 import { query } from "../db";
 import customError from "../utils/customError";
 
-interface IGetRequestHeaders {
-    pageindex: number;
-    pagesize: number;
-    searchquery: string;
-}
+interface IGetListRequestHeaders {
+  pageindex: number;
+  pagesize: number;
+  searchquery: string;
+};
+
+interface IGetCustomerRequestHeaders {
+  id: string;
+};
 
 export const get_customers = async (req: Request, res: Response) => {
 
-    const { pageindex, pagesize, searchquery } = req.headers as unknown as  IGetRequestHeaders;
-    const offset: number = Number(pageindex) * Number(pagesize);
-    // !!! should look into sanitizing this.
+  const { pageindex, pagesize, searchquery } = req.headers as unknown as IGetListRequestHeaders;
+  const offset: number = Number(pageindex) * Number(pagesize);
+  // !!! should look into sanitizing this.
 
-    let customers_query;
-    let count_query
+  let customers_query;
+  let count_query
 
-    if (!searchquery) {
-        customers_query = await query("SELECT * FROM customer_table LIMIT $1 OFFSET $2", [pagesize, offset]);
-        count_query = await query("SELECT COUNT(*) FROM customer_table");
-    } else {
-        const [firstName, lastName] = searchquery.split(" ");
+  if (!searchquery) {
+    customers_query = await query("SELECT * FROM customer_table LIMIT $1 OFFSET $2", [pagesize, offset]);
+    count_query = await query("SELECT COUNT(*) FROM customer_table");
+  } else {
+    const [firstName, lastName] = searchquery.split(" ");
 
-        customers_query = await query(`
+    customers_query = await query(`
         WITH filtered_rows AS (
             SELECT
               id,
@@ -58,16 +62,72 @@ export const get_customers = async (req: Request, res: Response) => {
             filtered_rows
           LIMIT $2 OFFSET $3;
         `, [searchquery, pagesize, offset, firstName, lastName]);
-        count_query = customers_query
-    }
+    count_query = customers_query
+  }
 
-    const totalCount: any = count_query.rows[0] ? count_query.rows[0].count : null;
+  const totalCount: any = count_query.rows[0] ? count_query.rows[0].count : null;
 
-    res.status(200).json({
-        pageindex,
-        pagesize,
-        offset,
-        total: totalCount,
-        data: customers_query.rows
-    });
+  res.status(200).json({
+    pageindex,
+    pagesize,
+    offset,
+    total: totalCount,
+    data: customers_query.rows
+  });
 };
+
+export const get_customer = async (req: Request, res: Response) => {
+  const { id } = req.headers as unknown as IGetCustomerRequestHeaders
+  const customer_object: any = {}
+
+  const customer_vendor_query: any = await query(
+    "SELECT * FROM vendor_and_customer WHERE customer_id = $1"
+  , [id]);
+
+  console.log(customer_vendor_query);
+
+  const customer_query: any = await query(
+    "SELECT * FROM customer_table WHERE id = $1", [id]);
+
+  const customer_data = customer_query.rows[0]
+
+  if (customer_data) {
+    customer_object.vendor = null;
+    customer_object.id = id;
+    customer_object.firstName = customer_data.first_name;
+    customer_object.lastName = customer_data.last_name;
+    customer_object.email = customer_data.email;
+    customer_object.phone = customer_data.phone;
+    customer_object.netTerms = customer_data.net_terms;
+  };
+
+  const address_query: any = await query(
+    "SELECT * FROM customer_addresses WHERE customer_id = $1"
+  , [id]);
+
+  for (const element of address_query.rows) {
+    if (element.address === "Shipping") {
+      customer_object.shipping = {
+        address1: element.street_address_line1,
+        address2: element.street_address_line2,
+        city: element.city,
+        province: element.province,
+        country: element.country,
+        postalCode: element.postal
+      }
+    } else if (element.address === "Billing") {
+      customer_object.billing = {
+        address1: element.street_address_line1,
+        address2: element.street_address_line2,
+        city: element.city,
+        province: element.province,
+        country: element.country,
+        postalCode: element.postal
+      }
+    }
+  }
+
+  res.status(200).json({ id, message: 'Successfully retrieved customer data', data: customer_object });
+
+
+}

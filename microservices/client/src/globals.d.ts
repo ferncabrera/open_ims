@@ -20,11 +20,13 @@ interface IErrorFields {
 interface IResponse {
     status?: number;
     message?: string;
+    data?: any;
 }
 
 interface IEntityState {
     action: "create" | "read" | "update" | "delete" | null;
     category: string;
     path: string;
+    id: string | null;
 }
 

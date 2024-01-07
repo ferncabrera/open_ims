@@ -39,7 +39,7 @@ export const OperationController = () => {
     case "update":
       return (
         <RenderEdit
-        
+          entity={entity}
         />
       )
 

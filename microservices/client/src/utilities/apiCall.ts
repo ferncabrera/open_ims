@@ -25,7 +25,7 @@ export const apiCall = async <T>(props: apiCallProps): Promise<T> => {
       body: JSON.stringify(data),
     });
     if (response.status) {
-      let responseWithStatus = await response.json();
+      const responseWithStatus = await response.json();
       responseWithStatus.status = response.status;
       return responseWithStatus;
     } else {
