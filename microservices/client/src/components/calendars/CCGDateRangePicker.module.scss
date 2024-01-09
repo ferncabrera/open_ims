@@ -1,0 +1,20 @@
+@import "../../styles/general/colors.scss";
+@import "../../styles/general/mixins.scss";
+
+div.dateRangePickerStyling {
+    @include ccg-border-styling($overflow: visible);
+
+    :global(div.react-daterange-picker__wrapper) {
+        border: none;
+    }
+}
+
+.dateRangePickerCalIcon {
+    @include ccg-icon-button-styling;
+    font-size: 1.2rem;
+}
+
+.dateRangePickerCloseIcon {
+    font-size: 1.2rem;
+    @include ccg-icon-button-styling;
+}

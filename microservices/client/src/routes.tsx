@@ -25,6 +25,8 @@ const Routes = [
     {
         path: '/ccg',
         element: <MainContainer/>, // this main container will handle our breadcrumbs https://reactrouter.com/en/main/hooks/use-matches
+        //? Note that all of the nested children components/containers/pages are embedded into the MainContainers <Col></Col>
+        //? so you may style all of your components/containers/pages using the Bootstrap 5 Grid system
         children: [
             {
                 path: '/ccg/dashboard',

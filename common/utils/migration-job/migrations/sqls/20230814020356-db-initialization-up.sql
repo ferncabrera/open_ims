@@ -160,12 +160,16 @@ BEGIN
         IF EXISTS (SELECT 1 FROM employee_table WHERE emp_id = NEW.id) THEN
             -- Set is_active to TRUE for the existing employee
             UPDATE employee_table SET is_active = TRUE WHERE emp_id = NEW.id;
-            RAISE NOTICE 'Employee w/ id % has had active status set to true!',
-            NEW.id;
+            RAISE INFO '% % (email: %) is now an active employee!',
+            NEW.first_name,
+            NEW.last_name,
+            NEW.email;
         ELSE
             -- Create a new entry in employee_table if it doesn't exist
-            RAISE NOTICE 'Employee entity has been created for User w/ id %',
-            NEW.id;
+            RAISE INFO '% % (email: %) is now an active employee!',
+            NEW.first_name,
+            NEW.last_name,
+            NEW.email;
             INSERT INTO employee_table(emp_id) VALUES (NEW.id);
         END IF;
     END IF;
@@ -185,8 +189,10 @@ RETURNS TRIGGER AS $$
 BEGIN
     IF NEW.permission = 'Unauthorized' AND OLD.permission != 'Unauthorized' THEN
         UPDATE employee_table SET is_active = FALSE WHERE emp_id = NEW.id;
-        RAISE NOTICE 'Employee w/ id % has had active status set to false!',
-            NEW.id;
+        RAISE INFO '% % (email: %) is no longer an active employee!',
+            NEW.first_name,
+            NEW.last_name,
+            NEW.email;
     END IF;
     RETURN NEW;
 END;
@@ -371,7 +377,7 @@ BEGIN
       p.item_number,
       v.id AS vendor_id,
       floor(random() * 90000 + 10000)::integer AS lot,
-      CURRENT_DATE + (random() * 745)::integer AS exp_date,
+      CURRENT_DATE + (random() * 1100)::integer AS exp_date,
       floor(random() * 100)::integer AS quantity_on_hand,
       ROW_NUMBER() OVER (PARTITION BY p.item_number ORDER BY random()) AS vendor_rank
     FROM products_table p
@@ -392,7 +398,7 @@ BEGIN
   INSERT INTO purchase_orders (vendor_id, purchase_date, delivery_date, product_quantity_rate_list, amount_due, delivery_status, payment_status, created_by)
   SELECT
     v.id,
-    CURRENT_DATE - (random() * 745)::integer AS purchase_date,
+    CURRENT_DATE - (random() * 1100)::integer AS purchase_date,
     CURRENT_DATE + (random() * 100)::integer AS delivery_date,
       ARRAY(
       SELECT 
@@ -432,7 +438,7 @@ BEGIN
   INSERT INTO invoice_orders (customer_id, invoice_date, product_quantity_rate_list, amount_due, delivery_status, payment_status, order_status, date_paid, created_by, sales_rep, reference_number)
   SELECT
       c.id,
-      CURRENT_DATE - (random() * 745)::integer AS invoice_date,
+      CURRENT_DATE - (random() * 1100)::integer AS invoice_date,
       ARRAY(
           SELECT 
               JSONB_BUILD_OBJECT(
