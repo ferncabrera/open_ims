@@ -9,6 +9,45 @@ div.dateRangePickerStyling {
     }
 }
 
+div.calendarStyling {
+    @include ccg-border-styling($overflow: hidden);
+
+    :global(div.react-calendar) {
+        border: none;
+    }
+
+    color: $dark-text;
+
+}
+
+button.tileStyling {
+    // &:active {
+    //     background: $secondary-blue;
+    // }
+
+    &:global(.react-calendar__tile--active) {
+        background: $lightest-blue;
+        // color: $dark-text
+    }
+
+    &:global(.react-calendar__tile--hasActive) {
+        background: $lightest-blue;
+        // color: $dark-text
+    }
+
+    &:global(.react-calendar__tile--now) {
+        background: $secondary-blue;
+        text-decoration: underline;
+        // color: $dark-text
+    }
+
+    &:global(.react-calendar__tile) {
+        // background: $lightest-blue;
+        color: $dark-text
+    }
+}
+
+
 .dateRangePickerCalIcon {
     @include ccg-icon-button-styling;
     font-size: 1.2rem;

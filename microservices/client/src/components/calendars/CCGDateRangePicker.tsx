@@ -23,9 +23,11 @@ export const CCGDateRangePicker: React.FC<ICCGDateRangePickerProps> = ({dateRang
     return (
         <>
             <DateRangePicker
+                calendarClassName={`${styles.calendarStyling} mt-1`}
                 className={`${styles.dateRangePickerStyling} ${additionalClasses}`}
                 onChange={setDateRange}
                 value={dateRange}
+                tileClassName={`${styles.tileStyling}`}
                 // maxDetail={maxDetail}
                 rangeDivider="to"
                 calendarIcon={

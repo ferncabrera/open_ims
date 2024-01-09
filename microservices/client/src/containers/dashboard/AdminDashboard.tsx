@@ -71,7 +71,7 @@ export const AdminDashboard = () => {
 
                 <Col md={12} lg={8}>
                     {userInfo.firstName !== null &&
-                        <p className='mb-0 font-30 dark-text'>Welcome back, {userInfo.firstName}.</p>
+                        <p className='mb-0 font-30 dark-text'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
                     }
                 </Col>
 
