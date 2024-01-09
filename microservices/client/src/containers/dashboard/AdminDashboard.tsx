@@ -67,16 +67,16 @@ export const AdminDashboard = () => {
     return (
         <>
 
-            <Row className={"align-items-center my-4 py-1"}>
+            <Row className={"align-items-center my-lg-4 mt-2 py-1"}>
 
-                <Col md={12} lg={8}>
+                <Col md={12} lg={6}>
                     {userInfo.firstName !== null &&
                         <p className='mb-0 font-30 dark-text'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
                     }
                 </Col>
 
                 <Col >
-                    <div className='float-end'>
+                    <div className='float-lg-end text-nowrap'>
                         {dashboardMetricsGranularity != "custom" ?
                             <>
                                 <p
@@ -132,7 +132,7 @@ export const AdminDashboard = () => {
                                 >
                                     summary from
                                 </p>
-                                <CCGDateRangePicker dateRange={dateRange} setDateRange={setDateRange} additionalClasses={`float-end px-2 bg-white ${styles.dashboardDateRangePicker}`} />
+                                <CCGDateRangePicker dateRange={dateRange} setDateRange={setDateRange} additionalClasses={`float-lg-end px-2 bg-white ${styles.dashboardDateRangePicker}`} />
                             </>
                         }
                     </div>
