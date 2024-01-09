@@ -203,6 +203,9 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
         if (rightHasNeg)
             setShowYReferenceLineRight(true);
 
+        setEndIndexBrush(data.length - 1);
+        setStartIndexBrush(0);
+
         setLoadingChart(false);
     }, [data]);
 
@@ -256,7 +259,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
         }
         else if ((customGlobalDateRange >= thirtyYearsInMs) && ((chartGranularity == "week") || (chartGranularity == "day") || (chartGranularity == "month") || (chartGranularity == "year"))) {
             setShowBrush(true);
-        } else {
+        } else if (showBrush && endIndexBrush == data.length -1 && startIndexBrush == 0) {
             setShowBrush(false);
         };
 
@@ -372,13 +375,13 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
 
                             <Tooltip />
                             {showBrush && <Brush onChange={(i) => {
+                                console.log("THe onchange ran --> ", i);
                                 setStartIndexBrush(i.startIndex);
                                 setEndIndexBrush(i.endIndex);
-                            }} dataKey="name"
+                            }}
+                                dataKey="name"
                                 height={30}
                                 stroke={styles.secondaryBlue}
-                                startIndex={startIndexBrush}
-                                endIndex={endIndexBrush}
                             />}
                             <Legend
                                 align='left'
