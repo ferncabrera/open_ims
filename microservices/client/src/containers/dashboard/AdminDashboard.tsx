@@ -11,7 +11,7 @@ import styles from "./index.module.scss";
 const standardMetricDateRanges = [
     "week",
     "month",
-    "quarter",
+    // "quarter",
     "year",
     "all",
     "custom"
@@ -69,7 +69,7 @@ export const AdminDashboard = () => {
 
             <Row className={"align-items-center my-4 py-1"}>
 
-                <Col xs={8}>
+                <Col md={12} lg={8}>
                     {userInfo.firstName !== null &&
                         <p className='mb-0 font-30 dark-text'>Welcome back, {userInfo.firstName}.</p>
                     }
@@ -143,7 +143,7 @@ export const AdminDashboard = () => {
 
             <Row >
 
-                <Col xs={8}>
+                <Col md={12} lg={8}>
                     {dateRange && <CCGChart globalDateRange={dateRange} />}
                 </Col>
 

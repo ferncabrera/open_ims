@@ -5,8 +5,8 @@ import styles from "./CCGChart.module.scss";
 import { Container, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap';
 import { ComposedChart, Line, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Brush } from 'recharts';
 import { DateRange } from '../../utilities/types/types';
-
 import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
+import { makeFriendlyDollarAmount  } from '../../utilities/helpers/functions';
 
 // ! REMOVE ONCE DONE WITH HELPER FUNC
 function getRandomNumber(min, max) {
@@ -60,8 +60,8 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
 
     const [showYReferenceLineRight, setShowYReferenceLineRight] = useState<boolean>(false);
     const [showBrush, setShowBrush] = useState<boolean>(false);
-    const [yAxisWidthLeft, setYAxisWidthLeft] = useState<number>(55);
-    const [yAxisWidthRight, setYAxisWidthRight] = useState<number>(55);
+    const [yAxisWidthLeft, setYAxisWidthLeft] = useState<number>(3);
+    const [yAxisWidthRight, setYAxisWidthRight] = useState<number>(3);
     const [endIndexBrush, setEndIndexBrush] = useState<number>(0);
     const [startIndexBrush, setStartIndexBrush] = useState<number>(0);
     const [loadingChart, setLoadingChart] = useState(true);
@@ -77,76 +77,83 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
 
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
             },
             {
                 name: 'Abc',
-                income: getRandomNumber(23000, 87980),
-                expenses: getRandomNumber(380003, 61880),
-                profit: getRandomNumber(-10000, 10000),
-            }
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
+            },
+            {
+                name: 'Abc',
+                income: getRandomNumber(100, 80000),
+                expenses: getRandomNumber(100, 80000),
+                profit: getRandomNumber(-8000, 80000),
+            },
+ 
 
         ]);
     }, []);
@@ -161,47 +168,113 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
         console.log("maxnumebricvalue", maxNumericValueRight);
         console.log("maxnumebricvalue", rightHasNeg);
 
-        if (maxNumericValueLeft <= 8000) {
+
+        if (maxNumericValueLeft <= 8) {
+            setYAxisWidthLeft(26);
+        }
+        else if (maxNumericValueLeft <= 80) {
+            setYAxisWidthLeft(35);
+        }
+        else if (maxNumericValueLeft <= 800) {
+            setYAxisWidthLeft(45);
+        }
+        else if (maxNumericValueLeft <= 1000) {
             setYAxisWidthLeft(55);
         }
+        else if (maxNumericValueLeft <= 4000) {
+            setYAxisWidthLeft(45);
+        }
         else if (maxNumericValueLeft <= 80000) {
-            setYAxisWidthLeft(65);
+            setYAxisWidthLeft(35);
         }
         else if (maxNumericValueLeft <= 800000) {
-            setYAxisWidthLeft(75);
+            setYAxisWidthLeft(35);
         }
         else if (maxNumericValueLeft <= 8000000) {
-            setYAxisWidthLeft(85);
+            setYAxisWidthLeft(35);
         }
         else if (maxNumericValueLeft <= 80000000) {
-            setYAxisWidthLeft(95);
+            setYAxisWidthLeft(35);
         }
         else {
-            setYAxisWidthLeft(105);
+            setYAxisWidthLeft(45);
         };
 
+        //! Logic to pad incase use wants to see entire dollar amounts and not abbreviations!
+        // if (maxNumericValueLeft <= 8000) {
+        //     setYAxisWidthLeft(55);
+        // }
+        // else if (maxNumericValueLeft <= 80000) {
+        //     setYAxisWidthLeft(65);
+        // }
+        // else if (maxNumericValueLeft <= 800000) {
+        //     setYAxisWidthLeft(75);
+        // }
+        // else if (maxNumericValueLeft <= 8000000) {
+        //     setYAxisWidthLeft(85);
+        // }
+        // else if (maxNumericValueLeft <= 80000000) {
+        //     setYAxisWidthLeft(95);
+        // }
+        // else {
+        //     setYAxisWidthLeft(105);
+        // };
 
-        if (maxNumericValueRight <= 8000) {
-            setYAxisWidthRight(65);
+
+        // if (maxNumericValueRight <= 8000) {
+        //     setYAxisWidthRight(65);
+        // }
+        // else if (maxNumericValueRight <= 80000) {
+        //     setYAxisWidthRight(75);
+        // }
+        // else if (maxNumericValueRight <= 800000) {
+        //     setYAxisWidthRight(85);
+        // }
+        // else if (maxNumericValueRight <= 8000000) {
+        //     setYAxisWidthRight(95);
+        // }
+        // else if (maxNumericValueRight <= 80000000) {
+        //     setYAxisWidthRight(105);
+        // }
+        // else {
+        //     setYAxisWidthRight(115);
+        // };
+
+        if (maxNumericValueRight <= 8) {
+            setYAxisWidthRight(26);
+        }
+        else if (maxNumericValueRight <= 80) {
+            setYAxisWidthRight(35);
+        }
+        else if (maxNumericValueRight <= 800) {
+            setYAxisWidthRight(45);
+        }
+        else if (maxNumericValueRight <= 1000) {
+            setYAxisWidthRight(55);
+        }
+        else if (maxNumericValueRight <= 4000) {
+            setYAxisWidthRight(45);
         }
         else if (maxNumericValueRight <= 80000) {
-            setYAxisWidthRight(75);
+            setYAxisWidthRight(35);
         }
         else if (maxNumericValueRight <= 800000) {
-            setYAxisWidthRight(85);
+            setYAxisWidthRight(35);
         }
         else if (maxNumericValueRight <= 8000000) {
-            setYAxisWidthRight(95);
+            setYAxisWidthRight(35);
         }
         else if (maxNumericValueRight <= 80000000) {
-            setYAxisWidthRight(105);
+            setYAxisWidthRight(35);
         }
         else {
-            setYAxisWidthRight(115);
+            setYAxisWidthRight(45);
         };
 
         if (rightHasNeg)
             setShowYReferenceLineRight(true);
+        else 
+            setShowYReferenceLineRight(false);
 
         setEndIndexBrush(data.length - 1);
         setStartIndexBrush(0);
@@ -259,7 +332,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
         }
         else if ((customGlobalDateRange >= thirtyYearsInMs) && ((chartGranularity == "week") || (chartGranularity == "day") || (chartGranularity == "month") || (chartGranularity == "year"))) {
             setShowBrush(true);
-        } else if (showBrush && endIndexBrush == data.length -1 && startIndexBrush == 0) {
+        } else if (showBrush && endIndexBrush == data.length - 1 && startIndexBrush == 0) {
             setShowBrush(false);
         };
 
@@ -343,7 +416,6 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                             <YAxis
                                 axisLine={false}
                                 width={yAxisWidthLeft}
-                                unit="$"
                                 tickMargin={7}
                                 tickLine={false}
                                 stroke={styles.darkText}
@@ -353,9 +425,10 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                                 fontStyle="normal"
                                 yAxisId={"left"}
                                 orientation="left"
-                            // domain={([dataMin, dataMax]) => {
-                            //     // setYAxisWidth(60);
-                            //     return [0, dataMax];
+                                tickFormatter={makeFriendlyDollarAmount}
+                                // domain={([dataMin, dataMax]) => {
+                                    //     // setYAxisWidth(60);
+                                    //     return [0, dataMax];
                             // }}
                             />
                             <YAxis
@@ -363,7 +436,6 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                                 orientation="right"
                                 axisLine={false}
                                 width={yAxisWidthRight}
-                                unit="$"
                                 tickMargin={7}
                                 tickLine={false}
                                 stroke={styles.darkText}
@@ -371,6 +443,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                                 fontSize={16}
                                 fontWeight={400}
                                 fontStyle="normal"
+                                tickFormatter={makeFriendlyDollarAmount}
                             />
 
                             <Tooltip />
