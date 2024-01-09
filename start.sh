@@ -43,7 +43,7 @@ $SCRIPT_DIR/scripts/create-secrets-and-config-map.sh $MODE
 
 echo -e $PURPLE_BOLD"Step 1 "$END$GREEN_BOLD"Completed successfully!\n"$END
 
-echo -e $PURPLE_BOLD"Step 2:"$END" Run skaffold "$CYAN_BOLD$MODE$END$BLUE" profile!\n"
+echo -e $PURPLE_BOLD"Step 2:"$END" Run skaffold "$CYAN_BOLD$MODE$END" profile!\n"
 
 
 if [ "$MODE" = "dev" ]

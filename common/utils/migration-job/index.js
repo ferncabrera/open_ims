@@ -49,7 +49,7 @@ const createDummyMigration = async function () {
         console.log(`\x1b[91mThere was an error running the migration-seed function!! This is unusual and means that your DB resets/down functionality won't work properly... please let me know if you encounter this issue!!!\n\n${error}\x1b[0`);
         console.log(`\x1b[91m-------------------------------------------------------------------------------------------------------------------------------------------------------\x1b[0`);
     }
-      
+    await pool.end();
 }
 
 module.exports.init = function () {

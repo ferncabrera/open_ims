@@ -25,7 +25,7 @@ export const GlobalBanner = () => {
     if (!_.isEmpty(memoizedBannerStateData)) {
       const closeAfterTimeout = () => { setBannerTextState({}) }
 
-      const timeoutId = setTimeout(closeAfterTimeout, bannerStateData.infinite || 5000) // close after 10 seconds automatically
+      const timeoutId = setTimeout(closeAfterTimeout, bannerStateData.infinite || 5000) // close after 5 seconds automatically
       return () => clearTimeout(timeoutId)
     }
   }, [memoizedBannerStateData]);
