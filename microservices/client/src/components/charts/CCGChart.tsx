@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, PureComponent } from 'react'
 import { getJSONResponse } from '../../utilities/apiHelpers';
 import _ from 'lodash';
 import styles from "./CCGChart.module.scss";
@@ -6,7 +6,7 @@ import { Container, Row, Col, Dropdown, DropdownButton, NavItem } from 'react-bo
 import { ComposedChart, Line, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Brush } from 'recharts';
 import { DateRange } from '../../utilities/types/types';
 import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
-import { makeFriendlyDollarAmount  } from '../../utilities/helpers/functions';
+import { makeFriendlyDollarAmount } from '../../utilities/helpers/functions';
 
 const renderColorfulLegendText = (value: string, entry: any) => {
     const upperCased = value.charAt(0).toUpperCase() + value.slice(1);
@@ -20,7 +20,7 @@ function findMaxNumericValue(data, excludeArr: string[]) {
     const maxNumeric = data.reduce((maxNumericValue: any, currentData: any) => {
         for (const key in currentData) {
             if (key !== 'name' && typeof currentData[key] === 'number' && !excludeArr.includes(key)) {
-                maxNumericValue = Math.max(maxNumericValue, currentData[key]);
+                maxNumericValue = Math.max(Math.abs(maxNumericValue), Math.abs(currentData[key]));
                 if (Math.min(currentData[key]) < 0)
                     hasNegative = true;
             }
@@ -58,7 +58,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
     const [endIndexBrush, setEndIndexBrush] = useState<number>(0);
     const [startIndexBrush, setStartIndexBrush] = useState<number>(0);
     const [loadingChart, setLoadingChart] = useState(true);
-    const [chartGranularity, setChartGranularity] = useState(null);
+    const [chartGranularity, setChartGranularity] = useState("week");
     const [showChartGranularityMenu, setShowChartGranularityMenu] = useState(false);
     const [data, setData] = useState<ICCGChartDataAttributes[]>([]);
     // TODO in the future each chart can display its own custom date range, perhaps for him to create custom reports using the charts?
@@ -66,19 +66,31 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
     // temp hack to set width
 
     useEffect(() => {
-        setData(filterByGranularity(chartData, chartGranularity));
+        const newChartData = filterByGranularity(chartData, chartGranularity);
+
+        if (newChartData.length >= 30) {
+            setStartIndexBrush(0);
+            setEndIndexBrush(30);
+            setShowBrush(true);
+        } else {
+            setStartIndexBrush(0);
+            setEndIndexBrush(0);
+            setShowBrush(false);
+        }
+
+        setData(newChartData);
     }, [chartData, chartGranularity]);
 
     useEffect(() => {
         //? This useEffect is used to style chart based on date being shown
         //? Done to avoid overflow of Y axis values out of the container when numbers get to big
-        const { maxNumericValue: maxNumericValueLeft, hasNegative: leftHasNeg } = findMaxNumericValue(data, ["profit"]);
-        const { maxNumericValue: maxNumericValueRight, hasNegative: rightHasNeg } = findMaxNumericValue(data, ["income", "expenses"]);
 
-        console.log("maxnumebricvalue", maxNumericValueLeft);
-        console.log("maxnumebricvalue", maxNumericValueRight);
-        console.log("maxnumebricvalue", rightHasNeg);
+        const { maxNumericValue: maxNumericValueLeft, hasNegative: leftHasNeg } = findMaxNumericValue(data.slice(startIndexBrush, endIndexBrush == 0 ? data.length : endIndexBrush + 1), ["profit"]);
+        const { maxNumericValue: maxNumericValueRight, hasNegative: rightHasNeg } = findMaxNumericValue(data.slice(startIndexBrush, endIndexBrush == 0 ? data.length : endIndexBrush + 1), ["income", "expenses"]);
 
+        console.log("maxnumericvalueleft", maxNumericValueLeft);
+        console.log("maxnumericvalueright", maxNumericValueRight);
+        console.log("righthasneg", rightHasNeg);
 
         if (maxNumericValueLeft <= 8) {
             setYAxisWidthLeft(26);
@@ -110,6 +122,47 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
         else {
             setYAxisWidthLeft(45);
         };
+
+        if (maxNumericValueRight <= 8) {
+            setYAxisWidthRight(26);
+        }
+        else if (maxNumericValueRight <= 80) {
+            setYAxisWidthRight(35);
+        }
+        else if (maxNumericValueRight <= 800) {
+            setYAxisWidthRight(45);
+        }
+        else if (maxNumericValueRight <= 2000) {
+            setYAxisWidthRight(55);
+        }
+        else if (maxNumericValueRight <= 4000) {
+            setYAxisWidthRight(45);
+        }
+        else if (maxNumericValueRight <= 80000) {
+            setYAxisWidthRight(35);
+        }
+        else if (maxNumericValueRight <= 800000) {
+            setYAxisWidthRight(35);
+        }
+        else if (maxNumericValueRight <= 8000000) {
+            setYAxisWidthRight(35);
+        }
+        else if (maxNumericValueRight <= 80000000) {
+            setYAxisWidthRight(35);
+        }
+        else {
+            setYAxisWidthRight(45);
+        };
+
+        if (rightHasNeg)
+            setShowYReferenceLineRight(true);
+        else
+            setShowYReferenceLineRight(false);
+
+        // setEndIndexBrush(data.length - 1);
+        // setStartIndexBrush(0);
+
+        setLoadingChart(false);
 
         //! Logic to pad incase use wants to see entire dollar amounts and not abbreviations!
         // if (maxNumericValueLeft <= 8000) {
@@ -150,104 +203,44 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
         // else {
         //     setYAxisWidthRight(115);
         // };
+    }, [data, startIndexBrush, endIndexBrush]);
 
-        if (maxNumericValueRight <= 8) {
-            setYAxisWidthRight(26);
-        }
-        else if (maxNumericValueRight <= 80) {
-            setYAxisWidthRight(35);
-        }
-        else if (maxNumericValueRight <= 800) {
-            setYAxisWidthRight(45);
-        }
-        else if (maxNumericValueRight <= 1000) {
-            setYAxisWidthRight(55);
-        }
-        else if (maxNumericValueRight <= 4000) {
-            setYAxisWidthRight(45);
-        }
-        else if (maxNumericValueRight <= 80000) {
-            setYAxisWidthRight(35);
-        }
-        else if (maxNumericValueRight <= 800000) {
-            setYAxisWidthRight(35);
-        }
-        else if (maxNumericValueRight <= 8000000) {
-            setYAxisWidthRight(35);
-        }
-        else if (maxNumericValueRight <= 80000000) {
-            setYAxisWidthRight(35);
-        }
-        else {
-            setYAxisWidthRight(45);
-        };
+    console.log(startIndexBrush, endIndexBrush);
+    console.log(data.length);
+    console.log("yAxisWidthLeft ", yAxisWidthLeft);
+    console.log("yAxisWidthRight ", yAxisWidthRight);
+    console.log("showYreferenceLineRight ", showYReferenceLineRight);
 
-        if (rightHasNeg)
-            setShowYReferenceLineRight(true);
-        else 
-            setShowYReferenceLineRight(false);
+    // useEffect(() => {
+    // ? Can be used to set an approriate chartGranularity selection based on globalDateRange
+    //     if (globalDateRange !== null) {
 
-        setEndIndexBrush(data.length - 1);
-        setStartIndexBrush(0);
+    //         const customGlobalDateRange = Math.abs(globalDateRange[0] - globalDateRange[1]);
 
-        setLoadingChart(false);
-    }, [data]);
+    //         const thirtyDaysInMs = 2592000000;
+    //         const thirtyWeeksInMs = 18144000000;
+    //         const thirtyMonthsInMs = 78892380000;
+    //         const thirtyYearsInMs = 946708560000;
 
-    useEffect(() => {
-        if (globalDateRange !== null) {
-
-            const customGlobalDateRange = Math.abs(globalDateRange[0] - globalDateRange[1]);
-
-            const thirtyDaysInMs = 2592000000;
-            const thirtyWeeksInMs = 18144000000;
-            const thirtyMonthsInMs = 78892380000;
-            const thirtyYearsInMs = 946708560000;
-
-            if (customGlobalDateRange < thirtyDaysInMs) {
-                setChartGranularity("day");
-            }
-            else if (customGlobalDateRange < thirtyWeeksInMs) {
-                setChartGranularity("week");
-            }
-            else if (customGlobalDateRange < thirtyMonthsInMs) {
-                setChartGranularity("month");
-            }
-            else if (customGlobalDateRange < thirtyYearsInMs) {
-                setChartGranularity("year");
-            }
-            else {
-                setChartGranularity("year");
-            }
-
-        }
+    //         if (customGlobalDateRange < thirtyDaysInMs) {
+    //             setChartGranularity("day");
+    //         }
+    //         else if (customGlobalDateRange < thirtyWeeksInMs) {
+    //             setChartGranularity("week");
+    //         }
+    //         else if (customGlobalDateRange < thirtyMonthsInMs) {
+    //             setChartGranularity("month");
+    //         }
+    //         else if (customGlobalDateRange < thirtyYearsInMs) {
+    //             setChartGranularity("year");
+    //         }
+    //         else {
+    //             setChartGranularity("year");
+    //         }
+    //     }
 
 
-    }, [globalDateRange]);
-
-    useEffect(() => {
-        const customGlobalDateRange = Math.abs(globalDateRange[0] - globalDateRange[1]);
-
-        const thirtyDaysInMs = 2592000000;
-        const thirtyWeeksInMs = 18144000000;
-        const thirtyMonthsInMs = 78892380000;
-        const thirtyYearsInMs = 946708560000;
-
-        if ((customGlobalDateRange >= thirtyDaysInMs) && chartGranularity == "day") {
-            setShowBrush(true);
-        }
-        else if ((customGlobalDateRange >= thirtyWeeksInMs) && ((chartGranularity == "week") || (chartGranularity == "day"))) {
-            setShowBrush(true);
-        }
-        else if ((customGlobalDateRange >= thirtyMonthsInMs) && ((chartGranularity == "week") || (chartGranularity == "day") || (chartGranularity == "month"))) {
-            setShowBrush(true);
-        }
-        else if ((customGlobalDateRange >= thirtyYearsInMs) && ((chartGranularity == "week") || (chartGranularity == "day") || (chartGranularity == "month") || (chartGranularity == "year"))) {
-            setShowBrush(true);
-        } else if (showBrush && endIndexBrush == data.length - 1 && startIndexBrush == 0) {
-            setShowBrush(false);
-        };
-
-    }, [chartGranularity, globalDateRange]);
+    // }, [globalDateRange]);
 
     return (
         <>
@@ -322,7 +315,65 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
                             barGap={"10%"}
                         >
                             <CartesianGrid strokeDasharray="9" vertical={false} />
-                            <XAxis dataKey="name" stroke={styles.darkText} tickLine={false} tickMargin={5} />
+                            <XAxis
+                                dataKey="name"
+                                // angle={5}
+                                stroke={styles.darkText}
+                                tickLine={false}
+                                tickMargin={5}
+                                minTickGap={4}
+                                padding={{
+                                    left: 10,
+                                    right: 10
+                                }}
+                                interval={"equidistantPreserveStart"}
+                                // tick={<CustomizedAxisTick props={chartGranularity} />}
+                                tick={(props: any) => {
+                                    const { x, y, stroke, payload } = props;
+                                    switch (chartGranularity) {
+                                        case "day":
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={40} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                        {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                        case "week":
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={95} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                        {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                        case "month":
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={25} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                        {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                        case "year":
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={18} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                        {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                        default:
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={0} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                        {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                    };
+                                }}
+                            />
                             {showYReferenceLineRight && <ReferenceLine yAxisId={"right"} y={0} stroke={styles.darkText} strokeDasharray={2} />}
                             <YAxis
                                 axisLine={false}
@@ -337,9 +388,9 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
                                 yAxisId={"left"}
                                 orientation="left"
                                 tickFormatter={makeFriendlyDollarAmount}
-                                // domain={([dataMin, dataMax]) => {
-                                    //     // setYAxisWidth(60);
-                                    //     return [0, dataMax];
+                            // domain={([dataMin, dataMax]) => {
+                            //     // setYAxisWidth(60);
+                            //     return [0, dataMax];
                             // }}
                             />
                             <YAxis
@@ -358,15 +409,22 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
                             />
 
                             <Tooltip />
-                            {showBrush && <Brush onChange={(i) => {
-                                console.log("THe onchange ran --> ", i);
-                                setStartIndexBrush(i.startIndex);
-                                setEndIndexBrush(i.endIndex);
-                            }}
-                                dataKey="name"
-                                height={30}
-                                stroke={styles.secondaryBlue}
-                            />}
+                            {showBrush &&
+                                <Brush onChange={(i) => {
+                                    console.log("THe onchange ran --> ", i);
+                                    setStartIndexBrush(i.startIndex);
+                                    setEndIndexBrush(i.endIndex);
+                                }}
+                                    // className={"mx-auto"}
+                                    // x={80}
+                                    dataKey="name"
+                                    height={30}
+                                    // width={500}
+                                    stroke={styles.secondaryBlue}
+                                    startIndex={startIndexBrush}
+                                    endIndex={endIndexBrush}
+                                />
+                            }
                             <Legend
                                 align='left'
                                 verticalAlign='top'
