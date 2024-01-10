@@ -19,7 +19,7 @@ export const get_customers = async (req: Request, res: Response) => {
   // !!! should look into sanitizing this.
 
   let customers_query;
-  let count_query
+  let count_query;
 
   if (!searchquery) {
     customers_query = await query("SELECT * FROM customer_table LIMIT $1 OFFSET $2", [pagesize, offset]);
@@ -82,9 +82,15 @@ export const get_customer = async (req: Request, res: Response) => {
 
   const customer_vendor_query: any = await query(
     "SELECT * FROM vendor_and_customer WHERE customer_id = $1"
-  , [id]);
+    , [id]);
 
-  console.log(customer_vendor_query);
+  if (customer_vendor_query.rows[0]) {
+    const vendor_id = customer_vendor_query.rows[0].vendor_id;
+
+    const vendor_query: any = await query("SELECT * FROM vendor_table WHERE id = $1", [vendor_id]);
+    const vendor_company_name = vendor_query.rows[0].company_name;
+    customer_object.vendor = vendor_company_name;
+  }
 
   const customer_query: any = await query(
     "SELECT * FROM customer_table WHERE id = $1", [id]);
@@ -92,10 +98,10 @@ export const get_customer = async (req: Request, res: Response) => {
   const customer_data = customer_query.rows[0]
 
   if (customer_data) {
-    customer_object.vendor = null;
     customer_object.id = id;
     customer_object.firstName = customer_data.first_name;
     customer_object.lastName = customer_data.last_name;
+    customer_object.companyName = customer_data.company_name;
     customer_object.email = customer_data.email;
     customer_object.phone = customer_data.phone;
     customer_object.netTerms = customer_data.net_terms;
@@ -103,7 +109,7 @@ export const get_customer = async (req: Request, res: Response) => {
 
   const address_query: any = await query(
     "SELECT * FROM customer_addresses WHERE customer_id = $1"
-  , [id]);
+    , [id]);
 
   for (const element of address_query.rows) {
     if (element.address === "Shipping") {
@@ -126,6 +132,23 @@ export const get_customer = async (req: Request, res: Response) => {
       }
     }
   }
+
+
+  const default_addresses_object = {
+    address1: '',
+    address2: '',
+    city: '',
+    province: '',
+    country: '',
+    postalCode: '',
+  };
+
+  if (!customer_object.billing) {
+    customer_object.billing = default_addresses_object;
+  }
+  if (!customer_object.shipping) {
+    customer_object.shipping = default_addresses_object;
+  };
 
   res.status(200).json({ id, message: 'Successfully retrieved customer data', data: customer_object });
 

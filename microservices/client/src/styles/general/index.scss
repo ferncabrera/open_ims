@@ -53,6 +53,13 @@ html, body {
         font-size: larger;
     }
 
+    .center-content-page {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        // transform: translate(-50%, -50%);
+    }
+
     img {
         user-select: none;
     }
