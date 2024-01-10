@@ -2,30 +2,13 @@ import React, { useEffect, useState } from 'react'
 import { getJSONResponse } from '../../utilities/apiHelpers';
 import _ from 'lodash';
 import styles from "./CCGChart.module.scss";
-import { Container, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Container, Row, Col, Dropdown, DropdownButton, NavItem } from 'react-bootstrap';
 import { ComposedChart, Line, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Brush } from 'recharts';
 import { DateRange } from '../../utilities/types/types';
 import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
 import { makeFriendlyDollarAmount  } from '../../utilities/helpers/functions';
 
-// ! REMOVE ONCE DONE WITH HELPER FUNC
-function getRandomNumber(min, max) {
-    // Ensure that both min and max are integers
-    min = Math.ceil(min);
-    max = Math.floor(max);
-
-    // Generate a random number between min (inclusive) and max (exclusive)
-    return Math.floor(Math.random() * (max - min)) + min;
-};
-// ! dummy data
-
-interface ICCGChartProps {
-    globalDateRange?: DateRange
-};
-
-
 const renderColorfulLegendText = (value: string, entry: any) => {
-    // const { color } = entry;
     const upperCased = value.charAt(0).toUpperCase() + value.slice(1);
     return <span className='dark-text px-2' style={{ fontWeight: 400, fontSize: "16px", fontStyle: "normal", fontFamily: "Rubik" }}>{upperCased}</span>;
 };
@@ -51,7 +34,21 @@ function findMaxNumericValue(data, excludeArr: string[]) {
     }
 };
 
-export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
+interface ICCGChartDataAttributes {
+    granularity: string
+};
+
+function filterByGranularity(data: ICCGChartDataAttributes[], targetGranularity: string) {
+    // console.log(data.filter(item => item.granularity === targetGranularity).map(item => ({...item, name: "abc"})));
+    return data.filter(item => item.granularity === targetGranularity);
+}
+
+interface ICCGChartProps {
+    globalDateRange?: DateRange
+    chartData?: ICCGChartDataAttributes[]
+};
+
+export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData }) => {
 
 
     const [showYReferenceLineRight, setShowYReferenceLineRight] = useState<boolean>(false);
@@ -63,96 +60,14 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
     const [loadingChart, setLoadingChart] = useState(true);
     const [chartGranularity, setChartGranularity] = useState(null);
     const [showChartGranularityMenu, setShowChartGranularityMenu] = useState(false);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<ICCGChartDataAttributes[]>([]);
     // TODO in the future each chart can display its own custom date range, perhaps for him to create custom reports using the charts?
     // const [dateRange, setDateRange] = useState<DateRange>([new Date(new Date().setFullYear(new Date().getFullYear() - 1)), new Date()]);
     // temp hack to set width
 
     useEffect(() => {
-        setData([
-
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
- 
-
-        ]);
-    }, []);
+        setData(filterByGranularity(chartData, chartGranularity));
+    }, [chartData, chartGranularity]);
 
     useEffect(() => {
         //? This useEffect is used to style chart based on date being shown
@@ -467,7 +382,8 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                         </ComposedChart>
                     </ResponsiveContainer>
 
-                </div >}
+                </div >
+            }
         </>
     )
 };

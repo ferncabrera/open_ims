@@ -24,6 +24,7 @@ export const AdminDashboard = () => {
     const [userInfo, setUserInfo] = useState({ firstName: null, email: null, permission: null });
     const [dateRange, setDateRange] = useState<DateRange>(null);
     const [dashboardMetricsGranularity, setDashboardMetricsGranularity] = useState("month");
+    const [incomeExpenseProfitQueryData, setIncomeExpenseProfitQueryData] = useState([]); 
 
     const getIncomeExpenseByDate = async (startdate: string, enddate: string) => {
         const response: any = await getJSONResponse({ endpoint: '/api/server/income_and_expense_by_date', params: { startdate, enddate } });
@@ -71,16 +72,14 @@ export const AdminDashboard = () => {
             (async () => {
                 try {
                     const res = await getIncomeExpenseByDate(dateRange[0].toISOString().substring(0, 10), dateRange[1].toISOString().substring(0, 10),);
-                    console.log("res on frontend! --> ", res);
+                    setIncomeExpenseProfitQueryData(res.data);
                 } catch (e) {
                     console.log("Error fetching income and expense date by date! ", e);
                 }
             })();
     }, [dateRange]);
 
-    // useEffect(() => {
-    // }, [dateRange]);
-
+    console.log("incomeexpensequery data ==> ", incomeExpenseProfitQueryData);
 
     return (
         <>
@@ -162,7 +161,7 @@ export const AdminDashboard = () => {
             <Row >
 
                 <Col md={12} lg={8}>
-                    {dateRange && <CCGChart globalDateRange={dateRange} />}
+                    {dateRange && <CCGChart globalDateRange={dateRange} chartData={incomeExpenseProfitQueryData} />}
                 </Col>
 
                 <Col>

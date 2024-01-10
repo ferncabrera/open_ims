@@ -15,6 +15,8 @@ export const income_and_expense_by_date = async (req: Request, res: Response) =>
     if (!startdate || !enddate)
         throw new Error("A startdate and enddate (strings) are required for this API function! Ex: {startdate: '2023-12-09' enddate: '2024-01-09'}");
 
+// TODO: Really need to write some unit tests to verify the data we are getting back from this query/API is right.... lol
+
 const profitTotalsByGranularity = await query(`
     WITH DaySeriesData AS (
         SELECT generate_series(
@@ -161,9 +163,18 @@ const profitTotalsByGranularity = await query(`
     SELECT
         COALESCE(p.date, i.date) AS date,
         COALESCE(p.granularity, i.granularity) AS granularity,
-        COALESCE(p.total_amount_due, 0) AS expenses,
-        COALESCE(i.total_amount_due, 0) AS income,
-        COALESCE(i.total_amount_due, 0) - COALESCE(p.total_amount_due, 0) AS profit
+        CAST(COALESCE(p.total_amount_due, 0) AS INTEGER) AS expenses,
+        CAST(COALESCE(i.total_amount_due, 0) AS INTEGER) AS income,
+        CAST(COALESCE(i.total_amount_due, 0) - COALESCE(p.total_amount_due, 0) AS INTEGER) AS profit,
+        CASE
+            WHEN COALESCE(p.granularity, i.granularity) = 'day' THEN TO_CHAR(COALESCE(p.date, i.date), 'Mon DD YY')
+            WHEN COALESCE(p.granularity, i.granularity) = 'week' THEN 
+                TO_CHAR(DATE_TRUNC('week', COALESCE(p.date, i.date)) - interval '1 day', 'DD Mon YY') ||
+                ' - ' ||
+                TO_CHAR(DATE_TRUNC('week', COALESCE(p.date, i.date)) + interval '6 days', 'DD Mon YY')
+            WHEN COALESCE(p.granularity, i.granularity) = 'month' THEN TO_CHAR(DATE_TRUNC('month', COALESCE(p.date, i.date)), 'Mon YY')
+            WHEN COALESCE(p.granularity, i.granularity) = 'year' THEN TO_CHAR(DATE_TRUNC('year', COALESCE(p.date, i.date)), 'YYYY')
+        END AS name
     FROM (
         SELECT
             date,
