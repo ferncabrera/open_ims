@@ -1,7 +1,7 @@
 import express from "express";
 import { forgot_pass, update_password, check_password, validate_reset_token } from "../controllers/forgot_pass";
 import catchAsync from "../utils/catchAsync";
-import errorHandler from "../../middleware/errorHandler";
+import errorHandler from "../middleware/errorHandler";
 
 const router = express.Router();
 
