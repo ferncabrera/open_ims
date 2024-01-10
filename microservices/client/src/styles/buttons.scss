@@ -1,35 +1,27 @@
-
 @import './general/colors.scss';
+@import './general/mixins.scss';
 
 .open-ims-styling {
     button.btn {
         width: 100%;
         border-radius: 15px;
         height: 45px;
+
         &.btn-primary {
             background-color: $primary-blue;
             color: $white;
+
             &:hover {
                 background-color: $secondary-blue;
                 border-color: $secondary-blue;
             }
         }
 
+        // @include ccg-bs-primary-button-styling;
+
     }
 
     button.pagination {
-        background-color: transparent;
-        border: none;
-        color: $secondary-blue;
-        width: auto;
-        height: auto;
-        display: block;
-        align-items: center;
-        &:hover {
-            color: $lightest-blue;
-        }
-        &:active {
-            background-color: transparent;
-        }
+        @include ccg-icon-button-styling;
     }
 }

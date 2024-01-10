@@ -1,0 +1,66 @@
+@import "../../styles/general/colors.scss";
+@import "../../styles/general/mixins.scss";
+
+
+.chartBorderWrapper {
+    @include ccg-border-styling;
+}
+
+.chartBackground {
+    background-color: $white;
+}
+
+.chartTitle {
+    font-family: Rubik;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+    color: $dark-text;
+}
+
+// div.incomeExpenseChartGranularityDropdown {
+
+button#incomeExpenseChartGranularityDropdown {
+    width: 180px;
+    border-radius: 10px;
+    height: 35px;
+    background-color: $white;
+    color: $dark-text;
+    border: 1px solid var(--stroke-grey, #D6D6D6);
+    // Button font
+    font-family: Rubik;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+    &::after {
+        display: none;
+    }
+
+    // &:hover {
+        // background-color: $secondary-blue;
+        // border-color: $secondary-blue;
+    // }
+}
+
+
+
+
+
+
+// .dropdownToggleIcon::after {
+//     display: none;
+// }
+
+// }
+
+
+// display: flex;
+// width: 180px;
+// padding: 10px 14px;
+// align-items: center;
+// gap: 35px;
+
+// border-radius: 10px;
+// background: var(--pure-white, #FFF);

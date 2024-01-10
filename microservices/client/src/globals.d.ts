@@ -22,3 +22,9 @@ interface IResponse {
     message?: string;
 }
 
+interface IEntityState {
+    action: "create" | "read" | "update" | "delete" | null;
+    category: string;
+    path: string;
+}
+

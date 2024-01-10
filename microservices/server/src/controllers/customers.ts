@@ -10,7 +10,7 @@ interface IGetRequestHeaders {
 
 export const get_customers = async (req: Request, res: Response) => {
 
-    const { pageindex, pagesize, searchquery } = req.headers as unknown as  IGetRequestHeaders;
+    const { pageindex, pagesize, searchquery } = req.headers as unknown as IGetRequestHeaders;
     const offset: number = Number(pageindex) * Number(pagesize);
     // !!! should look into sanitizing this.
 

@@ -54,7 +54,7 @@ export const register = async (req: Request, res: Response) => {
 
 export const isAuthenticated = async (req: Request, res: Response) => {
 
-    // later we can make permission checks in this API as well.
+    // TODO: later we can make permission checks in this API as well.
     // Adding it as a note here for later ^^
     const userCookie = req.cookies.authToken;
     if (!userCookie) {
@@ -64,6 +64,7 @@ export const isAuthenticated = async (req: Request, res: Response) => {
         const tokenData: token = jwt.verify(userCookie, secret) as token
         const permission = tokenData.permission;
         const first_name = tokenData.first_name;
-        res.status(200).json({ authenticated: true, permission, firstName: first_name});
+        const email = tokenData.email;
+        res.status(200).json({ authenticated: true, permission, firstName: first_name, email});
     }
 }
