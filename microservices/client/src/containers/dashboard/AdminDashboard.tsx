@@ -7,6 +7,8 @@ import { CCGDateRangePicker } from '../../components/calendars/CCGDateRangePicke
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { DateRange } from '../../utilities/types/types';
 import styles from "./index.module.scss";
+import { checkDomainOfScale } from 'recharts/types/util/ChartUtils';
+import { createResponseComposition } from 'msw';
 
 const standardMetricDateRanges = [
     "week",
@@ -15,7 +17,7 @@ const standardMetricDateRanges = [
     "year",
     "all",
     "custom"
-]
+];
 
 
 export const AdminDashboard = () => {
@@ -23,10 +25,13 @@ export const AdminDashboard = () => {
     const [dateRange, setDateRange] = useState<DateRange>(null);
     const [dashboardMetricsGranularity, setDashboardMetricsGranularity] = useState("month");
 
+    const getIncomeExpenseByDate = async (startdate: string, enddate: string) => {
+        const response: any = await getJSONResponse({ endpoint: '/api/server/income_and_expense_by_date', params: { startdate, enddate } });
+        return response;
+    };
 
     useEffect(() => {
         isUserAuth().then((response: any) => {
-            console.log("this is response --> ", response);
             setUserInfo({ firstName: response.firstName, email: response.email, permission: response.permission });
         }).catch((error) => {
             return
@@ -41,9 +46,9 @@ export const AdminDashboard = () => {
             case "month":
                 setDateRange([new Date(new Date().setMonth(new Date().getMonth() - 1)), new Date()]);
                 break;
-            case "quarter":
-                setDateRange([new Date(new Date().setMonth(new Date().getMonth() - 3)), new Date()]);
-                break;
+            // case "quarter":
+            //     setDateRange([new Date(new Date().setMonth(new Date().getMonth() - 3)), new Date()]);
+            //     break;
             case "year":
                 setDateRange([new Date(new Date().setFullYear(new Date().getFullYear() - 1)), new Date()]);
                 break;
@@ -60,9 +65,22 @@ export const AdminDashboard = () => {
         //? If date is ever reset by user we reset back to last months stats
         //TODO Introduce user default settings!
         // it could be a general save icon that simply saves the dashboard settings a certain way for a user...
-        if(dateRange === null)
+        if (dateRange === null)
             setDashboardMetricsGranularity("month");
+        else
+            (async () => {
+                try {
+                    const res = await getIncomeExpenseByDate(dateRange[0].toISOString().substring(0, 10), dateRange[1].toISOString().substring(0, 10),);
+                    console.log("res on frontend! --> ", res);
+                } catch (e) {
+                    console.log("Error fetching income and expense date by date! ", e);
+                }
+            })();
     }, [dateRange]);
+
+    // useEffect(() => {
+    // }, [dateRange]);
+
 
     return (
         <>
@@ -100,7 +118,7 @@ export const AdminDashboard = () => {
                                     >
                                         <span
                                         >
-                                            <u>{dashboardMetricsGranularity == "all" ?`${dashboardMetricsGranularity} time`:`${dashboardMetricsGranularity}s`}</u>
+                                            <u>{dashboardMetricsGranularity == "all" ? `${dashboardMetricsGranularity} time` : `${dashboardMetricsGranularity}s`}</u>
                                         </span>
                                     </Dropdown.Toggle>
 

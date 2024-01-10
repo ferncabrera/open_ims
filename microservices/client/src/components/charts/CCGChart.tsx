@@ -16,7 +16,7 @@ function getRandomNumber(min, max) {
 
     // Generate a random number between min (inclusive) and max (exclusive)
     return Math.floor(Math.random() * (max - min)) + min;
-}
+};
 // ! dummy data
 
 interface ICCGChartProps {
@@ -28,10 +28,6 @@ const renderColorfulLegendText = (value: string, entry: any) => {
     // const { color } = entry;
     const upperCased = value.charAt(0).toUpperCase() + value.slice(1);
     return <span className='dark-text px-2' style={{ fontWeight: 400, fontSize: "16px", fontStyle: "normal", fontFamily: "Rubik" }}>{upperCased}</span>;
-};
-
-const getIncomeExpenseByDate = async (date) => {
-    const response: any = await getJSONResponse({ endpoint: '/api/server/income_and_expense_by_date', params: { date: "" } });
 };
 
 // Instead this should just loop over once and return an array with the keys values being the counts and whether or not the col had a negative

@@ -1,71 +1,196 @@
 import { Request, Response } from "express";
 import { query } from "../db";
 import customError from "../utils/customError";
+import { DateRange } from "../utils/types";
+import { start } from "repl";
 
 interface IGetRequestHeaders {
-    date: number
+    startdate: string;
+    enddate: string;
 }
 
 export const income_and_expense_by_date = async (req: Request, res: Response) => {
+    const { startdate, enddate } = req.headers as unknown as IGetRequestHeaders;
 
-    const { date } = req.headers as unknown as IGetRequestHeaders;
-    // const offset: number = Number(pageindex) * Number(pagesize);
-    // !!! should look into sanitizing this.
+    if (!startdate || !enddate)
+        throw new Error("A startdate and enddate (strings) are required for this API function! Ex: {startdate: '2023-12-09' enddate: '2024-01-09'}");
 
-    let customers_query;
-    let count_query
+const profitTotalsByGranularity = await query(`
+    WITH DaySeriesData AS (
+        SELECT generate_series(
+            date_trunc('day', $1::date),
+            date_trunc('day', $2::date),
+            interval '1 day'
+        )::date AS date
+    ), 
+    WeekSeriesData AS (
+        SELECT generate_series(
+            date_trunc('week', $1::date),
+            date_trunc('week', $2::date),
+            interval '1 week'
+        )::date AS date
+    ), 
+    MonthSeriesData AS (
+        SELECT generate_series(
+            date_trunc('month', $1::date),
+            date_trunc('month', $2::date),
+            interval '1 month'
+        )::date AS date
+    ), 
+    YearSeriesData AS (
+        SELECT generate_series(
+            date_trunc('year', $1::date),
+            date_trunc('year', $2::date),
+            interval '1 year'
+        )::date AS date
+    ), 
+        
+    PurchaseOrderSummary AS (
+        SELECT
+            ds.date,
+            'day' AS granularity,
+            COALESCE(SUM(po.amount_due), 0) AS total_amount_due
+        FROM
+            DaySeriesData ds
+        LEFT JOIN purchase_orders po ON ds.date = DATE_TRUNC('day', po.purchase_date)
+        AND
+            po.purchase_date BETWEEN $1::date AND $2::date
+        GROUP BY
+            ds.date, granularity
 
-    // if (!searchquery) {
-    //     customers_query = await query("SELECT * FROM customer_table LIMIT $1 OFFSET $2", [pagesize, offset]);
-    //     count_query = await query("SELECT COUNT(*) FROM customer_table");
-    // } else {
-    //     const [firstName, lastName] = searchquery.split(" ");
+        UNION
+        SELECT
+            ds.date,
+            'week' AS granularity,
+            COALESCE(SUM(po.amount_due), 0) AS total_amount_due
+        FROM
+            WeekSeriesData ds
+        LEFT JOIN purchase_orders po ON ds.date = DATE_TRUNC('week', po.purchase_date)
+        AND
+            po.purchase_date BETWEEN $1::date AND $2::date
+        GROUP BY
+            ds.date, granularity
 
-    //     customers_query = await query(`
-    //     WITH filtered_rows AS (
-    //         SELECT
-    //           id,
-    //           email,
-    //           first_name,
-    //           last_name,
-    //           company_name,
-    //           phone
-    //         FROM
-    //           customer_table
-    //         WHERE
-    //           id::text ILIKE '%' || $1 || '%'
-    //           OR email ILIKE '%' || $1 || '%'
-    //           OR first_name ILIKE '%' || $1 || '%'
-    //           OR last_name ILIKE '%' || $1 || '%'
-    //           OR (first_name ILIKE '%' || $4 || '%' AND last_name ILIKE '%' || $5 || '%')
-    //           OR company_name ILIKE '%' || $1 || '%'
-    //           OR phone ILIKE '%' || $1 || '%'
-    //       ),
-    //       total_count AS (
-    //         SELECT COUNT(*) AS count FROM filtered_rows
-    //       )
-    //       SELECT
-    //         id,
-    //         email,
-    //         first_name,
-    //         last_name,
-    //         company_name,
-    //         phone,
-    //         (SELECT count FROM total_count) AS count
-    //       FROM
-    //         filtered_rows
-    //       LIMIT $2 OFFSET $3;
-    //     `, [searchquery, pagesize, offset, firstName, lastName]);
-    //     count_query = customers_query
-    // }
+        UNION
+        SELECT
+            ds.date,
+            'month' AS granularity,
+            COALESCE(SUM(po.amount_due), 0) AS total_amount_due
+        FROM
+            MonthSeriesData ds
+        LEFT JOIN purchase_orders po ON ds.date = DATE_TRUNC('month', po.purchase_date)
+        AND
+            po.purchase_date BETWEEN $1::date AND $2::date
+        GROUP BY
+            ds.date, granularity
 
-    // const totalCount: any = count_query.rows[0] ? count_query.rows[0].count : null;
+        UNION
+
+        SELECT
+            ds.date,
+            'year' AS granularity,
+            COALESCE(SUM(po.amount_due), 0) AS total_amount_due
+        FROM
+            YearSeriesData ds
+        LEFT JOIN purchase_orders po ON ds.date = DATE_TRUNC('year', po.purchase_date)
+        AND
+            po.purchase_date BETWEEN $1::date AND $2::date
+        GROUP BY
+            ds.date, granularity
+
+
+    ),
+
+    InvoiceOrderSummary AS (
+        SELECT
+            ds.date,
+            'day' AS granularity,
+            COALESCE(SUM(io.amount_due), 0) AS total_amount_due
+        FROM
+            DaySeriesData ds
+        LEFT JOIN invoice_orders io ON ds.date = DATE_TRUNC('day', io.invoice_date)
+        AND
+            io.invoice_date BETWEEN $1::date AND $2::date
+        GROUP BY
+        ds.date, granularity
+
+        UNION
+
+        SELECT
+            ds.date,
+            'week' AS granularity,
+            COALESCE(SUM(io.amount_due), 0) AS total_amount_due
+        FROM
+            WeekSeriesData ds
+        LEFT JOIN invoice_orders io ON ds.date = DATE_TRUNC('week', io.invoice_date)
+        AND
+            io.invoice_date BETWEEN $1::date AND $2::date
+        GROUP BY
+        ds.date, granularity
+
+        UNION
+
+        SELECT
+            ds.date,
+            'month' AS granularity,
+            COALESCE(SUM(io.amount_due), 0) AS total_amount_due
+        FROM
+            MonthSeriesData ds
+        LEFT JOIN invoice_orders io ON ds.date = DATE_TRUNC('month', io.invoice_date)
+        AND
+            io.invoice_date BETWEEN $1::date AND $2::date
+        GROUP BY
+        ds.date, granularity
+
+        UNION
+
+        SELECT
+            ds.date,
+            'year' AS granularity,
+            COALESCE(SUM(io.amount_due), 0) AS total_amount_due
+        FROM
+            YearSeriesData ds
+        LEFT JOIN invoice_orders io ON ds.date = DATE_TRUNC('year', io.invoice_date)
+        AND
+            io.invoice_date BETWEEN $1::date AND $2::date
+        GROUP BY
+        ds.date, granularity
+
+    )
+
+    SELECT
+        COALESCE(p.date, i.date) AS date,
+        COALESCE(p.granularity, i.granularity) AS granularity,
+        COALESCE(p.total_amount_due, 0) AS expenses,
+        COALESCE(i.total_amount_due, 0) AS income,
+        COALESCE(i.total_amount_due, 0) - COALESCE(p.total_amount_due, 0) AS profit
+    FROM (
+        SELECT
+            date,
+            granularity,
+            COALESCE(SUM(total_amount_due), 0) AS total_amount_due
+        FROM
+            PurchaseOrderSummary
+        GROUP BY
+            date, granularity
+    ) p
+    FULL JOIN (
+        SELECT
+            date,
+            granularity,
+            COALESCE(SUM(total_amount_due), 0) AS total_amount_due
+        FROM
+            InvoiceOrderSummary
+        GROUP BY
+            date, granularity
+    ) i
+    ON
+        p.date = i.date AND p.granularity = i.granularity
+    ORDER BY
+        date, granularity; 
+`, [startdate, enddate]);
 
     res.status(200).json({
-        // pageindex,
-        // pagesize,
-        // offset,
-        // total: totalCount,
-        // data: customers_query.rows
+        data: profitTotalsByGranularity.rows
     });
 };

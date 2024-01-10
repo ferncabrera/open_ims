@@ -7,6 +7,6 @@ const router = express.Router();
 
 router
   .route("/api/server/income_and_expense_by_date")
-  .post(catchAsync(income_and_expense_by_date), errorHandler);
+  .get(catchAsync(income_and_expense_by_date), errorHandler);
   
 export default router;
