@@ -63,18 +63,20 @@ interface ICCGChartProps {
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         const bodyItems = payload.map((obj, index) => {
-            return (<p key={index} className="mb-1">
+            return (
+            <p key={index} className="mb-1">
                 {obj.name}:
                 {/* <strong> */}
                     <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0)? "#036100": "#930505"}}>{obj.value}</span>
                 {/* </strong> */}
-            </p>);
+            </p>
+            );
 
         });
 
         return (
             <div className={`${styles.chartBorderWrapper} bg-white p-3`}>
-                <p className="mb-2 initialism">{`${label} ${new Date(payload[0].payload.date).getUTCFullYear()}`}</p>
+                <p className="mb-2 initialism">{`${label} ${payload[0].payload.granularity !== "year"?new Date(payload[0].payload.date).getUTCFullYear():""}`}</p>
                 {
                     bodyItems
                 }
