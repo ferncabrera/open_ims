@@ -1,6 +1,6 @@
 import express from "express";
 import catchAsync from "../utils/catchAsync";
-import errorHandler from "../../middleware/errorHandler";
+import errorHandler from "../middleware/errorHandler";
 import { income_and_expense_by_date, oldest_income_and_expense_record_dates } from "../controllers/charts";
 
 const router = express.Router();
