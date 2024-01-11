@@ -7,8 +7,6 @@ import { CCGDateRangePicker } from '../../components/calendars/CCGDateRangePicke
 import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { DateRange } from '../../utilities/types/types';
 import styles from "./index.module.scss";
-import { checkDomainOfScale } from 'recharts/types/util/ChartUtils';
-import { createResponseComposition } from 'msw';
 
 const standardMetricDateRanges = [
     "week",
@@ -19,15 +17,19 @@ const standardMetricDateRanges = [
     "custom"
 ];
 
-
 export const AdminDashboard = () => {
     const [userInfo, setUserInfo] = useState({ firstName: null, email: null, permission: null });
     const [dateRange, setDateRange] = useState<DateRange>(null);
     const [dashboardMetricsGranularity, setDashboardMetricsGranularity] = useState("month");
-    const [incomeExpenseProfitQueryData, setIncomeExpenseProfitQueryData] = useState([]); 
+    const [incomeExpenseProfitQueryData, setIncomeExpenseProfitQueryData] = useState([]);
 
-    const getIncomeExpenseByDate = async (startdate: string, enddate: string) => {
+    const getIncomeExpenseByDate = async ({ startdate = null, enddate = null }) => {
         const response: any = await getJSONResponse({ endpoint: '/api/server/income_and_expense_by_date', params: { startdate, enddate } });
+        return response;
+    };
+
+    const getOldestIncomeExpense = async ({ paddays = 0 }) => {
+        const response: any = await getJSONResponse({ endpoint: '/api/server/oldest_income_and_expense_record_dates', params: { paddays } });
         return response;
     };
 
@@ -42,24 +44,45 @@ export const AdminDashboard = () => {
     useEffect(() => {
         switch (dashboardMetricsGranularity) {
             case "week":
-                setDateRange([new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), new Date()]);
+                const bow = new Date();
+                const eow = new Date();
+
+                // const dayB = bow.getDay() || 7;
+                // if (dayB !== 1)
+                //     bow.setDate(-24 * (dayB - 1));
+                bow.setDate(bow.getDate() - (bow.getDay() + 6) % 7)
+                bow.setHours(0, 0, 0, 0);
+                // eow.setDate(bow.getDate() + 7);
+                // eow.setHours(0, 0, 0);
+                // console.log(bow);
+                eow.setDate(bow.getDate() + 6);
+                eow.setHours(0, 0, 0, 0);
+                // console.log(eow);
+                setDateRange([bow, eow]);
                 break;
             case "month":
-                setDateRange([new Date(new Date().setMonth(new Date().getMonth() - 1)), new Date()]);
+                const curr = new Date();
+                setDateRange([new Date(curr.getFullYear(), curr.getMonth(), 1), new Date(curr.getFullYear(), curr.getMonth() + 1, 0)]);
                 break;
             // case "quarter":
             //     setDateRange([new Date(new Date().setMonth(new Date().getMonth() - 3)), new Date()]);
             //     break;
             case "year":
-                setDateRange([new Date(new Date().setFullYear(new Date().getFullYear() - 1)), new Date()]);
+                const cur = new Date();
+                // const firstDOY
+                // const lastDOY
+                setDateRange([new Date(cur.getFullYear(), 0, 1), new Date(cur.getFullYear(), 11, 31)]);
                 break;
             case "all":
-                setDateRange([new Date(new Date().setFullYear(new Date().getFullYear() - 10)), new Date()]);
+                (async () => {
+                    const datesToSet = await getOldestIncomeExpense({paddays: 5});
+                    setDateRange([new Date(datesToSet.oldest_record_date), new Date(datesToSet.newest_record_date)]);
+                })();
                 break;
             case "custom":
                 break;
         }
-        console.log(dashboardMetricsGranularity);
+        // console.log(dashboardMetricsGranularity);
     }, [dashboardMetricsGranularity]);
 
     useEffect(() => {
@@ -71,15 +94,16 @@ export const AdminDashboard = () => {
         else
             (async () => {
                 try {
-                    const res = await getIncomeExpenseByDate(dateRange[0].toISOString().substring(0, 10), dateRange[1].toISOString().substring(0, 10),);
+                    const res = await getIncomeExpenseByDate({ startdate: dateRange[0].toISOString().substring(0, 10), enddate: dateRange[1].toISOString().substring(0, 10) });
+                    // console.log(res.rangeStartDateOfQuery);
+                    // console.log(res.rangeEndDateOfQuery);
                     setIncomeExpenseProfitQueryData(res.data);
                 } catch (e) {
+                    //! open ticket for this
                     console.log("Error fetching income and expense date by date! ", e);
                 }
             })();
     }, [dateRange]);
-
-    console.log("incomeexpensequery data ==> ", incomeExpenseProfitQueryData);
 
     return (
         <>
@@ -99,12 +123,12 @@ export const AdminDashboard = () => {
                                 <p
                                     className='d-inline-block'
                                 >
-                                    viewing {dashboardMetricsGranularity == "all" ? null : "past"}
+                                    here's your
                                 </p>
 
                                 <Dropdown
-                                    // align="start"
-                                    drop="down-centered"
+                                    align="start"
+                                    drop="down"
                                     style={{
                                     }}
                                     className='d-inline-block'
@@ -117,7 +141,7 @@ export const AdminDashboard = () => {
                                     >
                                         <span
                                         >
-                                            <u>{dashboardMetricsGranularity == "all" ? `${dashboardMetricsGranularity} time` : `${dashboardMetricsGranularity}s`}</u>
+                                            <u>{dashboardMetricsGranularity == "all" ? `history` : `${dashboardMetricsGranularity}`}</u>
                                         </span>
                                     </Dropdown.Toggle>
 
@@ -132,15 +156,10 @@ export const AdminDashboard = () => {
                                                 </>
                                             if (r == "all")
                                                 return <Dropdown.Item key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r} time`}</Dropdown.Item>
-                                            return <Dropdown.Item key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r}s`}</Dropdown.Item>
+                                            return <Dropdown.Item key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r}`}</Dropdown.Item>
                                         })}
                                     </Dropdown.Menu>
                                 </Dropdown>
-                                <p
-                                    className='d-inline-block'
-                                >
-                                    summary
-                                </p>
                             </>
                             :
                             <>
@@ -161,7 +180,7 @@ export const AdminDashboard = () => {
             <Row >
 
                 <Col md={12} lg={8}>
-                    {dateRange && <CCGChart globalDateRange={dateRange} chartData={incomeExpenseProfitQueryData} />}
+                    {dateRange && <CCGChart chartData={incomeExpenseProfitQueryData} />}
                 </Col>
 
                 <Col>

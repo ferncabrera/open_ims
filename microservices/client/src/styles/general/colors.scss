@@ -10,8 +10,11 @@ $page-grey: #F8F8F8;
 
 
 $primary-blue: #6268FF;
+$primary-blue-op-50:  #6268FF80;
 $secondary-blue: #9EA2FF;
+$secondary-blue-op-50:  #9EA2FF80;
 $lightest-blue: #E5E6FF;
+$lightest-blue-op-50:  #E5E6FF80;
 
 $light-orange: #FDAD36;
 $magenta: #E15ECC;
@@ -27,6 +30,9 @@ $success-faded: #089e1240;
     primaryBlue: $primary-blue;
     secondaryBlue: $secondary-blue;
     lightestBlue: $lightest-blue;
+    primaryBlueOpacityFifty: $primary-blue-op-50;
+    secondaryBlueOpacityFifty: $secondary-blue-op-50;
+    lightestBlueOpacityFifty: $lightest-blue-op-50;
 
     lightOrange: $light-orange;
 

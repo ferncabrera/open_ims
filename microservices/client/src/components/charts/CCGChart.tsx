@@ -9,8 +9,21 @@ import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
 import { makeFriendlyDollarAmount } from '../../utilities/helpers/functions';
 
 const renderColorfulLegendText = (value: string, entry: any) => {
-    const upperCased = value.charAt(0).toUpperCase() + value.slice(1);
-    return <span className='dark-text px-2' style={{ fontWeight: 400, fontSize: "16px", fontStyle: "normal", fontFamily: "Rubik" }}>{upperCased}</span>;
+    const hasUnderscores = value.includes('_');
+
+    let formattedValue;
+    if (hasUnderscores) {
+        const words = value.split('_');
+        formattedValue = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    } else {
+        formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    return (
+        <span className='dark-text px-2' style={{ fontWeight: 400, fontSize: "16px", fontStyle: "normal", fontFamily: "Rubik" }}>
+            {formattedValue}
+        </span>
+    );
 };
 
 // Instead this should just loop over once and return an array with the keys values being the counts and whether or not the col had a negative
@@ -44,11 +57,37 @@ function filterByGranularity(data: ICCGChartDataAttributes[], targetGranularity:
 }
 
 interface ICCGChartProps {
-    globalDateRange?: DateRange
     chartData?: ICCGChartDataAttributes[]
 };
 
-export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData }) => {
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        const bodyItems = payload.map((obj, index) => {
+            return (<p key={index} className="mb-1">
+                {obj.name}:
+                <strong>
+                    <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : obj.stroke }}>{obj.value}</span>
+                </strong>
+            </p>);
+
+        });
+
+        return (
+            <div className={`${styles.chartBorderWrapper} bg-white p-3`}>
+                <p className="mb-2 initialism">{`${label} ${new Date(payload[0].payload.date).getUTCFullYear()}`}</p>
+                {
+                    bodyItems
+                }
+            </div>
+        );
+    }
+
+    return null;
+
+};
+
+
+export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
 
 
     const [showYReferenceLineRight, setShowYReferenceLineRight] = useState<boolean>(false);
@@ -88,9 +127,9 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
         const { maxNumericValue: maxNumericValueLeft, hasNegative: leftHasNeg } = findMaxNumericValue(data.slice(startIndexBrush, endIndexBrush == 0 ? data.length : endIndexBrush + 1), ["profit"]);
         const { maxNumericValue: maxNumericValueRight, hasNegative: rightHasNeg } = findMaxNumericValue(data.slice(startIndexBrush, endIndexBrush == 0 ? data.length : endIndexBrush + 1), ["income", "expenses"]);
 
-        console.log("maxnumericvalueleft", maxNumericValueLeft);
-        console.log("maxnumericvalueright", maxNumericValueRight);
-        console.log("righthasneg", rightHasNeg);
+        // console.log("maxnumericvalueleft", maxNumericValueLeft);
+        // console.log("maxnumericvalueright", maxNumericValueRight);
+        // console.log("righthasneg", rightHasNeg);
 
         if (maxNumericValueLeft <= 8) {
             setYAxisWidthLeft(26);
@@ -110,6 +149,9 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
         else if (maxNumericValueLeft <= 80000) {
             setYAxisWidthLeft(35);
         }
+        else if (maxNumericValueLeft <= 400000) {
+            setYAxisWidthLeft(35);
+        }
         else if (maxNumericValueLeft <= 800000) {
             setYAxisWidthLeft(35);
         }
@@ -124,43 +166,43 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
         };
 
         if (maxNumericValueRight <= 8) {
-            setYAxisWidthRight(26);
+            !rightHasNeg ? setYAxisWidthRight(26) : setYAxisWidthRight(26 + 2);
         }
         else if (maxNumericValueRight <= 80) {
-            setYAxisWidthRight(35);
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
         }
         else if (maxNumericValueRight <= 800) {
-            setYAxisWidthRight(45);
+            !rightHasNeg ? setYAxisWidthRight(45) : setYAxisWidthRight(45 + 2);
         }
-        else if (maxNumericValueRight <= 2000) {
-            setYAxisWidthRight(55);
+        else if (maxNumericValueRight <= 1000) {
+            !rightHasNeg ? setYAxisWidthRight(55) : setYAxisWidthRight(55 + 2);
         }
         else if (maxNumericValueRight <= 4000) {
-            setYAxisWidthRight(45);
+            !rightHasNeg ? setYAxisWidthRight(45) : setYAxisWidthRight(45 + 2);
         }
         else if (maxNumericValueRight <= 80000) {
-            setYAxisWidthRight(35);
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
+        }
+        else if (maxNumericValueRight <= 400000) {
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
         }
         else if (maxNumericValueRight <= 800000) {
-            setYAxisWidthRight(35);
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
         }
         else if (maxNumericValueRight <= 8000000) {
-            setYAxisWidthRight(35);
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
         }
         else if (maxNumericValueRight <= 80000000) {
-            setYAxisWidthRight(35);
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
         }
         else {
-            setYAxisWidthRight(45);
+            !rightHasNeg ? setYAxisWidthRight(45) : setYAxisWidthRight(45 + 2);
         };
 
         if (rightHasNeg)
             setShowYReferenceLineRight(true);
         else
             setShowYReferenceLineRight(false);
-
-        // setEndIndexBrush(data.length - 1);
-        // setStartIndexBrush(0);
 
         setLoadingChart(false);
 
@@ -205,11 +247,11 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
         // };
     }, [data, startIndexBrush, endIndexBrush]);
 
-    console.log(startIndexBrush, endIndexBrush);
-    console.log(data.length);
-    console.log("yAxisWidthLeft ", yAxisWidthLeft);
-    console.log("yAxisWidthRight ", yAxisWidthRight);
-    console.log("showYreferenceLineRight ", showYReferenceLineRight);
+    // console.log(startIndexBrush, endIndexBrush);
+    // console.log(data.length);
+    // console.log("yAxisWidthLeft ", yAxisWidthLeft);
+    // console.log("yAxisWidthRight ", yAxisWidthRight);
+    // console.log("showYreferenceLineRight ", showYReferenceLineRight);
 
     // useEffect(() => {
     // ? Can be used to set an approriate chartGranularity selection based on globalDateRange
@@ -298,7 +340,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
                     </Row>
 
                     <ResponsiveContainer
-                        width="101%"
+                        width="100%"
                         height="91%">
                         <ComposedChart
                             className={`ps-2`}
@@ -321,12 +363,12 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
                                 stroke={styles.darkText}
                                 tickLine={false}
                                 tickMargin={5}
-                                minTickGap={4}
+                                minTickGap={5}
                                 padding={{
-                                    left: 10,
-                                    right: 10
+                                    left: 0,
+                                    right: 0
                                 }}
-                                interval={"equidistantPreserveStart"}
+                                interval={chartGranularity != "week" ? "equidistantPreserveStart" : "preserveEnd"}
                                 // tick={<CustomizedAxisTick props={chartGranularity} />}
                                 tick={(props: any) => {
                                     const { x, y, stroke, payload } = props;
@@ -334,7 +376,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
                                         case "day":
                                             return (
                                                 <g transform={`translate(${x},${y})`}>
-                                                    <text x={40} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                    <text x={23} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
                                                         {payload.value}
                                                     </text>
                                                 </g>
@@ -342,7 +384,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
                                         case "week":
                                             return (
                                                 <g transform={`translate(${x},${y})`}>
-                                                    <text x={95} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                    <text x={30} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
                                                         {payload.value}
                                                     </text>
                                                 </g>
@@ -350,7 +392,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
                                         case "month":
                                             return (
                                                 <g transform={`translate(${x},${y})`}>
-                                                    <text x={25} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                    <text x={22} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
                                                         {payload.value}
                                                     </text>
                                                 </g>
@@ -408,10 +450,11 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
                                 tickFormatter={makeFriendlyDollarAmount}
                             />
 
-                            <Tooltip />
+                            <Tooltip
+                                content={CustomTooltip}
+                            />
                             {showBrush &&
                                 <Brush onChange={(i) => {
-                                    console.log("THe onchange ran --> ", i);
                                     setStartIndexBrush(i.startIndex);
                                     setEndIndexBrush(i.endIndex);
                                 }}
@@ -433,9 +476,27 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange, chartData 
                                 wrapperStyle={{ paddingBottom: '20px', paddingLeft: "0px" }}
                                 formatter={renderColorfulLegendText}
                             />
-                            <Bar yAxisId={"left"} dataKey="income" fill={styles.secondaryBlue} radius={[5, 5, 0, 0]} />
-                            <Bar yAxisId={"left"} dataKey="expenses" stackId="a" fill={styles.primaryBlue} radius={[5, 5, 0, 0]} />
-                            <Line yAxisId={"right"} type="monotone" dataKey="profit" stroke={styles.lightOrange} />
+                            <Bar yAxisId={"left"} name="Income" dataKey="income" stackId="b" fill={styles.secondaryBlue} radius={[5, 5, 0, 0]} />
+                            <Bar yAxisId={"left"} name="Expenses" dataKey="expenses" stackId="a" fill={styles.primaryBlue} radius={[5, 5, 0, 0]} />
+                            <Bar
+                                animationBegin={250}
+                                yAxisId={"left"}
+                                dataKey="projected_income"
+                                name={"Projected Income"}
+                                stackId="b"
+                                fill={"#FFF1E3"}
+                                radius={[5, 5, 5, 5]}
+                            />
+                            <Bar
+                                animationBegin={250}
+                                yAxisId={"left"}
+                                name="Projected Expenses"
+                                dataKey="projected_expenses"
+                                stackId="a"
+                                fill={"#FAD8D8"}
+                                radius={[5, 5, 5, 5]}
+                            />
+                            <Line yAxisId={"right"} name="Profit" type="monotone" dataKey="profit" stroke={styles.lightOrange} />
                             {/* <Bar dataKey="amt" stackId="a" fill="#ffc658" /> */}
                         </ComposedChart>
                     </ResponsiveContainer>
