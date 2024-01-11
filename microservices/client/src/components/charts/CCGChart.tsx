@@ -63,20 +63,42 @@ interface ICCGChartProps {
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         const bodyItems = payload.map((obj, index) => {
-            return (
-            <p key={index} className="mb-1">
-                {obj.name}:
-                {/* <strong> */}
-                    <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0)? "#036100": "#930505"}}>{obj.value}</span>
-                {/* </strong> */}
-            </p>
-            );
+            console.log("obj.value --> ", obj);
+            return ((obj.value == 0) &&
+                ((obj.dataKey == "projected_income") ||
+                    (obj.dataKey == "projected_expenses") ||
+                (obj.dataKey == "profit"))) ? (
+                obj.dataKey == "profit" ?
+                    (<p key={index} className="mb-1">
+                        No earnings to report this {obj.payload.granularity}.
+                    </p>)
+                    :
+                    null
+            )
+                :
+                ((obj.dataKey != "projected_income") &&
+                    (obj.dataKey != "projected_expenses"))?(
+                    <p key={index} className="mb-1">
+                        {obj.name}:
+                        {/* <strong> */}
+                        <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? "#036100" : "#930505" }}>{obj.value}</span>
+                        {/* </strong> */}
+                    </p>
+                ):
+                (
+                    <p key={index} className="mb-1">
+                        {(obj.dataKey == "projected_expenses")?"Unpaid PO balance":"Unpaid invoice balance"}:
+                        {/* <strong> */}
+                        <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? "#036100" : "#930505" }}>{obj.value}</span>
+                        {/* </strong> */}
+                    </p>
+                );
 
         });
 
         return (
             <div className={`${styles.chartBorderWrapper} bg-white p-3`}>
-                <p className="mb-2 initialism">{`${label} ${payload[0].payload.granularity !== "year"?new Date(payload[0].payload.date).getUTCFullYear():""}`}</p>
+                <p className="mb-2 initialism">{`${label} ${payload[0].payload.granularity !== "year" ? new Date(payload[0].payload.date).getUTCFullYear() : ""}`}</p>
                 {
                     bodyItems
                 }
