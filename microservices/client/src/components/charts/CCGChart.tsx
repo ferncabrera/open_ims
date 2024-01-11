@@ -276,6 +276,13 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
     // console.log("yAxisWidthRight ", yAxisWidthRight);
     // console.log("showYreferenceLineRight ", showYReferenceLineRight);
 
+    console.log(
+        267.75+
+582.75+
+236.25+
+346.50
+    )
+
     // useEffect(() => {
     // ? Can be used to set an approriate chartGranularity selection based on globalDateRange
     //     if (globalDateRange !== null) {
@@ -347,15 +354,26 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                 </Dropdown.Toggle>
 
                                 <Dropdown.Menu style={{ fontSize: "14px" }}>
-                                    <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily View</Dropdown.Item>
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("week"); }} >Weekly View</Dropdown.Item>
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("month"); }} >Monthly View</Dropdown.Item>
-                                    <Dropdown.Divider />
+                                    {chartGranularity != "day" && <>
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily View</Dropdown.Item>
+                                        <Dropdown.Divider />
+                                    </>
+                                    }
+                                    {chartGranularity != "week" && <>
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("week"); }} >Weekly View</Dropdown.Item>
+                                        <Dropdown.Divider />
+                                    </>
+                                    }
+                                    {chartGranularity != "month" && <>
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("month"); }} >Monthly View</Dropdown.Item>
+                                        <Dropdown.Divider />
+                                    </>
+                                    }
                                     {/* <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("quarter"); }} >Quarterly View</Dropdown.Item>
                                     <Dropdown.Divider /> */}
-                                    <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("year"); }} >Yearly View</Dropdown.Item>
+                                    {chartGranularity != "year" &&
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("year"); }} >Yearly View</Dropdown.Item>
+                                    }
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Col>
