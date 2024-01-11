@@ -21,6 +21,7 @@ CREATE TABLE employee_table (
     emp_commission NUMERIC,
     emp_address VARCHAR(200),
     emp_notes VARCHAR(500),
+    created_on DATE NOT NULL,
     is_active BOOLEAN DEFAULT TRUE NOT NULL,
     PRIMARY KEY (emp_id)
 );
@@ -170,7 +171,7 @@ BEGIN
             NEW.first_name,
             NEW.last_name,
             NEW.email;
-            INSERT INTO employee_table(emp_id) VALUES (NEW.id);
+            INSERT INTO employee_table(emp_id, created_on) VALUES (NEW.id, CURRENT_DATE);
         END IF;
     END IF;
     RETURN NEW;
