@@ -149,6 +149,8 @@ export const AdminDashboard = () => {
                                         className={`${styles.dashboardMetricsGranularityDropdownMenu}`}
                                     >
                                         {standardMetricDateRanges.map((r, i) => {
+                                            if (r == dashboardMetricsGranularity)
+                                                return null;
                                             if (r == "custom")
                                                 return <>
                                                     <Dropdown.Divider key={`${r}divider`} />
