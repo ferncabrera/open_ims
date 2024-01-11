@@ -63,11 +63,10 @@ interface ICCGChartProps {
 const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         const bodyItems = payload.map((obj, index) => {
-            console.log("obj.value --> ", obj);
             return ((obj.value == 0) &&
                 ((obj.dataKey == "projected_income") ||
                     (obj.dataKey == "projected_expenses") ||
-                (obj.dataKey == "profit"))) ? (
+                    (obj.dataKey == "profit"))) ? (
                 obj.dataKey == "profit" ?
                     (<p key={index} className="mb-1">
                         No earnings to report this {obj.payload.granularity}.
@@ -77,22 +76,22 @@ const CustomTooltip = ({ active, payload, label }) => {
             )
                 :
                 ((obj.dataKey != "projected_income") &&
-                    (obj.dataKey != "projected_expenses"))?(
+                    (obj.dataKey != "projected_expenses")) ? (
                     <p key={index} className="mb-1">
                         {obj.name}:
                         {/* <strong> */}
                         <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? "#036100" : "#930505" }}>{obj.value}</span>
                         {/* </strong> */}
                     </p>
-                ):
-                (
-                    <p key={index} className="mb-1">
-                        {(obj.dataKey == "projected_expenses")?"Unpaid PO balance":"Unpaid invoice balance"}:
-                        {/* <strong> */}
-                        <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? "#036100" : "#930505" }}>{obj.value}</span>
-                        {/* </strong> */}
-                    </p>
-                );
+                ) :
+                    (
+                        <p key={index} className="mb-1">
+                            {(obj.dataKey == "projected_expenses") ? "Unpaid PO balance" : "Unpaid invoice balance"}:
+                            {/* <strong> */}
+                            <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? "#036100" : "#930505" }}>{obj.value}</span>
+                            {/* </strong> */}
+                        </p>
+                    );
 
         });
 
