@@ -1,5 +1,5 @@
 # open_ims
-An Inventory Management System (IMS) designed and built for the Christensen Consulting Group (CCG).
+An Inventory Management System (IMS) designed and built for the Christensen Consulting Group (CCG)
 
 ## Development
 
