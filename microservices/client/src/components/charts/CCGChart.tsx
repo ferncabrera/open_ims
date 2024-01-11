@@ -65,9 +65,9 @@ const CustomTooltip = ({ active, payload, label }) => {
         const bodyItems = payload.map((obj, index) => {
             return (<p key={index} className="mb-1">
                 {obj.name}:
-                <strong>
-                    <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : obj.stroke }}>{obj.value}</span>
-                </strong>
+                {/* <strong> */}
+                    <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0)? "#036100": "#930505"}}>{obj.value}</span>
+                {/* </strong> */}
             </p>);
 
         });
