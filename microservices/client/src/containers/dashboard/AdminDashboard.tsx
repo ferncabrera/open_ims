@@ -41,6 +41,8 @@ export const AdminDashboard = () => {
         })
     }, []);
 
+    // console.log("dateRange", dateRange)
+
     useEffect(() => {
         switch (dashboardMetricsGranularity) {
             case "week":
@@ -94,7 +96,8 @@ export const AdminDashboard = () => {
         else
             (async () => {
                 try {
-                    const res = await getIncomeExpenseByDate({ startdate: dateRange[0].toISOString().substring(0, 10), enddate: dateRange[1].toISOString().substring(0, 10) });
+                    const isoEndDate = new Date(new Date(dateRange[1]).setHours(0,0,0,0));
+                    const res = await getIncomeExpenseByDate({ startdate: dateRange[0].toISOString().substring(0, 10), enddate: isoEndDate.toISOString().substring(0, 10) });
                     // console.log(res.rangeStartDateOfQuery);
                     // console.log(res.rangeEndDateOfQuery);
                     setIncomeExpenseProfitQueryData(res.data);
