@@ -10,6 +10,11 @@ import styles from "./index.module.scss";
 import { SimpleSummaryCard } from '../../components/cards/SimpleSummaryCard';
 import { MdMoving } from "react-icons/md";
 
+let USDollar = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+});
+
 const standardMetricDateRanges = [
     "week",
     "month",
@@ -77,7 +82,6 @@ export const AdminDashboard = () => {
             return
         })
     }, []);
-
 
     useEffect(() => {
         switch (dashboardMetricsGranularity) {
@@ -238,15 +242,15 @@ export const AdminDashboard = () => {
                         <Col>
                             <SimpleSummaryCard
                                 titleContent={"total income"}
-                                bodyContent={!loadingTileData && timeRangeSummary ? `$${Number(timeRangeSummary.income) + Number(timeRangeSummary.projected_income)}` : "$0"}
+                                bodyContent={!loadingTileData && timeRangeSummary ? `${USDollar.format(parseFloat(timeRangeSummary.income.toString()) + parseFloat(timeRangeSummary.projected_income.toString()))}` : USDollar.format(0)}
                                 icon={
                                     <MdMoving
-                                        style={{backgroundColor: !loadingTileData && timeRangeSummary && Number(timeRangeSummary.income) + Number(timeRangeSummary.projected_income) > 0 ? styles.lightGreen :styles.lightRed}}
+                                        style={{backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income.toString()) + parseFloat(timeRangeSummary.projected_income.toString()) > 0 ? styles.lightGreen :styles.lightRed}}
                                     />
                                 }
-                                commentContent={`This ${dashboardMetricsGranularity} your income has ${!loadingTileData && timeRangeSummary && Number(timeRangeSummary.income) > 0? "decreased" : "increased"}`}
+                                commentContent={`This ${dashboardMetricsGranularity} your income has ${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income.toString()) > 0? "decreased" : "increased"}`}
                                 commentMetric={"XD$"}
-                                colorScheme={`${!loadingTileData && timeRangeSummary && Number(timeRangeSummary.income) + Number(timeRangeSummary.projected_income) >0? styles.darkGreen : styles.darkRed}`}
+                                colorScheme={`${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income.toString()) + parseFloat(timeRangeSummary.projected_income.toString()) >0? styles.darkGreen : styles.darkRed}`}
                             />
                         </Col>
                     </Row>
@@ -254,15 +258,15 @@ export const AdminDashboard = () => {
                         <Col>
                             <SimpleSummaryCard
                                 titleContent={"total expenses"}
-                                bodyContent={!loadingTileData && timeRangeSummary ? `$${Number(timeRangeSummary.expenses) + Number(timeRangeSummary.projected_expenses)}` : "$0"}
+                                bodyContent={!loadingTileData && timeRangeSummary ? `${USDollar.format(parseFloat(timeRangeSummary.expenses.toString()) + parseFloat(timeRangeSummary.projected_expenses.toString()))}` : USDollar.format(0)}
                                 icon={
                                     <MdMoving
-                                        style={{backgroundColor: !loadingTileData && timeRangeSummary && Number(timeRangeSummary.expenses) + Number(timeRangeSummary.projected_expenses) > 0 ? styles.lightGreen : styles.lightRed}}
+                                        style={{backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expenses.toString()) + parseFloat(timeRangeSummary.projected_expenses.toString()) > 0 ? styles.lightGreen : styles.lightRed}}
                                     />
                                 }
-                                commentContent={`This ${dashboardMetricsGranularity} your expenses have ${!loadingTileData && timeRangeSummary && Number(timeRangeSummary.expenses) > 0? "decreased" : "increased"}`}
+                                commentContent={`This ${dashboardMetricsGranularity} your expenses have ${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expenses.toString()) > 0? "decreased" : "increased"}`}
                                 commentMetric={"XD$"}
-                                colorScheme={`${!loadingTileData && timeRangeSummary && Number(timeRangeSummary.expenses) + Number(timeRangeSummary.projected_expenses) >0? styles.darkGreen : styles.darkRed}`}
+                                colorScheme={`${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expenses.toString()) + parseFloat(timeRangeSummary.projected_expenses.toString()) >0? styles.darkGreen : styles.darkRed}`}
                             />
                         </Col>
 
@@ -271,15 +275,15 @@ export const AdminDashboard = () => {
                         <Col>
                             <SimpleSummaryCard
                                 titleContent={"total profit"}
-                                bodyContent={!loadingTileData && timeRangeSummary ? `$${timeRangeSummary.profit}` : "$0"}
+                                bodyContent={!loadingTileData && timeRangeSummary ? `${USDollar.format(parseFloat(timeRangeSummary.profit.toString()))}` : USDollar.format(0)}
                                 icon={
                                     <MdMoving
-                                        style={{backgroundColor: !loadingTileData && timeRangeSummary && Number(timeRangeSummary.profit) > 0 ? styles.lightGreen : styles.lightRed}}
+                                        style={{backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit.toString()) > 0 ? styles.lightGreen : styles.lightRed}}
                                     />
                                 }
-                                commentContent={`This ${dashboardMetricsGranularity} your profit has ${!loadingTileData && timeRangeSummary && Number(timeRangeSummary.profit) > 0? "decreased" : "increased"}`}
+                                commentContent={`This ${dashboardMetricsGranularity} your profit has ${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit.toString()) > 0? "decreased" : "increased"}`}
                                 commentMetric={"XD$"}
-                                colorScheme={`${!loadingTileData && timeRangeSummary && Number(timeRangeSummary.profit) >0? styles.darkGreen : styles.darkRed}`}
+                                colorScheme={`${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit.toString()) >0? styles.darkGreen : styles.darkRed}`}
                             />
                         </Col>
                     </Row>
