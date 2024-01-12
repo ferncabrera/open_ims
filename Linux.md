@@ -35,7 +35,7 @@ it is important to use "sudo" in your commands otherwise you will not be able to
    ![image](https://github.com/ferncabrera/open_ims/assets/77382000/f22bce29-54a7-4609-add2-48a0a1b5661a)
 
 8. Finally go into your open_ims directory.
-9. In your open_ims directory, run `sudo skaffold dev`
+9. In your open_ims directory, run `sudo ./start.sh`
 10. Once it compiles without any errors, return back to your browser and voila! You should see the app.
 
 ### Shut-down
@@ -52,3 +52,4 @@ After running these two commands (step 2 and 3), you will have to go through the
 - What is the URL/IP I need to access to see the app?
   - http://192.168.49.2:31957/ This is the one you want to use! Refresh the page after running skaffold dev. Ensure you followed all set-up steps correctly.
   - Run `sudo kubectl port-forward svc/ingress-nginx-controller 80:80 -n ingress-nginx` this will ensure that the IP you are hosting on will forward the port to localhost:8080
+  - If you want access to pgadmin, while the development is running, run `sudo kubectl port-forward service/dev-pgadmin-service 30007:9000` and you will be able to access pgadmin on localhost:30007
