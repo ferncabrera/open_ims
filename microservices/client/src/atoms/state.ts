@@ -14,3 +14,8 @@ export const entityState = atom({
         id: null,
     }
 });
+
+export const overlaySpinnerState = atom({
+    key: 'overlaySpinnerState',
+    default: false
+});

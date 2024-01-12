@@ -1,26 +1,40 @@
 import React, { ReactNode } from 'react';
-import { Row, Col, Button } from 'react-bootstrap';
+import { Row, Col, Button, Spinner } from 'react-bootstrap';
 import styles from './CrudForm.module.scss';
-import { entityState } from '../../atoms/state';
-import { useResetRecoilState } from 'recoil';
+import { entityState, overlaySpinnerState } from '../../atoms/state';
+import { useResetRecoilState, useRecoilState } from 'recoil';
 
 interface ICrudForm {
     children: ReactNode;
     header: string;
-    handleSave: () => void;
+    handleSubmit(): Promise<void>;
     handleCancel?: () => void;
+    disablePrimary?: boolean;
+    disableSecondary?: boolean;
 }
 
 export const CrudForm = (props: ICrudForm) => {
 
     const resetEntityState = useResetRecoilState(entityState);
+    const [overlaySpinner, setOverlaySpinner] = useRecoilState(overlaySpinnerState);
 
     const {
-        handleSave,
+        handleSubmit,
         header,
-        handleCancel = resetEntityState
+        handleCancel = resetEntityState,
+        disablePrimary = false,
+        disableSecondary = false,
     } = props;
 
+
+    const handleSubmitClick = async () => {
+        setOverlaySpinner(true);
+        try {
+            await handleSubmit();
+            resetEntityState();
+        } catch(err) {} // might not be necessary for error handelling, but we don't want the entity state to reset or continue if the submission did not work
+        setOverlaySpinner(false);
+    };
     
 
     return (
@@ -42,7 +56,8 @@ export const CrudForm = (props: ICrudForm) => {
                 <Col className='d-flex' xs={3} sm={4} md={3} lg={3}>
                     <Button 
                     className='mx-1'
-                    onClick={handleSave}
+                    onClick={handleSubmitClick}
+                    disabled={disablePrimary}
                     >
                         Save
                     </Button>
@@ -50,6 +65,7 @@ export const CrudForm = (props: ICrudForm) => {
                         className='mx-1'
                         variant='secondary'
                         onClick={handleCancel}
+                        disabled={disableSecondary}
                     >
                         Cancel
                     </Button>

@@ -41,6 +41,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
   const { customerId } = props;
 
   const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [isCheckedBilling, setIsCheckedBilling] = useState(false);
   const [vendorList, setVendorList] = useState([]);
   const [initialVendor, setInitialVendor] = useState('');
@@ -98,6 +99,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
   }
 
   const handleSave = async () => {
+    setIsLoadingSubmit(true);
     try {
       const data = { ...customerData };
       if (hasEmptyKeys(data.billing)) {
@@ -109,7 +111,9 @@ export const EditCustomer = (props: IEditCustomerProps) => {
       await sendPatchRequest({ endpoint: '/api/server/customer', data });
     } catch(e) {
       console.log(e, '!Error! we need to display this on banner for the user');
-    }
+    };
+
+    setIsLoadingSubmit(false);
     
   }
 
@@ -142,7 +146,9 @@ export const EditCustomer = (props: IEditCustomerProps) => {
       {!isLoading &&
         <CrudForm
           header='Edit Customer'
-          handleSave={handleSave}
+          handleSubmit={handleSave}
+          disablePrimary={isLoadingSubmit}
+          disableSecondary={isLoadingSubmit}
         >
           <div id='form-content'>
             <Form className='my-5 pt-2'>

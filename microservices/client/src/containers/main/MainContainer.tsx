@@ -4,11 +4,15 @@ import { Container, Row, Col } from 'react-bootstrap';
 import { Sidebar } from '../../components/mainComponents/Sidebar'
 import { isUserAuth } from '../../utilities/helpers/functions';
 import { useNavigate } from 'react-router-dom';
+import { OverlaySpinner } from '../../components/modals/OverlaySpinner';
+import { useRecoilValue } from 'recoil';
+import { overlaySpinnerState } from '../../atoms/state';
 import styles from "./index.module.scss";
 
 export const MainContainer = (props: any) => {
 
     const navigate = useNavigate();
+    const spinnerState = useRecoilValue(overlaySpinnerState);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     // we should use a global state here tbh - but will do this temporarily to show we have access to cookie data
     const [sidebarProps, setSidebarProps] = useState({})
@@ -35,6 +39,8 @@ export const MainContainer = (props: any) => {
         <>
             {isAuthenticated &&
                 <Container fluid>
+                    {spinnerState && <OverlaySpinner/>}
+
 
                     <Row>
 
