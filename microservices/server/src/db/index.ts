@@ -8,11 +8,15 @@ pool.on('error', (err, client) => {
 });
 
 export const query = async (text: string, params?: (any)[]) => {
-        const start = Date.now();
-        const res = await pool.query(text, params);
-        const duration = Date.now() - start;
-        console.log('Query details below:\n', { text, execTimeInMS: duration, rowsInQuery: res.rowCount });
-        return res;
+    const start = Date.now();
+    const res = await pool.query(text, params);
+    const duration = Date.now() - start;
+    console.log('Query details below:\n', {
+        // text,
+        execTimeInMS: duration,
+        rowsInQuery: res.rowCount
+    });
+    return res;
 };
 
 export const chained_query = async (queries: IChainedQueryProps[]) => {
@@ -50,7 +54,7 @@ export const getClient = async () => {
     const timeout = setTimeout(() => {
         console.error('A client has been checked out for more than 5 seconds!');
         console.error(`The last executed query on this client was: ${(client as any).lastQuery}`);
-    }, 5000)
+    }, 5000);
     // monkey patch the query method to keep track of the last query executed
     client.query = (...args: any) => {
         (client as any).lastQuery = args;

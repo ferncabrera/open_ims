@@ -1,6 +1,6 @@
 import express from "express";
 import catchAsync from "../utils/catchAsync";
-import errorHandler from "../../middleware/errorHandler";
+import errorHandler from "../middleware/errorHandler";
 import { get_customers, get_customer, update_customer } from "../controllers/customers";
 
 const router = express.Router();

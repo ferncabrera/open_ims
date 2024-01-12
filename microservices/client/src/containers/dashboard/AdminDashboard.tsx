@@ -15,79 +15,123 @@ const standardMetricDateRanges = [
     "year",
     "all",
     "custom"
-]
-
+];
 
 export const AdminDashboard = () => {
     const [userInfo, setUserInfo] = useState({ firstName: null, email: null, permission: null });
     const [dateRange, setDateRange] = useState<DateRange>(null);
     const [dashboardMetricsGranularity, setDashboardMetricsGranularity] = useState("month");
+    const [incomeExpenseProfitQueryData, setIncomeExpenseProfitQueryData] = useState([]);
 
+    const getIncomeExpenseByDate = async ({ startdate = null, enddate = null }) => {
+        const response: any = await getJSONResponse({ endpoint: '/api/server/income_and_expense_by_date', params: { startdate, enddate } });
+        return response;
+    };
+
+    const getOldestIncomeExpense = async ({ paddays = 0 }) => {
+        const response: any = await getJSONResponse({ endpoint: '/api/server/oldest_income_and_expense_record_dates', params: { paddays } });
+        return response;
+    };
 
     useEffect(() => {
         isUserAuth().then((response: any) => {
-            console.log("this is response --> ", response);
             setUserInfo({ firstName: response.firstName, email: response.email, permission: response.permission });
         }).catch((error) => {
             return
         })
     }, []);
 
+    // console.log("dateRange", dateRange)
+
     useEffect(() => {
         switch (dashboardMetricsGranularity) {
             case "week":
-                setDateRange([new Date(new Date().getTime() - 7 * 24 * 60 * 60 * 1000), new Date()]);
+                const bow = new Date();
+                const eow = new Date();
+
+                // const dayB = bow.getDay() || 7;
+                // if (dayB !== 1)
+                //     bow.setDate(-24 * (dayB - 1));
+                bow.setDate(bow.getDate() - (bow.getDay() + 6) % 7)
+                bow.setHours(0, 0, 0, 0);
+                // eow.setDate(bow.getDate() + 7);
+                // eow.setHours(0, 0, 0);
+                // console.log(bow);
+                eow.setDate(bow.getDate() + 6);
+                eow.setHours(0, 0, 0, 0);
+                // console.log(eow);
+                setDateRange([bow, eow]);
                 break;
             case "month":
-                setDateRange([new Date(new Date().setMonth(new Date().getMonth() - 1)), new Date()]);
+                const curr = new Date();
+                setDateRange([new Date(curr.getFullYear(), curr.getMonth(), 1), new Date(curr.getFullYear(), curr.getMonth() + 1, 0)]);
                 break;
-            case "quarter":
-                setDateRange([new Date(new Date().setMonth(new Date().getMonth() - 3)), new Date()]);
-                break;
+            // case "quarter":
+            //     setDateRange([new Date(new Date().setMonth(new Date().getMonth() - 3)), new Date()]);
+            //     break;
             case "year":
-                setDateRange([new Date(new Date().setFullYear(new Date().getFullYear() - 1)), new Date()]);
+                const cur = new Date();
+                // const firstDOY
+                // const lastDOY
+                setDateRange([new Date(cur.getFullYear(), 0, 1), new Date(cur.getFullYear(), 11, 31)]);
                 break;
             case "all":
-                setDateRange([new Date(new Date().setFullYear(new Date().getFullYear() - 10)), new Date()]);
+                (async () => {
+                    const datesToSet = await getOldestIncomeExpense({paddays: 5});
+                    setDateRange([new Date(datesToSet.oldest_record_date), new Date(datesToSet.newest_record_date)]);
+                })();
                 break;
             case "custom":
                 break;
         }
-        console.log(dashboardMetricsGranularity);
+        // console.log(dashboardMetricsGranularity);
     }, [dashboardMetricsGranularity]);
 
     useEffect(() => {
         //? If date is ever reset by user we reset back to last months stats
         //TODO Introduce user default settings!
         // it could be a general save icon that simply saves the dashboard settings a certain way for a user...
-        if(dateRange === null)
+        if (dateRange === null)
             setDashboardMetricsGranularity("month");
+        else
+            (async () => {
+                try {
+                    const isoEndDate = new Date(new Date(dateRange[1]).setHours(0,0,0,0));
+                    const res = await getIncomeExpenseByDate({ startdate: dateRange[0].toISOString().substring(0, 10), enddate: isoEndDate.toISOString().substring(0, 10) });
+                    // console.log(res.rangeStartDateOfQuery);
+                    // console.log(res.rangeEndDateOfQuery);
+                    setIncomeExpenseProfitQueryData(res.data);
+                } catch (e) {
+                    //! open ticket for this
+                    console.log("Error fetching income and expense date by date! ", e);
+                }
+            })();
     }, [dateRange]);
 
     return (
         <>
 
-            <Row className={"align-items-center my-4 py-1"}>
+            <Row className={"align-items-center my-lg-4 mt-2 py-1"}>
 
-                <Col md={12} lg={8}>
+                <Col md={12} lg={6}>
                     {userInfo.firstName !== null &&
                         <p className='mb-0 font-30 dark-text'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
                     }
                 </Col>
 
                 <Col >
-                    <div className='float-end'>
+                    <div className='float-lg-end text-nowrap'>
                         {dashboardMetricsGranularity != "custom" ?
                             <>
                                 <p
                                     className='d-inline-block'
                                 >
-                                    viewing {dashboardMetricsGranularity == "all" ? null : "past"}
+                                    here's your
                                 </p>
 
                                 <Dropdown
-                                    // align="start"
-                                    drop="down-centered"
+                                    align="start"
+                                    drop="down"
                                     style={{
                                     }}
                                     className='d-inline-block'
@@ -100,7 +144,7 @@ export const AdminDashboard = () => {
                                     >
                                         <span
                                         >
-                                            <u>{dashboardMetricsGranularity == "all" ?`${dashboardMetricsGranularity} time`:`${dashboardMetricsGranularity}s`}</u>
+                                            <u>{dashboardMetricsGranularity == "all" ? `history` : `${dashboardMetricsGranularity}`}</u>
                                         </span>
                                     </Dropdown.Toggle>
 
@@ -108,6 +152,8 @@ export const AdminDashboard = () => {
                                         className={`${styles.dashboardMetricsGranularityDropdownMenu}`}
                                     >
                                         {standardMetricDateRanges.map((r, i) => {
+                                            if (r == dashboardMetricsGranularity)
+                                                return null;
                                             if (r == "custom")
                                                 return <>
                                                     <Dropdown.Divider key={`${r}divider`} />
@@ -115,15 +161,10 @@ export const AdminDashboard = () => {
                                                 </>
                                             if (r == "all")
                                                 return <Dropdown.Item key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r} time`}</Dropdown.Item>
-                                            return <Dropdown.Item key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r}s`}</Dropdown.Item>
+                                            return <Dropdown.Item key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r}`}</Dropdown.Item>
                                         })}
                                     </Dropdown.Menu>
                                 </Dropdown>
-                                <p
-                                    className='d-inline-block'
-                                >
-                                    summary
-                                </p>
                             </>
                             :
                             <>
@@ -132,7 +173,7 @@ export const AdminDashboard = () => {
                                 >
                                     summary from
                                 </p>
-                                <CCGDateRangePicker dateRange={dateRange} setDateRange={setDateRange} additionalClasses={`float-end px-2 bg-white ${styles.dashboardDateRangePicker}`} />
+                                <CCGDateRangePicker dateRange={dateRange} setDateRange={setDateRange} additionalClasses={`float-lg-end px-2 bg-white ${styles.dashboardDateRangePicker}`} />
                             </>
                         }
                     </div>
@@ -144,7 +185,7 @@ export const AdminDashboard = () => {
             <Row >
 
                 <Col md={12} lg={8}>
-                    {dateRange && <CCGChart globalDateRange={dateRange} />}
+                    {dateRange && <CCGChart chartData={incomeExpenseProfitQueryData} />}
                 </Col>
 
                 <Col>

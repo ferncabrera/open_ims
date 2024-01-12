@@ -1,37 +1,29 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, PureComponent } from 'react'
 import { getJSONResponse } from '../../utilities/apiHelpers';
 import _ from 'lodash';
 import styles from "./CCGChart.module.scss";
-import { Container, Row, Col, Dropdown, DropdownButton } from 'react-bootstrap';
+import { Container, Row, Col, Dropdown, DropdownButton, NavItem } from 'react-bootstrap';
 import { ComposedChart, Line, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Brush } from 'recharts';
 import { DateRange } from '../../utilities/types/types';
 import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
-import { makeFriendlyDollarAmount  } from '../../utilities/helpers/functions';
-
-// ! REMOVE ONCE DONE WITH HELPER FUNC
-function getRandomNumber(min, max) {
-    // Ensure that both min and max are integers
-    min = Math.ceil(min);
-    max = Math.floor(max);
-
-    // Generate a random number between min (inclusive) and max (exclusive)
-    return Math.floor(Math.random() * (max - min)) + min;
-}
-// ! dummy data
-
-interface ICCGChartProps {
-    globalDateRange?: DateRange
-};
-
+import { makeFriendlyDollarAmount } from '../../utilities/helpers/functions';
 
 const renderColorfulLegendText = (value: string, entry: any) => {
-    // const { color } = entry;
-    const upperCased = value.charAt(0).toUpperCase() + value.slice(1);
-    return <span className='dark-text px-2' style={{ fontWeight: 400, fontSize: "16px", fontStyle: "normal", fontFamily: "Rubik" }}>{upperCased}</span>;
-};
+    const hasUnderscores = value.includes('_');
 
-const getIncomeExpenseByDate = async (date) => {
-    const response: any = await getJSONResponse({ endpoint: '/api/server/income_and_expense_by_date', params: { date: "" } });
+    let formattedValue;
+    if (hasUnderscores) {
+        const words = value.split('_');
+        formattedValue = words.map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+    } else {
+        formattedValue = value.charAt(0).toUpperCase() + value.slice(1);
+    }
+
+    return (
+        <span className='dark-text px-2' style={{ fontWeight: 400, fontSize: "16px", fontStyle: "normal", fontFamily: "Rubik" }}>
+            {formattedValue}
+        </span>
+    );
 };
 
 // Instead this should just loop over once and return an array with the keys values being the counts and whether or not the col had a negative
@@ -41,7 +33,7 @@ function findMaxNumericValue(data, excludeArr: string[]) {
     const maxNumeric = data.reduce((maxNumericValue: any, currentData: any) => {
         for (const key in currentData) {
             if (key !== 'name' && typeof currentData[key] === 'number' && !excludeArr.includes(key)) {
-                maxNumericValue = Math.max(maxNumericValue, currentData[key]);
+                maxNumericValue = Math.max(Math.abs(maxNumericValue), Math.abs(currentData[key]));
                 if (Math.min(currentData[key]) < 0)
                     hasNegative = true;
             }
@@ -55,7 +47,70 @@ function findMaxNumericValue(data, excludeArr: string[]) {
     }
 };
 
-export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
+interface ICCGChartDataAttributes {
+    granularity: string
+};
+
+function filterByGranularity(data: ICCGChartDataAttributes[], targetGranularity: string) {
+    // console.log(data.filter(item => item.granularity === targetGranularity).map(item => ({...item, name: "abc"})));
+    return data.filter(item => item.granularity === targetGranularity);
+}
+
+interface ICCGChartProps {
+    chartData?: ICCGChartDataAttributes[]
+};
+
+const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        const bodyItems = payload.map((obj, index) => {
+            return ((obj.value == 0) &&
+                ((obj.dataKey == "projected_income") ||
+                    (obj.dataKey == "projected_expenses") ||
+                    (obj.dataKey == "profit"))) ? (
+                obj.dataKey == "profit" ?
+                    (<p key={index} className="mb-1">
+                        No earnings to report this {obj.payload.granularity}.
+                    </p>)
+                    :
+                    null
+            )
+                :
+                ((obj.dataKey != "projected_income") &&
+                    (obj.dataKey != "projected_expenses")) ? (
+                    <p key={index} className="mb-1">
+                        {obj.name}:
+                        {/* <strong> */}
+                        <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? "#036100" : "#930505" }}>{obj.value}</span>
+                        {/* </strong> */}
+                    </p>
+                ) :
+                    (
+                        <p key={index} className="mb-1">
+                            {(obj.dataKey == "projected_expenses") ? "Unpaid PO balance" : "Unpaid invoice balance"}:
+                            {/* <strong> */}
+                            <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? "#036100" : "#930505" }}>{obj.value}</span>
+                            {/* </strong> */}
+                        </p>
+                    );
+
+        });
+
+        return (
+            <div className={`${styles.chartBorderWrapper} bg-white p-3`}>
+                <p className="mb-2 initialism">{`${label} ${payload[0].payload.granularity !== "year" ? new Date(payload[0].payload.date).getUTCFullYear() : ""}`}</p>
+                {
+                    bodyItems
+                }
+            </div>
+        );
+    }
+
+    return null;
+
+};
+
+
+export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
 
 
     const [showYReferenceLineRight, setShowYReferenceLineRight] = useState<boolean>(false);
@@ -65,109 +120,39 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
     const [endIndexBrush, setEndIndexBrush] = useState<number>(0);
     const [startIndexBrush, setStartIndexBrush] = useState<number>(0);
     const [loadingChart, setLoadingChart] = useState(true);
-    const [chartGranularity, setChartGranularity] = useState(null);
+    const [chartGranularity, setChartGranularity] = useState("week");
     const [showChartGranularityMenu, setShowChartGranularityMenu] = useState(false);
-    const [data, setData] = useState([]);
+    const [data, setData] = useState<ICCGChartDataAttributes[]>([]);
     // TODO in the future each chart can display its own custom date range, perhaps for him to create custom reports using the charts?
     // const [dateRange, setDateRange] = useState<DateRange>([new Date(new Date().setFullYear(new Date().getFullYear() - 1)), new Date()]);
     // temp hack to set width
 
     useEffect(() => {
-        setData([
+        const newChartData = filterByGranularity(chartData, chartGranularity);
 
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
-            {
-                name: 'Abc',
-                income: getRandomNumber(100, 80000),
-                expenses: getRandomNumber(100, 80000),
-                profit: getRandomNumber(-8000, 80000),
-            },
- 
+        if (newChartData.length >= 30) {
+            setStartIndexBrush(0);
+            setEndIndexBrush(30);
+            setShowBrush(true);
+        } else {
+            setStartIndexBrush(0);
+            setEndIndexBrush(0);
+            setShowBrush(false);
+        }
 
-        ]);
-    }, []);
+        setData(newChartData);
+    }, [chartData, chartGranularity]);
 
     useEffect(() => {
         //? This useEffect is used to style chart based on date being shown
         //? Done to avoid overflow of Y axis values out of the container when numbers get to big
-        const { maxNumericValue: maxNumericValueLeft, hasNegative: leftHasNeg } = findMaxNumericValue(data, ["profit"]);
-        const { maxNumericValue: maxNumericValueRight, hasNegative: rightHasNeg } = findMaxNumericValue(data, ["income", "expenses"]);
 
-        console.log("maxnumebricvalue", maxNumericValueLeft);
-        console.log("maxnumebricvalue", maxNumericValueRight);
-        console.log("maxnumebricvalue", rightHasNeg);
+        const { maxNumericValue: maxNumericValueLeft, hasNegative: leftHasNeg } = findMaxNumericValue(data.slice(startIndexBrush, endIndexBrush == 0 ? data.length : endIndexBrush + 1), ["profit"]);
+        const { maxNumericValue: maxNumericValueRight, hasNegative: rightHasNeg } = findMaxNumericValue(data.slice(startIndexBrush, endIndexBrush == 0 ? data.length : endIndexBrush + 1), ["income", "expenses"]);
 
+        // console.log("maxnumericvalueleft", maxNumericValueLeft);
+        // console.log("maxnumericvalueright", maxNumericValueRight);
+        // console.log("righthasneg", rightHasNeg);
 
         if (maxNumericValueLeft <= 8) {
             setYAxisWidthLeft(26);
@@ -187,6 +172,9 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
         else if (maxNumericValueLeft <= 80000) {
             setYAxisWidthLeft(35);
         }
+        else if (maxNumericValueLeft <= 400000) {
+            setYAxisWidthLeft(35);
+        }
         else if (maxNumericValueLeft <= 800000) {
             setYAxisWidthLeft(35);
         }
@@ -199,6 +187,47 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
         else {
             setYAxisWidthLeft(45);
         };
+
+        if (maxNumericValueRight <= 8) {
+            !rightHasNeg ? setYAxisWidthRight(26) : setYAxisWidthRight(26 + 2);
+        }
+        else if (maxNumericValueRight <= 80) {
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
+        }
+        else if (maxNumericValueRight <= 800) {
+            !rightHasNeg ? setYAxisWidthRight(45) : setYAxisWidthRight(45 + 2);
+        }
+        else if (maxNumericValueRight <= 1000) {
+            !rightHasNeg ? setYAxisWidthRight(55) : setYAxisWidthRight(55 + 2);
+        }
+        else if (maxNumericValueRight <= 4000) {
+            !rightHasNeg ? setYAxisWidthRight(45) : setYAxisWidthRight(45 + 2);
+        }
+        else if (maxNumericValueRight <= 80000) {
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
+        }
+        else if (maxNumericValueRight <= 400000) {
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
+        }
+        else if (maxNumericValueRight <= 800000) {
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
+        }
+        else if (maxNumericValueRight <= 8000000) {
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
+        }
+        else if (maxNumericValueRight <= 80000000) {
+            !rightHasNeg ? setYAxisWidthRight(35) : setYAxisWidthRight(35 + 2);
+        }
+        else {
+            !rightHasNeg ? setYAxisWidthRight(45) : setYAxisWidthRight(45 + 2);
+        };
+
+        if (rightHasNeg)
+            setShowYReferenceLineRight(true);
+        else
+            setShowYReferenceLineRight(false);
+
+        setLoadingChart(false);
 
         //! Logic to pad incase use wants to see entire dollar amounts and not abbreviations!
         // if (maxNumericValueLeft <= 8000) {
@@ -239,104 +268,44 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
         // else {
         //     setYAxisWidthRight(115);
         // };
+    }, [data, startIndexBrush, endIndexBrush]);
 
-        if (maxNumericValueRight <= 8) {
-            setYAxisWidthRight(26);
-        }
-        else if (maxNumericValueRight <= 80) {
-            setYAxisWidthRight(35);
-        }
-        else if (maxNumericValueRight <= 800) {
-            setYAxisWidthRight(45);
-        }
-        else if (maxNumericValueRight <= 1000) {
-            setYAxisWidthRight(55);
-        }
-        else if (maxNumericValueRight <= 4000) {
-            setYAxisWidthRight(45);
-        }
-        else if (maxNumericValueRight <= 80000) {
-            setYAxisWidthRight(35);
-        }
-        else if (maxNumericValueRight <= 800000) {
-            setYAxisWidthRight(35);
-        }
-        else if (maxNumericValueRight <= 8000000) {
-            setYAxisWidthRight(35);
-        }
-        else if (maxNumericValueRight <= 80000000) {
-            setYAxisWidthRight(35);
-        }
-        else {
-            setYAxisWidthRight(45);
-        };
+    // console.log(startIndexBrush, endIndexBrush);
+    // console.log(data.length);
+    // console.log("yAxisWidthLeft ", yAxisWidthLeft);
+    // console.log("yAxisWidthRight ", yAxisWidthRight);
+    // console.log("showYreferenceLineRight ", showYReferenceLineRight);
 
-        if (rightHasNeg)
-            setShowYReferenceLineRight(true);
-        else 
-            setShowYReferenceLineRight(false);
+    // useEffect(() => {
+    // ? Can be used to set an approriate chartGranularity selection based on globalDateRange
+    //     if (globalDateRange !== null) {
 
-        setEndIndexBrush(data.length - 1);
-        setStartIndexBrush(0);
+    //         const customGlobalDateRange = Math.abs(globalDateRange[0] - globalDateRange[1]);
 
-        setLoadingChart(false);
-    }, [data]);
+    //         const thirtyDaysInMs = 2592000000;
+    //         const thirtyWeeksInMs = 18144000000;
+    //         const thirtyMonthsInMs = 78892380000;
+    //         const thirtyYearsInMs = 946708560000;
 
-    useEffect(() => {
-        if (globalDateRange !== null) {
-
-            const customGlobalDateRange = Math.abs(globalDateRange[0] - globalDateRange[1]);
-
-            const thirtyDaysInMs = 2592000000;
-            const thirtyWeeksInMs = 18144000000;
-            const thirtyMonthsInMs = 78892380000;
-            const thirtyYearsInMs = 946708560000;
-
-            if (customGlobalDateRange < thirtyDaysInMs) {
-                setChartGranularity("day");
-            }
-            else if (customGlobalDateRange < thirtyWeeksInMs) {
-                setChartGranularity("week");
-            }
-            else if (customGlobalDateRange < thirtyMonthsInMs) {
-                setChartGranularity("month");
-            }
-            else if (customGlobalDateRange < thirtyYearsInMs) {
-                setChartGranularity("year");
-            }
-            else {
-                setChartGranularity("year");
-            }
-
-        }
+    //         if (customGlobalDateRange < thirtyDaysInMs) {
+    //             setChartGranularity("day");
+    //         }
+    //         else if (customGlobalDateRange < thirtyWeeksInMs) {
+    //             setChartGranularity("week");
+    //         }
+    //         else if (customGlobalDateRange < thirtyMonthsInMs) {
+    //             setChartGranularity("month");
+    //         }
+    //         else if (customGlobalDateRange < thirtyYearsInMs) {
+    //             setChartGranularity("year");
+    //         }
+    //         else {
+    //             setChartGranularity("year");
+    //         }
+    //     }
 
 
-    }, [globalDateRange]);
-
-    useEffect(() => {
-        const customGlobalDateRange = Math.abs(globalDateRange[0] - globalDateRange[1]);
-
-        const thirtyDaysInMs = 2592000000;
-        const thirtyWeeksInMs = 18144000000;
-        const thirtyMonthsInMs = 78892380000;
-        const thirtyYearsInMs = 946708560000;
-
-        if ((customGlobalDateRange >= thirtyDaysInMs) && chartGranularity == "day") {
-            setShowBrush(true);
-        }
-        else if ((customGlobalDateRange >= thirtyWeeksInMs) && ((chartGranularity == "week") || (chartGranularity == "day"))) {
-            setShowBrush(true);
-        }
-        else if ((customGlobalDateRange >= thirtyMonthsInMs) && ((chartGranularity == "week") || (chartGranularity == "day") || (chartGranularity == "month"))) {
-            setShowBrush(true);
-        }
-        else if ((customGlobalDateRange >= thirtyYearsInMs) && ((chartGranularity == "week") || (chartGranularity == "day") || (chartGranularity == "month") || (chartGranularity == "year"))) {
-            setShowBrush(true);
-        } else if (showBrush && endIndexBrush == data.length - 1 && startIndexBrush == 0) {
-            setShowBrush(false);
-        };
-
-    }, [chartGranularity, globalDateRange]);
+    // }, [globalDateRange]);
 
     return (
         <>
@@ -378,15 +347,26 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                                 </Dropdown.Toggle>
 
                                 <Dropdown.Menu style={{ fontSize: "14px" }}>
-                                    <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily View</Dropdown.Item>
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("week"); }} >Weekly View</Dropdown.Item>
-                                    <Dropdown.Divider />
-                                    <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("month"); }} >Monthly View</Dropdown.Item>
-                                    <Dropdown.Divider />
+                                    {chartGranularity != "day" && <>
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily View</Dropdown.Item>
+                                        <Dropdown.Divider />
+                                    </>
+                                    }
+                                    {chartGranularity != "week" && <>
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("week"); }} >Weekly View</Dropdown.Item>
+                                        <Dropdown.Divider />
+                                    </>
+                                    }
+                                    {chartGranularity != "month" && <>
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("month"); }} >Monthly View</Dropdown.Item>
+                                        {chartGranularity != "year" && <Dropdown.Divider />}
+                                    </>
+                                    }
                                     {/* <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("quarter"); }} >Quarterly View</Dropdown.Item>
                                     <Dropdown.Divider /> */}
-                                    <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("year"); }} >Yearly View</Dropdown.Item>
+                                    {chartGranularity != "year" &&
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("year"); }} >Yearly View</Dropdown.Item>
+                                    }
                                 </Dropdown.Menu>
                             </Dropdown>
                         </Col>
@@ -394,7 +374,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                     </Row>
 
                     <ResponsiveContainer
-                        width="101%"
+                        width="100%"
                         height="91%">
                         <ComposedChart
                             className={`ps-2`}
@@ -411,7 +391,65 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                             barGap={"10%"}
                         >
                             <CartesianGrid strokeDasharray="9" vertical={false} />
-                            <XAxis dataKey="name" stroke={styles.darkText} tickLine={false} tickMargin={5} />
+                            <XAxis
+                                dataKey="name"
+                                // angle={5}
+                                stroke={styles.darkText}
+                                tickLine={false}
+                                tickMargin={5}
+                                minTickGap={5}
+                                padding={{
+                                    left: 0,
+                                    right: 0
+                                }}
+                                interval={chartGranularity != "week" ? "equidistantPreserveStart" : "preserveEnd"}
+                                // tick={<CustomizedAxisTick props={chartGranularity} />}
+                                tick={(props: any) => {
+                                    const { x, y, stroke, payload } = props;
+                                    switch (chartGranularity) {
+                                        case "day":
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={23} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                        {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                        case "week":
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={30} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                        {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                        case "month":
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={22} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                        {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                        case "year":
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={18} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                        {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                        default:
+                                            return (
+                                                <g transform={`translate(${x},${y})`}>
+                                                    <text x={0} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                        {payload.value}
+                                                    </text>
+                                                </g>
+                                            )
+                                    };
+                                }}
+                            />
                             {showYReferenceLineRight && <ReferenceLine yAxisId={"right"} y={0} stroke={styles.darkText} strokeDasharray={2} />}
                             <YAxis
                                 axisLine={false}
@@ -426,9 +464,9 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                                 yAxisId={"left"}
                                 orientation="left"
                                 tickFormatter={makeFriendlyDollarAmount}
-                                // domain={([dataMin, dataMax]) => {
-                                    //     // setYAxisWidth(60);
-                                    //     return [0, dataMax];
+                            // domain={([dataMin, dataMax]) => {
+                            //     // setYAxisWidth(60);
+                            //     return [0, dataMax];
                             // }}
                             />
                             <YAxis
@@ -446,16 +484,24 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                                 tickFormatter={makeFriendlyDollarAmount}
                             />
 
-                            <Tooltip />
-                            {showBrush && <Brush onChange={(i) => {
-                                console.log("THe onchange ran --> ", i);
-                                setStartIndexBrush(i.startIndex);
-                                setEndIndexBrush(i.endIndex);
-                            }}
-                                dataKey="name"
-                                height={30}
-                                stroke={styles.secondaryBlue}
-                            />}
+                            <Tooltip
+                                content={CustomTooltip}
+                            />
+                            {showBrush &&
+                                <Brush onChange={(i) => {
+                                    setStartIndexBrush(i.startIndex);
+                                    setEndIndexBrush(i.endIndex);
+                                }}
+                                    // className={"mx-auto"}
+                                    // x={80}
+                                    dataKey="name"
+                                    height={30}
+                                    // width={500}
+                                    stroke={styles.secondaryBlue}
+                                    startIndex={startIndexBrush}
+                                    endIndex={endIndexBrush}
+                                />
+                            }
                             <Legend
                                 align='left'
                                 verticalAlign='top'
@@ -464,14 +510,33 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ globalDateRange }) => {
                                 wrapperStyle={{ paddingBottom: '20px', paddingLeft: "0px" }}
                                 formatter={renderColorfulLegendText}
                             />
-                            <Bar yAxisId={"left"} dataKey="income" fill={styles.secondaryBlue} radius={[5, 5, 0, 0]} />
-                            <Bar yAxisId={"left"} dataKey="expenses" stackId="a" fill={styles.primaryBlue} radius={[5, 5, 0, 0]} />
-                            <Line yAxisId={"right"} type="monotone" dataKey="profit" stroke={styles.lightOrange} />
+                            <Bar yAxisId={"left"} name="Income" dataKey="income" stackId="b" fill={styles.secondaryBlue} radius={[5, 5, 0, 0]} />
+                            <Bar yAxisId={"left"} name="Expenses" dataKey="expenses" stackId="a" fill={styles.primaryBlue} radius={[5, 5, 0, 0]} />
+                            <Bar
+                                animationBegin={250}
+                                yAxisId={"left"}
+                                dataKey="projected_income"
+                                name={"Projected Income"}
+                                stackId="b"
+                                fill={"#FFF1E3"}
+                                radius={[5, 5, 5, 5]}
+                            />
+                            <Bar
+                                animationBegin={250}
+                                yAxisId={"left"}
+                                name="Projected Expenses"
+                                dataKey="projected_expenses"
+                                stackId="a"
+                                fill={"#FAD8D8"}
+                                radius={[5, 5, 5, 5]}
+                            />
+                            <Line yAxisId={"right"} name="Profit" type="monotone" dataKey="profit" stroke={styles.lightOrange} />
                             {/* <Bar dataKey="amt" stackId="a" fill="#ffc658" /> */}
                         </ComposedChart>
                     </ResponsiveContainer>
 
-                </div >}
+                </div >
+            }
         </>
     )
 };
