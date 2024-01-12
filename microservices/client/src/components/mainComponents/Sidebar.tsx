@@ -25,10 +25,11 @@ export const Sidebar: React.FC<ISidebarProps> = (props) => {
         <>
 
             <Nav className={`col-md-12 d-none d-md-block ${styles.sidebar}`}
+                style={{width: "12.75rem"}}
                 defaultActiveKey={location.pathname}
                 // onSelect={selectedKey => alert(`selected ${selectedKey}`)}
             >
-                <div className='mt-2 mb-4 pb-1 ps-3 pe-5'>
+                <div className='mt-2 mb-4 pb-1 ms-3 pe-4 me-2'>
                     <Image className={styles.logo} src={logoWithText} />
                 </div>
                 <Nav.Item>

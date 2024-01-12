@@ -7,6 +7,8 @@ import { ComposedChart, Line, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, 
 import { DateRange } from '../../utilities/types/types';
 import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
 import { makeFriendlyDollarAmount } from '../../utilities/helpers/functions';
+import useWindowDimensions from '../../hooks/useWindowDimensions'
+import { SimpleSummaryCard } from "../cards/SimpleSummaryCard";
 
 const renderColorfulLegendText = (value: string, entry: any) => {
     const hasUnderscores = value.includes('_');
@@ -20,7 +22,7 @@ const renderColorfulLegendText = (value: string, entry: any) => {
     }
 
     return (
-        <span className='dark-text px-2' style={{ fontWeight: 400, fontSize: "16px", fontStyle: "normal", fontFamily: "Rubik" }}>
+        <span className='dark-text px-1 pt-2' style={{ fontWeight: 400, fontSize: "16px", fontStyle: "normal", fontFamily: "Rubik" }}>
             {formattedValue}
         </span>
     );
@@ -80,7 +82,7 @@ const CustomTooltip = ({ active, payload, label }) => {
                     <p key={index} className="mb-1">
                         {obj.name}:
                         {/* <strong> */}
-                        <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? "#036100" : "#930505" }}>{obj.value}</span>
+                        <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? styles.darkGreen : styles.darkRed }}>{obj.value}</span>
                         {/* </strong> */}
                     </p>
                 ) :
@@ -88,7 +90,7 @@ const CustomTooltip = ({ active, payload, label }) => {
                         <p key={index} className="mb-1">
                             {(obj.dataKey == "projected_expenses") ? "Unpaid PO balance" : "Unpaid invoice balance"}:
                             {/* <strong> */}
-                            <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? "#036100" : "#930505" }}>{obj.value}</span>
+                            <span className='ps-2' style={{ color: !(obj.dataKey == "profit") ? obj.fill : (obj.value >= 0) ? styles.darkGreen : styles.darkRed }}>{obj.value}</span>
                             {/* </strong> */}
                         </p>
                     );
@@ -109,7 +111,6 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 };
 
-
 export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
 
 
@@ -123,6 +124,8 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
     const [chartGranularity, setChartGranularity] = useState("week");
     const [showChartGranularityMenu, setShowChartGranularityMenu] = useState(false);
     const [data, setData] = useState<ICCGChartDataAttributes[]>([]);
+    const { height: winHeight, width: winWidth } = useWindowDimensions();
+
     // TODO in the future each chart can display its own custom date range, perhaps for him to create custom reports using the charts?
     // const [dateRange, setDateRange] = useState<DateRange>([new Date(new Date().setFullYear(new Date().getFullYear() - 1)), new Date()]);
     // temp hack to set width
@@ -132,7 +135,15 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
 
         if (newChartData.length >= 30) {
             setStartIndexBrush(0);
-            setEndIndexBrush(30);
+            if (winWidth <= 576)
+                setEndIndexBrush(3);
+            else if (winWidth <= 768) {
+                setEndIndexBrush(5)
+            }
+            else if (winWidth <= 1200) {
+                setEndIndexBrush(7)
+            }
+            else { setEndIndexBrush(14) }
             setShowBrush(true);
         } else {
             setStartIndexBrush(0);
@@ -141,7 +152,8 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
         }
 
         setData(newChartData);
-    }, [chartData, chartGranularity]);
+    }, [chartData, chartGranularity, winWidth]);
+
 
     useEffect(() => {
         //? This useEffect is used to style chart based on date being shown
@@ -314,17 +326,17 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                     className={`${styles.chartBackground} ${styles.chartBorderWrapper} ps-0 pe-0 pb-2`}
                     style={{ width: "100%", height: "100%" }}
                 >
-                    <Row className="mx-0" >
+                    <Row className="mx-0 pt-sm-2" >
 
                         <Col xs={"auto"}>
-                            <h4 className={`${styles.chartTitle} text-capitalize text-nowrap ps-1 ms-1 mt-3 pt-1`}>
+                            <h4 className={`${styles.chartTitle} text-capitalize text-nowrap ps-1 ms-1 mt-2 pt-1`}>
                                 income & expenses
                             </h4>
                         </Col>
 
                         <Col className={`align-self-end d-flex justify-content-end`}>
                             <Dropdown
-                                className='ms-1'
+                                className='mt-sm-2 pt-1'
                                 drop='down-centered'
                                 onToggle={show => {
                                     setShowChartGranularityMenu(show);
@@ -334,9 +346,9 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                     id={`${styles.incomeExpenseChartGranularityDropdown}`}
                                 >
                                     {chartGranularity != "day" ?
-                                        <span>{`${chartGranularity.charAt(0).toUpperCase() + chartGranularity.slice(1)}ly View`}</span>
+                                        <span>{`${chartGranularity.charAt(0).toUpperCase() + chartGranularity.slice(1)}ly view`}</span>
 
-                                        : <span>Daily View</span>
+                                        : <span>Daily view</span>
                                     }
                                     {
                                         showChartGranularityMenu ?
@@ -348,24 +360,24 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
 
                                 <Dropdown.Menu style={{ fontSize: "14px" }}>
                                     {chartGranularity != "day" && <>
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily View</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily view</Dropdown.Item>
                                         <Dropdown.Divider />
                                     </>
                                     }
                                     {chartGranularity != "week" && <>
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("week"); }} >Weekly View</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("week"); }} >Weekly view</Dropdown.Item>
                                         <Dropdown.Divider />
                                     </>
                                     }
                                     {chartGranularity != "month" && <>
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("month"); }} >Monthly View</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("month"); }} >Monthly view</Dropdown.Item>
                                         {chartGranularity != "year" && <Dropdown.Divider />}
                                     </>
                                     }
-                                    {/* <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("quarter"); }} >Quarterly View</Dropdown.Item>
+                                    {/* <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("quarter"); }} >Quarterly view</Dropdown.Item>
                                     <Dropdown.Divider /> */}
                                     {chartGranularity != "year" &&
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("year"); }} >Yearly View</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("year"); }} >Yearly view</Dropdown.Item>
                                     }
                                 </Dropdown.Menu>
                             </Dropdown>
@@ -375,14 +387,16 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
 
                     <ResponsiveContainer
                         width="100%"
-                        height="91%">
+                        height="91%"
+                        className={"pb-sm-2"}
+                    >
                         <ComposedChart
                             className={`ps-2`}
                             width={500}
                             height={300}
                             data={data}
                             margin={{
-                                top: 12,
+                                top: 0,
                                 right: 30,
                                 left: 20,
                                 bottom: 5,
@@ -390,7 +404,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                             barCategoryGap={"20%"}
                             barGap={"10%"}
                         >
-                            <CartesianGrid strokeDasharray="9" vertical={false} />
+                            <CartesianGrid strokeDasharray="9" vertical={false} fill={styles.pageGrey} />
                             <XAxis
                                 dataKey="name"
                                 // angle={5}
@@ -410,7 +424,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                         case "day":
                                             return (
                                                 <g transform={`translate(${x},${y})`}>
-                                                    <text x={23} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                    <text x={23} y={0} dy={14} textAnchor="end" fill={styles.darkText} transform="rotate(0)">
                                                         {payload.value}
                                                     </text>
                                                 </g>
@@ -418,7 +432,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                         case "week":
                                             return (
                                                 <g transform={`translate(${x},${y})`}>
-                                                    <text x={30} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                    <text x={30} y={0} dy={14} textAnchor="end" fill={styles.darkText} transform="rotate(0)">
                                                         {payload.value}
                                                     </text>
                                                 </g>
@@ -426,7 +440,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                         case "month":
                                             return (
                                                 <g transform={`translate(${x},${y})`}>
-                                                    <text x={22} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                    <text x={22} y={0} dy={14} textAnchor="end" fill={styles.darkText} transform="rotate(0)">
                                                         {payload.value}
                                                     </text>
                                                 </g>
@@ -434,7 +448,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                         case "year":
                                             return (
                                                 <g transform={`translate(${x},${y})`}>
-                                                    <text x={18} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                    <text x={18} y={0} dy={14} textAnchor="end" fill={styles.darkText} transform="rotate(0)">
                                                         {payload.value}
                                                     </text>
                                                 </g>
@@ -442,7 +456,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                         default:
                                             return (
                                                 <g transform={`translate(${x},${y})`}>
-                                                    <text x={0} y={0} dy={14} textAnchor="end" fill="#666" transform="rotate(0)">
+                                                    <text x={0} y={0} dy={14} textAnchor="end" fill={styles.darkText} transform="rotate(0)">
                                                         {payload.value}
                                                     </text>
                                                 </g>
@@ -500,6 +514,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                     stroke={styles.secondaryBlue}
                                     startIndex={startIndexBrush}
                                     endIndex={endIndexBrush}
+                                // className='pt-sm-2'
                                 />
                             }
                             <Legend
@@ -507,7 +522,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                 verticalAlign='top'
                                 iconSize={19}
                                 iconType='circle'
-                                wrapperStyle={{ paddingBottom: '20px', paddingLeft: "0px" }}
+                                wrapperStyle={{ paddingBottom: '25px', paddingLeft: "0px", paddingTop: "3px" }}
                                 formatter={renderColorfulLegendText}
                             />
                             <Bar yAxisId={"left"} name="Income" dataKey="income" stackId="b" fill={styles.secondaryBlue} radius={[5, 5, 0, 0]} />
@@ -516,7 +531,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                 animationBegin={250}
                                 yAxisId={"left"}
                                 dataKey="projected_income"
-                                name={"Projected Income"}
+                                name={"Projected income"}
                                 stackId="b"
                                 fill={"#FFF1E3"}
                                 radius={[5, 5, 5, 5]}
@@ -524,10 +539,10 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                             <Bar
                                 animationBegin={250}
                                 yAxisId={"left"}
-                                name="Projected Expenses"
+                                name="Projected expenses"
                                 dataKey="projected_expenses"
                                 stackId="a"
-                                fill={"#FAD8D8"}
+                                fill={`${styles.lightRed}`}
                                 radius={[5, 5, 5, 5]}
                             />
                             <Line yAxisId={"right"} name="Profit" type="monotone" dataKey="profit" stroke={styles.lightOrange} />

@@ -9,8 +9,8 @@
     overflow: $overflow
 }
 
-@mixin ccg-icon-button-styling($color: $secondary-blue, $hovercolor: $lightest-blue) {
-    background-color: transparent;
+@mixin ccg-icon-button-styling($color: $secondary-blue, $hovercolor: $lightest-blue, $backgroundcolor: transparent) {
+    background-color: $backgroundcolor;
     border: none;
     color: $color;
     width: auto;

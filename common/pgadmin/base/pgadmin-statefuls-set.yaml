@@ -20,7 +20,7 @@ spec:
      containers:
        - name: pgadmin
          image: dpage/pgadmin4
-         imagePullPolicy: IfNotPresent
+         imagePullPolicy: Always
         #  envFrom:
         #   - configMapRef:
         #       name: pgadmin-user-config
