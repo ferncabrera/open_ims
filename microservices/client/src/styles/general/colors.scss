@@ -1,5 +1,3 @@
-
-
 $white: #FFFFFF;
 $dark-text: #2C2C2C;
 $dark-grey: #494949;
@@ -14,12 +12,18 @@ $secondary-blue: #9EA2FF;
 $lightest-blue: #E5E6FF;
 
 $light-orange: #FDAD36;
+$light-green: #DEFFDD;
 $magenta: #E15ECC;
 
 $invalid: #dc3545;
 $invalid-faded: #dc354640;
 
 $success-faded: #089e1240;
+
+$dark-red: #930505;
+$dark-green: #036100;
+$dark-orange: #814003;
+$light-red: #FAD8D8;
 
 // include colour exports here
 
@@ -30,8 +34,19 @@ $success-faded: #089e1240;
 
     lightOrange: $light-orange;
 
-    darkText: $dark-text
-  }
+    darkText: $dark-text;
+
+    grey: $grey;
+    lightGrey: $light-grey;
+    lightRed: $light-red;
+    darkGrey: $dark-grey;
+    pageGrey: $page-grey;
+    darkGreyTwo: $dark-grey2;
+    darkRed: $dark-red;
+    darkGreen: $dark-green;
+    lightGreen: $light-green;
+    darkOrange: $dark-orange;
+}
 
 // include colour classes here
 

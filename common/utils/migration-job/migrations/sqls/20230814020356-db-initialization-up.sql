@@ -21,6 +21,7 @@ CREATE TABLE employee_table (
     emp_commission NUMERIC,
     emp_address VARCHAR(200),
     emp_notes VARCHAR(500),
+    created_on DATE NOT NULL,
     is_active BOOLEAN DEFAULT TRUE NOT NULL,
     PRIMARY KEY (emp_id)
 );
@@ -28,11 +29,11 @@ CREATE TABLE employee_table (
  -- CUSTOMER TABLE
 CREATE TABLE customer_table (
     id SERIAL PRIMARY KEY,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    company_name VARCHAR(50) NOT NULL,
-    phone VARCHAR(15) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    company_name VARCHAR(50) UNIQUE NOT NULL,
+    phone VARCHAR(15),
     net_terms INT DEFAULT 30 NOT NULL,
     created_by INT,
     FOREIGN KEY (created_by) REFERENCES employee_table (emp_id) ON UPDATE CASCADE ON DELETE NO ACTION
@@ -41,11 +42,11 @@ CREATE TABLE customer_table (
 -- VENDOR TABLE
 CREATE TABLE vendor_table (
     id SERIAL PRIMARY KEY,
-    email VARCHAR(100) UNIQUE NOT NULL,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    company_name VARCHAR(50) NOT NULL,
-    phone VARCHAR(15) NOT NULL,
+    email VARCHAR(100) UNIQUE,
+    first_name VARCHAR(50),
+    last_name VARCHAR(50),
+    company_name VARCHAR(50) UNIQUE NOT NULL,
+    phone VARCHAR(15),
     net_terms INT DEFAULT 30 NOT NULL,
     created_by INT,
     FOREIGN KEY (created_by) REFERENCES employee_table (emp_id) ON UPDATE CASCADE ON DELETE NO ACTION
@@ -170,7 +171,7 @@ BEGIN
             NEW.first_name,
             NEW.last_name,
             NEW.email;
-            INSERT INTO employee_table(emp_id) VALUES (NEW.id);
+            INSERT INTO employee_table(emp_id, created_on) VALUES (NEW.id, CURRENT_DATE);
         END IF;
     END IF;
     RETURN NEW;

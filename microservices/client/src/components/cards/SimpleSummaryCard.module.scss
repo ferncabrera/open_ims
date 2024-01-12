@@ -1,0 +1,51 @@
+@import "../../styles/general/colors.scss";
+@import "../../styles/general/mixins.scss";
+
+.titleSimpleSummaryCard {
+    color: $dark-text;
+    /* body */
+    font-family: Rubik;
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.mainBodySimpleSummaryCard {
+    color: $dark-text;
+    /* Heading 01 */
+    font-family: Rubik;
+    font-size: 48px;
+    font-style: normal;
+    font-weight: 500;
+    line-height: normal;
+}
+
+.commentMetricText {
+    /* Small text */
+    font-family: Rubik;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.commentText {
+    color: $dark-grey2;
+    /* Small text */
+    font-family: Rubik;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: normal;
+}
+
+.commentIcon {
+    svg {
+        @include ccg-icon-button-styling($backgroundcolor: inherit, $hovercolor: inherit, $color: inherit);
+        border-radius: 10px;
+        width: 31px;
+        height: 28px;
+        display: inline;
+    }
+}
