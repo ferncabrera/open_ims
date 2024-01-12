@@ -29,3 +29,8 @@ export const makeFriendlyDollarAmount = function (num: number) {
     return !isNeg ? intlFormat(num) + '$' : '-' + intlFormat(num) + '$';
 
 };
+
+export const hasEmptyKeys = (obj) => {
+    `Checks if a particular object has values with empty keys, returns true of false`;
+    return Object.values(obj).every(value => !value);
+}

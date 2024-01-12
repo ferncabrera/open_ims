@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getJSONResponse } from '../../utilities/apiHelpers';
+import { getJSONResponse, sendPatchRequest } from '../../utilities/apiHelpers';
 import { CrudForm } from '../../components/forms/CrudForm';
 import { Form, Row, Col, Spinner } from 'react-bootstrap';
+import { hasEmptyKeys } from '../../utilities/helpers/functions';
 import _ from 'lodash';
 
 interface IEditCustomerProps {
@@ -41,6 +42,8 @@ export const EditCustomer = (props: IEditCustomerProps) => {
 
   const [isLoading, setIsLoading] = useState(true);
   const [isCheckedBilling, setIsCheckedBilling] = useState(false);
+  const [vendorList, setVendorList] = useState([]);
+  const [initialVendor, setInitialVendor] = useState('');
   const [customerData, setCustomerData] = useState<ICustomerData>(
     {
       vendor: '',
@@ -71,25 +74,43 @@ export const EditCustomer = (props: IEditCustomerProps) => {
   );
 
   useEffect(() => {
-    getCustomerData().catch((e) => null);
+    setIsLoading(true);
+    Promise.all([getCustomerData(), getAllAvailableVendors()])
+      .then(() => setIsLoading(false))
+      .catch((e) => console.log(e, 'Error! Have this display in the banner please'));
   }, []);
 
   useEffect(() => {
     if (isCheckedBilling) {
       handleCheck(isCheckedBilling);
     }
-  },[customerData.shipping]);
+  }, [customerData.shipping]);
 
   const getCustomerData = async () => {
-    setIsLoading(true);
     const response: IResponse = await getJSONResponse({ endpoint: '/api/server/customer', params: { id: customerId } });
-
+    setInitialVendor(response.data.vendor);
     setCustomerData(response.data);
-    setIsLoading(false);
+  };
+
+  const getAllAvailableVendors = async () => {
+    const response: IResponse = await getJSONResponse({ endpoint: '/api/server/available-vendors' });
+    setVendorList(response.data);
   }
 
-  const handleSave = () => {
-    console.log('handling save function');
+  const handleSave = async () => {
+    try {
+      const data = { ...customerData };
+      if (hasEmptyKeys(data.billing)) {
+        delete data.billing;
+      }
+      if (hasEmptyKeys(data.shipping)) {
+        delete data.shipping;
+      }
+      await sendPatchRequest({ endpoint: '/api/server/customer', data });
+    } catch(e) {
+      console.log(e, '!Error! we need to display this on banner for the user');
+    }
+    
   }
 
   const handleCheck = (isChecked) => {
@@ -136,9 +157,12 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                     value={customerData.vendor}
                     onChange={(e) => setCustomerData({ ...customerData, vendor: e.target.value })}
                   >
-                    <option value={''} hidden>Select Vendor</option>
-                    <option value={customerData.vendor}>{customerData.vendor}</option>
-                    {/* Need to map value of all possible vendors */}
+                    <option value={''}>Select Available Vendor</option>
+                    {initialVendor && <option value={initialVendor}>{initialVendor}</option>}
+
+                    {!_.isEmpty(vendorList) && _.map(vendorList, (vendor) => {
+                      return (<option value={vendor.company_name}> {vendor.company_name}</option>)
+                    })}
                   </Form.Select>
                 </Col>
               </Form.Group>
