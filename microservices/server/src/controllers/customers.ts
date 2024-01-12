@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { query } from "../db";
+import { query, chained_query } from "../db";
 import customError from "../utils/customError";
 
 interface IGetListRequestHeaders {
@@ -22,7 +22,7 @@ export const get_customers = async (req: Request, res: Response) => {
   let count_query;
 
   if (!searchquery) {
-    customers_query = await query("SELECT * FROM customer_table LIMIT $1 OFFSET $2", [pagesize, offset]);
+    customers_query = await query("SELECT * FROM customer_table ORDER BY id LIMIT $1 OFFSET $2", [pagesize, offset]);
     count_query = await query("SELECT COUNT(*) FROM customer_table");
   } else {
     const [firstName, lastName] = searchquery.split(" ");
@@ -60,7 +60,7 @@ export const get_customers = async (req: Request, res: Response) => {
             (SELECT count FROM total_count) AS count
           FROM
             filtered_rows
-          LIMIT $2 OFFSET $3;
+          ORDER BY id LIMIT $2 OFFSET $3;
         `, [searchquery, pagesize, offset, firstName, lastName]);
     count_query = customers_query
   }
@@ -152,5 +152,136 @@ export const get_customer = async (req: Request, res: Response) => {
 
   res.status(200).json({ id, message: 'Successfully retrieved customer data', data: customer_object });
 
+
+}
+
+export const update_customer = async (req: Request, res: Response) => {
+
+  const data = req.body
+
+  const connected_vendor = data.vendor ? data.vendor : '';
+  const queriesList = [] as { text: string; params: any[] }[];
+
+  const { id, firstName, lastName, companyName, email, phone, netTerms } = data;
+
+  const create_or_update_address = async (type: string, address_data: any) => {
+
+    const { address1, address2, city, province, postalCode, country } = address_data;
+
+    // Have to check if shipping or billing already exists. This decides on the user's edit whether we create, read, update, or delete
+    const address_query: any = await query(
+      "SELECT * FROM customer_addresses WHERE customer_id = $1 AND address = $2"
+      , [data.id, type]);
+    
+    const address = address_query.rows[0];
+    if (address && address.address) {
+      // update
+      const { id } = address;
+
+      const update_address_query: IChainedQueryProps = {
+        text: `
+          UPDATE customer_addresses SET
+            customer_id = $2,
+            address = $3,
+            street_address_line1 = $4,
+            street_address_line2 = $5,
+            city = $6,
+            province = $7,
+            postal = $8,
+            country = $9
+          WHERE id = $1`,
+        params: [id, data.id, type, address1, address2, city, province, postalCode, country]
+      };
+      queriesList.push(update_address_query);
+      console.log('so we reach here?', update_address_query)
+
+    } else if (!address || !address.address) {
+      // create
+      const create_address_query: IChainedQueryProps = {
+        text: `
+          INSERT INTO customer_addresses 
+          (customer_id,
+            address, 
+            street_address_line1, 
+            street_address_line2,
+            city,
+            province,
+            postal,
+            country)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
+        params: [data.id, type, address1, address2, city, province, postalCode, country]
+      }
+
+      queriesList.push(create_address_query);
+    }
+
+
+  };
+
+  if (data.shipping) {
+    await create_or_update_address('Shipping', data.shipping);
+  } else if (!data.shipping) {
+    // delete
+    const delete_shipping_query: IChainedQueryProps = {
+      text: `DELETE FROM customer_addresses WHERE customer_id = $1 AND address = $2`,
+      params: [id, 'Shipping']
+    };
+    queriesList.push(delete_shipping_query);
+  };
+  if (data.billing) {
+    await create_or_update_address('Billing', data.billing);
+
+  } else if (!data.billing) {
+    //delete
+    const delete_billing_query: IChainedQueryProps = {
+      text: `DELETE FROM customer_addresses WHERE customer_id = $1 AND address = $2`,
+      params: [id, 'Billing']
+    };
+    queriesList.push(delete_billing_query);
+  };
+
+
+
+  //update (this is just basically delete old one and create new one)
+  const delete_vendor_customer_query: IChainedQueryProps = {
+    text: `DELETE FROM vendor_and_customer WHERE customer_id = $1`,
+    params: [id]
+  };
+
+  queriesList.push(delete_vendor_customer_query);
+
+  if (connected_vendor) { // only create new one if we have a passed in vendor
+
+    const vendor_query = await query("SELECT * FROM vendor_table WHERE company_name = $1", [connected_vendor]);
+    const new_vendor_id = vendor_query.rows[0].id;
+
+    const create_vendor_customer_query: IChainedQueryProps = {
+      text: 'INSERT INTO vendor_and_customer (vendor_id, customer_id) VALUES ($1, $2)',
+      params: [new_vendor_id, id]
+    }
+    queriesList.push(create_vendor_customer_query)
+  }
+
+
+  const customer_query = {
+    text:
+      `UPDATE customer_table SET
+        first_name = $2,
+        last_name = $3,
+        company_name = $4,
+        email = $5,
+        phone = $6,
+        net_terms = $7
+      WHERE id = $1`,
+    params: [id, firstName, lastName, companyName, email, phone, netTerms]
+  };
+
+  queriesList.push(customer_query)
+
+
+  await chained_query(queriesList)
+
+
+  res.status(200).json({ message: "Successfully updated customer" });
 
 }
