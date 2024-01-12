@@ -197,18 +197,18 @@ export const income_and_expense_by_date = async (req: Request, res: Response) =>
             COALESCE(p.date, i.date) AS date,
             COALESCE(p.granularity, i.granularity) AS granularity,
             CAST(COALESCE(p.projected_amount_due,
-                0) AS INTEGER) AS projected_expenses,
+                0) AS FLOAT) AS projected_expenses,
             CAST(COALESCE(p.amount_due,
-                0) AS INTEGER) AS expenses,
+                0) AS FLOAT) AS expenses,
             CAST(COALESCE(i.projected_earnings,
-                0) AS INTEGER) AS projected_income,
+                0) AS FLOAT) AS projected_income,
             CAST(COALESCE(i.earnings,
-                0) AS INTEGER) AS income,
+                0) AS FLOAT) AS income,
             CAST((COALESCE(i.projected_earnings,
                 0) + COALESCE(i.earnings,
                 0)) - (COALESCE(p.projected_amount_due,
                 0) + COALESCE(p.amount_due,
-                0)) AS INTEGER) AS profit,
+                0)) AS FLOAT) AS profit,
         CASE
             WHEN COALESCE(p.granularity, i.granularity) = 'day' THEN TO_CHAR(COALESCE(p.date, i.date), 'Mon DD')
             WHEN COALESCE(p.granularity, i.granularity) = 'week' THEN 
