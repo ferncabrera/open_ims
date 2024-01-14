@@ -210,7 +210,7 @@ export const AdminDashboard = () => {
 
                 <Col md={12} lg={6} className={"align-self-center"}>
                     {userInfo.firstName !== null &&
-                        <p style={{fontSize: "calc(.5vw + 1.95vh)"}} className='mb-0 font-30 dark-text my-lg-4 mt-2'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
+                        <p style={{fontSize: "calc(.5vw + 2.5vh)"}} className='mb-0 font-30 dark-text my-lg-4 mt-2'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
                     }
                 </Col>
 
