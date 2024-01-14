@@ -191,7 +191,6 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
         }
 
         setData(newChartData);
-        // setStartIndexBrush(0);
         // setEndIndexBrush(0);
         // setShowBrush(false);
         // setData(
