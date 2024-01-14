@@ -25,7 +25,7 @@
 
 .floatNumbersIntoPos {
     animation-name: floatNumbersIntoPos;
-    animation-duration: 1.5s;
+    animation-duration: 1s;
     animation-iteration-count: 1;
     animation-timing-function: ease-in-out;
     transition-timing-function: ease;
@@ -36,15 +36,15 @@
         transform: translate(0, 0);
     }
     
-    25% {
+    20% {
         transform: translate(0, -4px);
     }
     
-    50% {
+    45% {
         transform: translate(0, 3px);
     }
     
-    75% {
+    70% {
         transform: translate(0, -2px);
     }
     
