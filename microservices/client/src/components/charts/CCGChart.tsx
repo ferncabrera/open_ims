@@ -22,7 +22,7 @@ const renderColorfulLegendText = (value: string, entry: any) => {
     }
 
     return (
-        <span className='dark-text px-1 pt-2' style={{ fontWeight: 400, fontSize: "16px", fontStyle: "normal", fontFamily: "Rubik" }}>
+        <span className='dark-text px-1 pt-2' style={{ fontWeight: 400, fontSize: "calc(14px + .35vh)", fontStyle: "normal", fontFamily: "Rubik" }}>
             {formattedValue}
         </span>
     );
@@ -436,7 +436,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
                     <Row className="mx-0 pt-sm-2" >
 
                         <Col xs={"auto"}>
-                            <h4 style={{ fontSize: "calc(.25vw + 2.6vh)" }} className={`${styles.chartTitle} text-capitalize text-nowrap ps-1 ms-1 mt-1 pt-1`}>
+                            <h4 style={{ fontSize: "calc(20px + .85vh)" }} className={`${styles.chartTitle} text-capitalize text-nowrap ps-1 ms-1 mt-1 pt-1`}>
                                 income & expenses
                             </h4>
                         </Col>
@@ -454,21 +454,21 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
                                     style={{height:"inherit", width: "100%"}}
                                 >
                                     {chartGranularity != "day" ?
-                                        <span style={{ fontSize: "calc(.075vw + 1.65vh)" }} className="">{`${chartGranularity.charAt(0).toUpperCase() + chartGranularity.slice(1)}ly view`}</span>
+                                        <span style={{ fontSize: "calc(14px + .35vh)" }} className="">{`${chartGranularity.charAt(0).toUpperCase() + chartGranularity.slice(1)}ly view`}</span>
 
-                                        : <span style={{ fontSize: "calc(.075vw + 1.65vh)" }} className="">Daily view</span>
+                                        : <span style={{ fontSize: "calc(14px + .35vh)" }} className="">Daily view</span>
                                     }
                                     {
                                         // showChartGranularityMenu ?
                                         <IoIosArrowDropup
                                             className={`${styles.iconStartRot} ${showChartGranularityMenu ? styles.iconEndRot : ''} ms-3`}
-                                            style={{ fontSize: "calc(.075vw + 1.65vh)" }} />
+                                            style={{ fontSize: "calc(18px + .55vh)" }} />
                                         // :
                                         // <IoIosArrowDropdown className={"ms-4"} style={{ fontSize: "24px", paddingBottom: "3px" }} />
                                     }
                                 </Dropdown.Toggle>
 
-                                <Dropdown.Menu style={{ fontSize: "calc(.075vw + 1.65vh)" }}>
+                                <Dropdown.Menu style={{ fontSize: "calc(14px + .45vh)" }}>
                                     {chartGranularity != "day" && <>
                                         <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily view</Dropdown.Item>
                                         <Dropdown.Divider />
@@ -497,7 +497,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
 
                     <ResponsiveContainer
                         width="100%"
-                        height="91%"
+                        height="85%"
                         className={"pb-sm-2"}
                     >
                         <ComposedChart
