@@ -38,7 +38,7 @@ export const SimpleSummaryCard: React.FC<OpenIMSChartProps> = ({ id, titleConten
                         <div className={`${styles.titleSimpleSummaryCard} text-capitalize`}>{titleContent}</div>
                         <div className={`${styles.mainBodySimpleSummaryCard} ${loadingSummaryData ? styles.floatNumbersInf: styles.floatNumbersIntoPos} py-2`} style={{fontSize: "calc(.65vw + 2.75vh)"}}>{bodyContent}</div>
                         <div>
-                            <span className={`${styles.commentIcon} ${loadingSummaryData ? styles.geyIconBackgroundPulse : null}`} style={{ color: colorScheme }}>{icon}</span>
+                            <span className={`${styles.commentIcon} ${loadingSummaryData ? styles.greyIconBackgroundPulse : null}`} style={{ color: colorScheme }}>{icon}</span>
                             <span className='ps-2' style={{fontSize: "calc(5px + 1.15vh)"}}>{commentContent}</span>
                             <span className="text-nowrap w-100 h-75" ref={ref} {...triggerHandler}>
                                 <span style={{ color: colorScheme, fontSize: "calc(6px + 1.25vh)" }} className={`${styles.commentMetricText} ps-1`}>{commentMetric}</span>
