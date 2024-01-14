@@ -8,7 +8,10 @@ import { Container, Row, Col, Dropdown } from 'react-bootstrap';
 import { DateRange } from '../../utilities/types/types';
 import styles from "./index.module.scss";
 import { SimpleSummaryCard } from '../../components/cards/SimpleSummaryCard';
-import { MdMoving } from "react-icons/md";
+import { MdMoving, MdInfoOutline } from "react-icons/md";
+import DateRangePicker from '@wojtekmaj/react-daterange-picker';
+
+const delay = ms => new Promise(res => setTimeout(res, ms));
 
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -54,16 +57,21 @@ interface TimeRangeSummaryObj {
     projected_income: number | string,
     granularity: number | string,
     profit: number | string,
-    name: string
+    name: string,
+    profit_percent_movement: string | number,
+    expense_percent_movement: string | number,
+    income_percent_movement: string | number,
 };
 
 export const AdminDashboard = () => {
     const [userInfo, setUserInfo] = useState({ firstName: null, email: null, permission: null });
     const [dateRange, setDateRange] = useState<DateRange>(null);
+    const [prevDateRange, setPrevDateRange] = useState<DateRange>(null);
     const [dashboardMetricsGranularity, setDashboardMetricsGranularity] = useState("month");
     const [incomeExpenseProfitQueryData, setIncomeExpenseProfitQueryData] = useState([]);
     const [timeRangeSummary, setTimeRangeSummary] = useState<TimeRangeSummaryObj>();
     const [loadingTileData, setLoadingTileData] = useState<boolean>(false);
+    const [randomNumbers, setRandomNumbers] = useState<number>(0);
 
     const getIncomeExpenseByDate = async ({ startdate = null, enddate = null }) => {
         const response: any = await getJSONResponse({ endpoint: '/api/server/income_and_expense_by_date', params: { startdate, enddate } });
@@ -86,39 +94,51 @@ export const AdminDashboard = () => {
     useEffect(() => {
         switch (dashboardMetricsGranularity) {
             case "week":
-                const bow = new Date();
+                const bow = new Date() as any;
                 const eow = new Date();
+                const sometimeLastWeek = new Date(new Date() as any - 604800000);
+                const bolw = new Date() as any;
+                const eolw = new Date();
 
-                // const dayB = bow.getDay() || 7;
-                // if (dayB !== 1)
-                //     bow.setDate(-24 * (dayB - 1));
                 bow.setDate(bow.getDate() - (bow.getDay() + 6) % 7)
                 bow.setHours(0, 0, 0, 0);
-                // eow.setDate(bow.getDate() + 7);
-                // eow.setHours(0, 0, 0);
-                // console.log(bow);
+                bolw.setDate(sometimeLastWeek.getDate() - (sometimeLastWeek.getDay() + 6) % 7);
+
+                const dateRangeSearch = new Date().getTime() - bow.getTime();
+                eolw.setDate(bolw.getDate() + Math.floor(dateRangeSearch / (1000 * 3600 * 24)))
                 eow.setDate(bow.getDate() + 6);
                 eow.setHours(0, 0, 0, 0);
-                // console.log(eow);
                 setDateRange([bow, eow]);
+                setPrevDateRange([bolw, eolw]);
                 break;
             case "month":
                 const curr = new Date();
-                setDateRange([new Date(curr.getFullYear(), curr.getMonth(), 1), new Date(curr.getFullYear(), curr.getMonth() + 1, 0)]);
+                const bom = new Date(curr.getFullYear(), curr.getMonth(), 1);
+                const sometimeLastMonth = new Date(new Date(new Date().setDate(0)).toISOString());
+                const bolm = new Date(sometimeLastMonth.getFullYear(), sometimeLastMonth.getMonth(), 1);
+                const dateRangeSearchMonths = new Date().getTime() - bom.getTime();
+                const eolm = new Date(bolm).setDate(bolm.getDate() + Math.floor(dateRangeSearchMonths / (1000 * 3600 * 24))) as any;
+                setDateRange([bom, new Date(curr.getFullYear(), curr.getMonth() + 1, 0)]);
+                setPrevDateRange([bolm, new Date(eolm)]);
                 break;
             // case "quarter":
             //     setDateRange([new Date(new Date().setMonth(new Date().getMonth() - 3)), new Date()]);
             //     break;
             case "year":
                 const cur = new Date();
-                // const firstDOY
-                // const lastDOY
-                setDateRange([new Date(cur.getFullYear(), 0, 1), new Date(cur.getFullYear(), 11, 31)]);
+                const boy = new Date(cur.getFullYear(), 0, 1);
+                const sometimeLastYear = new Date(new Date().getFullYear() - 1, 0, 1);
+                const boly = new Date(sometimeLastYear.getFullYear(), 0, 1);
+                const dateRangeSearchYears = new Date().getTime() - boy.getTime();
+                const eoly = new Date(boly).setDate(boly.getDate() + Math.floor(dateRangeSearchYears / (1000 * 3600 * 24))) as any;
+                setDateRange([boy, new Date(cur.getFullYear(), 11, 31)]);
+                setPrevDateRange([boly, new Date(eoly)]);
                 break;
             case "all":
                 (async () => {
                     const datesToSet = await getOldestIncomeExpense({ paddays: 5 });
                     setDateRange([new Date(datesToSet.oldest_record_date), new Date(datesToSet.newest_record_date)]);
+                    setPrevDateRange([new Date(datesToSet.oldest_record_date), new Date(datesToSet.newest_record_date)]);
                 })();
                 break;
             case "custom":
@@ -137,26 +157,52 @@ export const AdminDashboard = () => {
         else
             (async () => {
                 try {
+                    // ! need to set comparison metrics for when all or custom range is selected
                     setLoadingTileData(true);
-                    const isoEndDate = new Date(new Date(dateRange[1]).setHours(0, 0, 0, 0));
-                    const res = await getIncomeExpenseByDate({ startdate: dateRange[0].toISOString().substring(0, 10), enddate: isoEndDate.toISOString().substring(0, 10) });
-                    const timeSummary = getSummaryOfTimePeriod(res.data);
+                    const isoEndDate: any = new Date(new Date(dateRange[1]).setHours(0, 0, 0, 0));
+                    const startDate: any = dateRange[0].toISOString().substring(0, 10);
+                    const prevStartDate: any = prevDateRange[0].toISOString().substring(0, 10);
+                    const prevEndDate: any = new Date(new Date(prevDateRange[1]).setHours(0, 0, 0, 0)).toISOString().substring(0, 10);
+                    const currDateRangeRes = await getIncomeExpenseByDate({ startdate: startDate, enddate: isoEndDate.toISOString().substring(0, 10) });
+                    const prevDateRangeRes = await getIncomeExpenseByDate({ startdate: prevStartDate, enddate: prevEndDate });
+                    const currTimeSummary = getSummaryOfTimePeriod(currDateRangeRes.data);
+                    const prevTimeSummary = getSummaryOfTimePeriod(prevDateRangeRes.data);
+                    // console.log("prevData : ", prevDateRangeRes.rangeStartDateOfQuery, prevDateRangeRes.rangeEndDateOfQuery, prevTimeSummary);
+                    // console.log("CurrData : ", currDateRangeRes.rangeStartDateOfQuery, currDateRangeRes.rangeEndDateOfQuery, currTimeSummary);
+                    //! This should really just become another SQL query that is more efficient at getting profit data but oh well for now
+                    await delay(100);
                     setTimeRangeSummary({
-                        expenses: timeSummary.aggregatedData.expenses,
-                        income: timeSummary.aggregatedData.income,
-                        projected_expenses: timeSummary.aggregatedData.projected_expenses,
-                        projected_income: timeSummary.aggregatedData.projected_income,
-                        granularity: timeSummary.aggregatedData.granularity,
-                        profit: timeSummary.aggregatedData.profit,
-                        name: `${res.rangeStartDateOfQuery} ${res.rangeEndDateOfQuery}`
+                        expenses: currTimeSummary.aggregatedData.expenses,
+                        income: currTimeSummary.aggregatedData.income,
+                        projected_expenses: currTimeSummary.aggregatedData.projected_expenses,
+                        projected_income: currTimeSummary.aggregatedData.projected_income,
+                        granularity: currTimeSummary.aggregatedData.granularity,
+                        profit: currTimeSummary.aggregatedData.profit,
+                        name: `${currDateRangeRes.rangeStartDateOfQuery} ${currDateRangeRes.rangeEndDateOfQuery}`,
+                        profit_percent_movement: ((currTimeSummary.aggregatedData.profit - prevTimeSummary.aggregatedData.profit) / Math.abs(prevTimeSummary.aggregatedData.profit) * 100).toFixed(2),
+                        expense_percent_movement: ((currTimeSummary.aggregatedData.expenses - prevTimeSummary.aggregatedData.expenses) / Math.abs(prevTimeSummary.aggregatedData.expenses) * 100).toFixed(2),
+                        income_percent_movement: ((currTimeSummary.aggregatedData.income - prevTimeSummary.aggregatedData.income) / Math.abs(prevTimeSummary.aggregatedData.income) * 100).toFixed(2)
                     });
-                    setIncomeExpenseProfitQueryData(res.data);
+                    setIncomeExpenseProfitQueryData(currDateRangeRes.data);
                 } catch (e) {
                     //! open ticket for this
                     console.log("Error fetching income and expense date by date! ", e);
                 }
             })().then(() => { setLoadingTileData(false) });
     }, [dateRange]);
+
+    useEffect(() => {
+        if (loadingTileData) {
+            //Implementing the setInterval method
+            const interval = setInterval(() => {
+                setRandomNumbers((Math.floor(Math.random() * 2) % 2 == 0) ? (Math.random() * 10000) : (Math.random() * 1000000));
+            }, 100);
+
+            //Clearing the interval
+            return () => clearInterval(interval);
+        }
+
+    }, [loadingTileData]);
 
     return (
         <div className="px-2">
@@ -168,7 +214,7 @@ export const AdminDashboard = () => {
                     }
                 </Col>
 
-                <Col className={"align-self-end"}>
+                <Col className={"align-self-end"} >
                     <div className='text-nowrap float-end'>
                         {dashboardMetricsGranularity != "custom" ?
                             <>
@@ -186,8 +232,6 @@ export const AdminDashboard = () => {
                                     className='d-inline-block'
                                 >
                                     <Dropdown.Toggle
-                                        style={{
-                                        }}
                                         className='px-1'
                                         id={`${styles.dashboardMetricsGranularityDropdown}`}
                                     >
@@ -222,7 +266,7 @@ export const AdminDashboard = () => {
                                 >
 
                                 </p>
-                                <CCGDateRangePicker dateRange={dateRange} setDateRange={setDateRange} additionalClasses={`float-lg-end px-2 bg-white ${styles.dashboardDateRangePicker}`} />
+                                <CCGDateRangePicker dateRange={dateRange} setDateRange={setDateRange} additionalClasses={`float-lg-end mb-2 px-2 bg-white ${styles.dashboardDateRangePicker}`} />
                             </>
                         }
                     </div>
@@ -234,39 +278,51 @@ export const AdminDashboard = () => {
             <Row className=''>
 
                 <Col md={12} xl={8}>
-                    {dateRange && <CCGChart chartData={incomeExpenseProfitQueryData} />}
+                    {dateRange && <CCGChart loadingChartData={loadingTileData} chartData={incomeExpenseProfitQueryData} />}
                 </Col>
 
                 <Col className='d-flex flex-column justify-content-between'>
                     <Row className="mt-xl-0 mt-2">
                         <Col>
                             <SimpleSummaryCard
+                                id={"summary-card-1"}
+                                info={<p>test</p>}
+                                loadingSummaryData={loadingTileData}
                                 titleContent={"total income"}
-                                bodyContent={!loadingTileData && timeRangeSummary ? `${USDollar.format(parseFloat(timeRangeSummary.income.toString()) + parseFloat(timeRangeSummary.projected_income.toString()))}` : USDollar.format(0)}
+                                bodyContent={!loadingTileData && timeRangeSummary ? `${USDollar.format(parseFloat(timeRangeSummary.income.toString()) + parseFloat(timeRangeSummary.projected_income.toString()))}` : <span >{USDollar.format(randomNumbers * 2)}</span>}
                                 icon={
                                     <MdMoving
-                                        style={{backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income.toString()) + parseFloat(timeRangeSummary.projected_income.toString()) > 0 ? styles.lightGreen :styles.lightRed}}
+                                        style={{
+                                            transform: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? "none" : loadingTileData ? "none" : "scaleY(-1)",
+                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed
+                                        }}
                                     />
                                 }
-                                commentContent={`This ${dashboardMetricsGranularity} your income has ${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income.toString()) > 0? "decreased" : "increased"}`}
-                                commentMetric={"XD$"}
-                                colorScheme={`${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income.toString()) + parseFloat(timeRangeSummary.projected_income.toString()) >0? styles.darkGreen : styles.darkRed}`}
+                                commentContent={`This ${dashboardMetricsGranularity} your income has ${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? "increased" : "decreased"}`}
+                                commentMetric={`${!loadingTileData ? (timeRangeSummary && Math.abs(parseFloat(timeRangeSummary.income_percent_movement.toString()))) : "0"}%`}
+                                colorScheme={`${!loadingTileData ? (timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? styles.darkGreen : styles.darkRed) : styles.darkGrey}`}
                             />
                         </Col>
                     </Row>
                     <Row className="py-xl-3 py-2">
                         <Col>
                             <SimpleSummaryCard
+                                id={"summary-card-2"}
+                                info={<p>test</p>}
+                                loadingSummaryData={loadingTileData}
                                 titleContent={"total expenses"}
-                                bodyContent={!loadingTileData && timeRangeSummary ? `${USDollar.format(parseFloat(timeRangeSummary.expenses.toString()) + parseFloat(timeRangeSummary.projected_expenses.toString()))}` : USDollar.format(0)}
+                                bodyContent={!loadingTileData && timeRangeSummary ? `${USDollar.format(parseFloat(timeRangeSummary.expenses.toString()) + parseFloat(timeRangeSummary.projected_expenses.toString()))}` : USDollar.format(randomNumbers / 2)}
                                 icon={
                                     <MdMoving
-                                        style={{backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expenses.toString()) + parseFloat(timeRangeSummary.projected_expenses.toString()) > 0 ? styles.lightGreen : styles.lightRed}}
+                                        style={{
+                                            transform: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? "none" : loadingTileData ? "none" : "scaleY(-1)",
+                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? styles.lightRed : styles.lightGreen
+                                        }}
                                     />
                                 }
-                                commentContent={`This ${dashboardMetricsGranularity} your expenses have ${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expenses.toString()) > 0? "decreased" : "increased"}`}
-                                commentMetric={"XD$"}
-                                colorScheme={`${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expenses.toString()) + parseFloat(timeRangeSummary.projected_expenses.toString()) >0? styles.darkGreen : styles.darkRed}`}
+                                commentContent={`This ${dashboardMetricsGranularity} your expenses have ${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? "increased" : "decreased"}`}
+                                commentMetric={`${!loadingTileData ? (timeRangeSummary && Math.abs(parseFloat(timeRangeSummary.expense_percent_movement.toString()))) : "0"}%`}
+                                colorScheme={`${!loadingTileData ? (timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? styles.darkRed : styles.darkGreen) : styles.darkGrey}`}
                             />
                         </Col>
 
@@ -274,16 +330,22 @@ export const AdminDashboard = () => {
                     <Row className="mb-xl-0 mb-2">
                         <Col>
                             <SimpleSummaryCard
+                                id={"summary-card-3"}
+                                info={<p>test</p>}
+                                loadingSummaryData={loadingTileData}
                                 titleContent={"total profit"}
-                                bodyContent={!loadingTileData && timeRangeSummary ? `${USDollar.format(parseFloat(timeRangeSummary.profit.toString()))}` : USDollar.format(0)}
+                                bodyContent={!loadingTileData && timeRangeSummary ? `${USDollar.format(parseFloat(timeRangeSummary.profit.toString()))}` : USDollar.format(Math.floor(randomNumbers) % 2 == 0 ? randomNumbers * -1 : randomNumbers)}
                                 icon={
                                     <MdMoving
-                                        style={{backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit.toString()) > 0 ? styles.lightGreen : styles.lightRed}}
+                                        style={{
+                                            transform: !loadingTileData ? (timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? "none" : "scaleY(-1)") : (Math.floor(randomNumbers) % 2 == 0 ? randomNumbers * -1 : randomNumbers) > 0 ? "none" : "scaleY(-1)",
+                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed
+                                        }}
                                     />
                                 }
-                                commentContent={`This ${dashboardMetricsGranularity} your profit has ${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit.toString()) > 0? "decreased" : "increased"}`}
-                                commentMetric={"XD$"}
-                                colorScheme={`${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit.toString()) >0? styles.darkGreen : styles.darkRed}`}
+                                commentContent={`This ${dashboardMetricsGranularity} your profit has ${!loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? "increased" : "decreased"}`}
+                                commentMetric={`${!loadingTileData ? (timeRangeSummary && Math.abs(parseFloat(timeRangeSummary.profit_percent_movement.toString()))) : "0"}%`}
+                                colorScheme={`${!loadingTileData ? (timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? styles.darkGreen : styles.darkRed) : styles.darkGrey}`}
                             />
                         </Col>
                     </Row>

@@ -10,7 +10,7 @@ div.dateRangePickerStyling {
 }
 
 div.calendarStyling {
-    @include ccg-border-styling($overflow: hidden);
+    @include ccg-border-styling($overflow: hidden, $box-shadow: none);
 
     :global(div.react-calendar) {
         border: none;

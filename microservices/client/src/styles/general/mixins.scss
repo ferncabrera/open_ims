@@ -3,10 +3,11 @@
 // If there is a very commonly used group/set of attributes you find adding across many classes, make a mixin for it and add it here!
 // This will help keep our stylesheets DRY!
 
-@mixin ccg-border-styling($theme: $light-grey, $overflow: hidden) {
+@mixin ccg-border-styling($theme: $light-grey, $overflow: hidden, $box-shadow: 0px 2px 2px 0px $light-grey) {
     border: 1px solid $light-grey;
     border-radius: 10px;
-    overflow: $overflow
+    overflow: $overflow;
+    box-shadow: $box-shadow;
 }
 
 @mixin ccg-icon-button-styling($color: $secondary-blue, $hovercolor: $lightest-blue, $backgroundcolor: transparent) {

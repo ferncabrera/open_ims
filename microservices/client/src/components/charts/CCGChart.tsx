@@ -1,6 +1,6 @@
 import React, { useEffect, useState, PureComponent } from 'react'
 import { getJSONResponse } from '../../utilities/apiHelpers';
-import _ from 'lodash';
+import _, { stubFalse } from 'lodash';
 import styles from "./CCGChart.module.scss";
 import { Container, Row, Col, Dropdown, DropdownButton, NavItem } from 'react-bootstrap';
 import { ComposedChart, Line, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Brush } from 'recharts';
@@ -50,7 +50,7 @@ function findMaxNumericValue(data, excludeArr: string[]) {
 };
 
 interface ICCGChartDataAttributes {
-    granularity: string
+    granularity: string,
 };
 
 function filterByGranularity(data: ICCGChartDataAttributes[], targetGranularity: string) {
@@ -59,7 +59,9 @@ function filterByGranularity(data: ICCGChartDataAttributes[], targetGranularity:
 }
 
 interface ICCGChartProps {
-    chartData?: ICCGChartDataAttributes[]
+    chartData?: ICCGChartDataAttributes[],
+    loadingChartData?: boolean
+
 };
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -111,7 +113,44 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 };
 
-export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
+const CustomLoadingTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        const bodyItems = payload.map((obj, index) => {
+            return ((obj.dataKey != "projected_income") &&
+                    (obj.dataKey != "projected_expenses")) ? (
+                    <p key={index} className="mb-1">
+                        {obj.name}:
+                        {/* <strong> */}
+                        <span className='ps-2' style={{ color: styles.darkText }}>loading....</span>
+                        {/* </strong> */}
+                    </p>
+                ) :
+                    (
+                        <p key={index} className="mb-1">
+                            {(obj.dataKey == "projected_expenses") ? "Unpaid PO balance" : "Unpaid invoice balance"}:
+                            {/* <strong> */}
+                            <span className='ps-2' style={{ color: styles.darkText }}>loading...</span>
+                            {/* </strong> */}
+                        </p>
+                    );
+
+        });
+
+        return (
+            <div className={`${styles.chartBorderWrapper} bg-white p-3`}>
+                <p className="mb-2 initialism">{`${label} ${payload[0].payload.granularity !== "year" ? new Date(payload[0].payload.date).getUTCFullYear() : ""}`}</p>
+                {
+                    bodyItems
+                }
+            </div>
+        );
+    }
+
+    return null;
+
+};
+
+export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData = false }) => {
 
 
     const [showYReferenceLineRight, setShowYReferenceLineRight] = useState<boolean>(false);
@@ -152,6 +191,74 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
         }
 
         setData(newChartData);
+        // setStartIndexBrush(0);
+        // setEndIndexBrush(0);
+        // setShowBrush(false);
+        // setData(
+        //     [
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 500 / 2,
+        //             expenses: 500,
+        //             projected_income: 500 / 2,
+        //             income: 500,
+        //             profit: 500,
+        //             name: "Jan 2"
+        //         },
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 1000 / 2,
+        //             expenses: 1000,
+        //             projected_income: 1000 / 2,
+        //             income: 1000,
+        //             profit: 1000,
+        //             name: "Jan 2"
+        //         },
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 2000 / 2,
+        //             expenses: 2000,
+        //             projected_income: 2000 / 2,
+        //             income: 2000,
+        //             profit: 2000,
+        //             name: "Jan 2"
+        //         },
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 2000 / 2,
+        //             expenses: 2000,
+        //             projected_income: 2000 / 2,
+        //             income: 2000,
+        //             profit: 2000,
+        //             name: "Jan 2"
+        //         },
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 4000 / 2,
+        //             expenses: 4000,
+        //             projected_income: 4000 / 2,
+        //             income: 4000,
+        //             profit: 4000,
+        //             name: "Jan 2"
+        //         },
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 10000 / 2,
+        //             expenses: 10000,
+        //             projected_income: 10000 / 2,
+        //             income: 10000,
+        //             profit: 10000,
+        //             name: "Jan 2"
+        //         },
+        //     ]
+        //     );
+        //     console.log("this is running");
     }, [chartData, chartGranularity, winWidth]);
 
 
@@ -319,6 +426,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
 
     // }, [globalDateRange]);
 
+
     return (
         <>
             {!loadingChart &&
@@ -334,9 +442,9 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                             </h4>
                         </Col>
 
-                        <Col className={`align-self-end d-flex justify-content-end`}>
+                        <Col className={`d-flex justify-content-end`}>
                             <Dropdown
-                                className='mt-sm-2 pt-1'
+                                className='mt-1'
                                 drop='down-centered'
                                 onToggle={show => {
                                     setShowChartGranularityMenu(show);
@@ -499,7 +607,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                             />
 
                             <Tooltip
-                                content={CustomTooltip}
+                                content={loadingChartData?CustomLoadingTooltip:CustomTooltip}
                             />
                             {showBrush &&
                                 <Brush onChange={(i) => {
@@ -511,7 +619,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                     dataKey="name"
                                     height={30}
                                     // width={500}
-                                    stroke={styles.secondaryBlue}
+                                    stroke={!loadingChartData?styles.secondaryBlue:styles.lightGrey}
                                     startIndex={startIndexBrush}
                                     endIndex={endIndexBrush}
                                 // className='pt-sm-2'
@@ -525,27 +633,54 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                 wrapperStyle={{ paddingBottom: '25px', paddingLeft: "0px", paddingTop: "3px" }}
                                 formatter={renderColorfulLegendText}
                             />
-                            <Bar yAxisId={"left"} name="Income" dataKey="income" stackId="b" fill={styles.secondaryBlue} radius={[5, 5, 0, 0]} />
-                            <Bar yAxisId={"left"} name="Expenses" dataKey="expenses" stackId="a" fill={styles.primaryBlue} radius={[5, 5, 0, 0]} />
                             <Bar
-                                animationBegin={250}
+                                animationDuration={1000}
+                                animationBegin={50}
+                                style={{ filter: `drop-shadow(${endIndexBrush - startIndexBrush > 30 ? "2px" : "3px"} 0px ${styles.lightGrey})` }}
+                                yAxisId={"left"}
+                                name="Income"
+                                dataKey="income"
+                                stackId="b"
+                                fill={!loadingChartData ? styles.secondaryBlue : styles.lightGrey}
+                                radius={[5, 5, 0, 0]}
+                            />
+                            <Bar
+                                animationDuration={1000}
+                                animationBegin={200}
+                                style={{ filter: `drop-shadow(${endIndexBrush - startIndexBrush > 30 ? "2px" : "3px"} 0px ${styles.lightGrey})` }}
+                                yAxisId={"left"}
+                                name="Expenses"
+                                dataKey="expenses"
+                                stackId="a"
+                                fill={!loadingChartData ? styles.primaryBlue : styles.lightGrey}
+                                radius={[5, 5, 0, 0]}
+                            />
+                            <Bar
+                                style={{ filter: `drop-shadow(${endIndexBrush - startIndexBrush > 30 ? "2px" : "3px"} 0px ${styles.lightGrey})` }}
+                                animationDuration={1000}
+                                animationBegin={400}
                                 yAxisId={"left"}
                                 dataKey="projected_income"
                                 name={"Projected income"}
                                 stackId="b"
-                                fill={"#FFF1E3"}
+                                fill={`${!loadingChartData ? styles.lightGreen : styles.lightGrey}`}
                                 radius={[5, 5, 5, 5]}
                             />
                             <Bar
-                                animationBegin={250}
+                                style={{ filter: `drop-shadow(${endIndexBrush - startIndexBrush > 30 ? "2px" : "3px"} 0px ${styles.lightGrey})` }}
+                                animationDuration={1000}
+                                animationBegin={600}
                                 yAxisId={"left"}
                                 name="Projected expenses"
                                 dataKey="projected_expenses"
                                 stackId="a"
-                                fill={`${styles.lightRed}`}
+                                fill={`${!loadingChartData ? styles.lightRed : styles.lightGrey}`}
                                 radius={[5, 5, 5, 5]}
                             />
-                            <Line yAxisId={"right"} name="Profit" type="monotone" dataKey="profit" stroke={styles.lightOrange} />
+                            <Line
+                                animationDuration={1000}
+                                animationBegin={250}
+                                yAxisId={"right"} name="Profit" type="monotone" dataKey="profit" stroke={!loadingChartData ? styles.lightOrange : styles.darkGrey} />
                             {/* <Bar dataKey="amt" stackId="a" fill="#ffc658" /> */}
                         </ComposedChart>
                     </ResponsiveContainer>
