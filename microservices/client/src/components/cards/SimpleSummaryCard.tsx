@@ -36,15 +36,15 @@ export const SimpleSummaryCard: React.FC<OpenIMSChartProps> = ({ id, titleConten
                 <Card className={`py-2 px-2 px-xxl-3 px-xl-2 py-xl-2 py-xxl-3 ${styles.simpleSummaryCardBorder}`}>
                     <Card.Body className={`${"p-1"}`}>
                         <div className={`${styles.titleSimpleSummaryCard} text-capitalize`}>{titleContent}</div>
-                        <div className={`${styles.mainBodySimpleSummaryCard} ${loadingSummaryData ? styles.floatNumbersInf + " py-2 py-xl-3 m-0" : styles.floatNumbersIntoPos + " py-2 py-xl-3"}`} >{bodyContent}</div>
+                        <div className={`${styles.mainBodySimpleSummaryCard} ${loadingSummaryData ? styles.floatNumbersInf: styles.floatNumbersIntoPos} py-2`} style={{fontSize: "calc(1.35vw + 1.35vh)"}}>{bodyContent}</div>
                         <div>
                             <span className={`${styles.commentIcon} ${loadingSummaryData ? styles.greyIconBackgroundPulse : null}`} style={{ color: colorScheme }}>{icon}</span>
-                            <span className='ps-2'>{commentContent}</span>
+                            <span className='ps-2' style={{fontSize: "calc(.40vw + 1.25vh)"}}>{commentContent}</span>
                             <span className="text-nowrap w-100 h-100" ref={ref} {...triggerHandler}>
-                                <span style={{ color: colorScheme }} className={`${styles.commentMetricText} ps-1`}>{commentMetric}</span>
+                                <span style={{ color: colorScheme, fontSize: "calc(.4vw + 1.25vh)" }} className={`${styles.commentMetricText} ps-1`}>{commentMetric}</span>
                                 {info && !loadingSummaryData &&
                                         <span className={`ms-1`}>
-                                            <MdInfoOutline style={{ color: "#0d6efd", width: "20px", height: "25px", margin: "0px 0px .2rem 0px" }} />
+                                            <MdInfoOutline style={{ fontSize: "calc(.4vw + .1.25vh)", color: "#0d6efd" }} />
                                         </span>
                                 }
                             </span>

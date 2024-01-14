@@ -210,7 +210,7 @@ export const AdminDashboard = () => {
 
                 <Col md={12} lg={6} className={"align-self-center"}>
                     {userInfo.firstName !== null &&
-                        <p className='mb-0 font-30 dark-text my-lg-4 mt-2'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
+                        <p style={{fontSize: "calc(.5vw + 2.5vh)"}} className='mb-0 font-30 dark-text my-lg-4 mt-2'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
                     }
                 </Col>
 
@@ -220,6 +220,7 @@ export const AdminDashboard = () => {
                             <>
                                 <p
                                     className='d-inline-block mb-0'
+                                    style={{fontSize: "calc(.3vw + 1.85vh)"}}
                                 >
                                     here's your
                                 </p>
@@ -234,6 +235,7 @@ export const AdminDashboard = () => {
                                     <Dropdown.Toggle
                                         className='px-1'
                                         id={`${styles.dashboardMetricsGranularityDropdown}`}
+                                        style={{fontSize: "calc(.2vw + 1.55vh)"}}
                                     >
                                         <span
                                         >
@@ -243,6 +245,7 @@ export const AdminDashboard = () => {
 
                                     <Dropdown.Menu
                                         className={`${styles.dashboardMetricsGranularityDropdownMenu}`}
+                                        // style={{fontSize: "calc(.4vw + 1.35vh)"}}
                                     >
                                         {standardMetricDateRanges.map((r, i) => {
                                             if (r == dashboardMetricsGranularity)
@@ -250,11 +253,11 @@ export const AdminDashboard = () => {
                                             if (r == "custom")
                                                 return <>
                                                     <Dropdown.Divider key={`${r}divider`} />
-                                                    <Dropdown.Item key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r} range`}</Dropdown.Item>
+                                                    <Dropdown.Item style={{fontSize: "calc(.2vw + 1.55vh)"}} key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r} range`}</Dropdown.Item>
                                                 </>
                                             if (r == "all")
-                                                return <Dropdown.Item key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r} time`}</Dropdown.Item>
-                                            return <Dropdown.Item key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r}`}</Dropdown.Item>
+                                                return <Dropdown.Item style={{fontSize: "calc(.2vw + 1.55vh)"}} key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r} time`}</Dropdown.Item>
+                                            return <Dropdown.Item style={{fontSize: "calc(.2vw + 1.55vh)"}} key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r}`}</Dropdown.Item>
                                         })}
                                     </Dropdown.Menu>
                                 </Dropdown>
@@ -294,7 +297,9 @@ export const AdminDashboard = () => {
                                     <MdMoving
                                         style={{
                                             transform: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? "none" : loadingTileData ? "none" : "scaleY(-1)",
-                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed
+                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed,
+                                            width: "8%",
+                                            height: "8%"
                                         }}
                                     />
                                 }
@@ -316,7 +321,9 @@ export const AdminDashboard = () => {
                                     <MdMoving
                                         style={{
                                             transform: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? "none" : loadingTileData ? "none" : "scaleY(-1)",
-                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? styles.lightRed : styles.lightGreen
+                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? styles.lightRed : styles.lightGreen,
+                                            width: "8%",
+                                            height: "8%"
                                         }}
                                     />
                                 }
@@ -339,7 +346,9 @@ export const AdminDashboard = () => {
                                     <MdMoving
                                         style={{
                                             transform: !loadingTileData ? (timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? "none" : "scaleY(-1)") : (Math.floor(randomNumbers) % 2 == 0 ? randomNumbers * -1 : randomNumbers) > 0 ? "none" : "scaleY(-1)",
-                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed
+                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed,
+                                            width: "8%",
+                                            height: "8%"
                                         }}
                                     />
                                 }
