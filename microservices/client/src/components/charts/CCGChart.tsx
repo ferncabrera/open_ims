@@ -100,7 +100,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         });
 
         return (
-            <div className={`${styles.chartBorderWrapper} bg-white p-3`}>
+            <div className={`${styles.chartTooltipBorderWrapper} bg-white p-3`}>
                 <p className="mb-2 initialism">{`${label} ${payload[0].payload.granularity !== "year" ? new Date(payload[0].payload.date).getUTCFullYear() : ""}`}</p>
                 {
                     bodyItems
@@ -117,27 +117,27 @@ const CustomLoadingTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
         const bodyItems = payload.map((obj, index) => {
             return ((obj.dataKey != "projected_income") &&
-                    (obj.dataKey != "projected_expenses")) ? (
+                (obj.dataKey != "projected_expenses")) ? (
+                <p key={index} className="mb-1">
+                    {obj.name}:
+                    {/* <strong> */}
+                    <span className='ps-2' style={{ color: styles.darkText }}>loading....</span>
+                    {/* </strong> */}
+                </p>
+            ) :
+                (
                     <p key={index} className="mb-1">
-                        {obj.name}:
+                        {(obj.dataKey == "projected_expenses") ? "Unpaid PO balance" : "Unpaid invoice balance"}:
                         {/* <strong> */}
-                        <span className='ps-2' style={{ color: styles.darkText }}>loading....</span>
+                        <span className='ps-2' style={{ color: styles.darkText }}>loading...</span>
                         {/* </strong> */}
                     </p>
-                ) :
-                    (
-                        <p key={index} className="mb-1">
-                            {(obj.dataKey == "projected_expenses") ? "Unpaid PO balance" : "Unpaid invoice balance"}:
-                            {/* <strong> */}
-                            <span className='ps-2' style={{ color: styles.darkText }}>loading...</span>
-                            {/* </strong> */}
-                        </p>
-                    );
+                );
 
         });
 
         return (
-            <div className={`${styles.chartBorderWrapper} bg-white p-3`}>
+            <div className={`${styles.chartTooltipBorderWrapper} bg-white p-3`}>
                 <p className="mb-2 initialism">{`${label} ${payload[0].payload.granularity !== "year" ? new Date(payload[0].payload.date).getUTCFullYear() : ""}`}</p>
                 {
                     bodyItems
@@ -436,14 +436,14 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
                     <Row className="mx-0 pt-sm-2" >
 
                         <Col xs={"auto"}>
-                            <h4 className={`${styles.chartTitle} text-capitalize text-nowrap ps-1 ms-1 mt-2 pt-1`}>
+                            <h4 style={{ fontSize: "calc(.25vw + 2.6vh)" }} className={`${styles.chartTitle} text-capitalize text-nowrap ps-1 ms-1 mt-1 pt-1`}>
                                 income & expenses
                             </h4>
                         </Col>
 
-                        <Col className={`d-flex justify-content-end`}>
+                        <Col sm={12} md={4} className={`py-1 ms-auto`}>
                             <Dropdown
-                                className='mt-1'
+                                className=''
                                 drop='down-centered'
                                 onToggle={show => {
                                     setShowChartGranularityMenu(show);
@@ -451,40 +451,43 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
                             >
                                 <Dropdown.Toggle
                                     id={`${styles.incomeExpenseChartGranularityDropdown}`}
+                                    style={{height:"inherit", width: "100%"}}
                                 >
                                     {chartGranularity != "day" ?
-                                        <span>{`${chartGranularity.charAt(0).toUpperCase() + chartGranularity.slice(1)}ly view`}</span>
+                                        <span style={{ fontSize: "calc(.075vw + 1.65vh)" }} className="">{`${chartGranularity.charAt(0).toUpperCase() + chartGranularity.slice(1)}ly view`}</span>
 
-                                        : <span>Daily view</span>
+                                        : <span style={{ fontSize: "calc(.075vw + 1.65vh)" }} className="">Daily view</span>
                                     }
                                     {
-                                        showChartGranularityMenu ?
-                                            <IoIosArrowDropup className={"ms-4"} style={{ fontSize: "24px", paddingBottom: "3px" }} />
-                                            :
-                                            <IoIosArrowDropdown className={"ms-4"} style={{ fontSize: "24px", paddingBottom: "3px" }} />
+                                        // showChartGranularityMenu ?
+                                        <IoIosArrowDropup
+                                            className={`${styles.iconStartRot} ${showChartGranularityMenu ? styles.iconEndRot : ''} ms-3`}
+                                            style={{ fontSize: "calc(.075vw + 1.65vh)" }} />
+                                        // :
+                                        // <IoIosArrowDropdown className={"ms-4"} style={{ fontSize: "24px", paddingBottom: "3px" }} />
                                     }
                                 </Dropdown.Toggle>
 
-                                <Dropdown.Menu style={{ fontSize: "14px" }}>
+                                <Dropdown.Menu style={{ fontSize: "calc(.075vw + 1.65vh)" }}>
                                     {chartGranularity != "day" && <>
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily view</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily view</Dropdown.Item>
                                         <Dropdown.Divider />
                                     </>
                                     }
                                     {chartGranularity != "week" && <>
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("week"); }} >Weekly view</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("week"); }} >Weekly view</Dropdown.Item>
                                         <Dropdown.Divider />
                                     </>
                                     }
                                     {chartGranularity != "month" && <>
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("month"); }} >Monthly view</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("month"); }} >Monthly view</Dropdown.Item>
                                         {chartGranularity != "year" && <Dropdown.Divider />}
                                     </>
                                     }
-                                    {/* <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("quarter"); }} >Quarterly view</Dropdown.Item>
+                                    {/* <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("quarter"); }} >Quarterly view</Dropdown.Item>
                                     <Dropdown.Divider /> */}
                                     {chartGranularity != "year" &&
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("year"); }} >Yearly view</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("year"); }} >Yearly view</Dropdown.Item>
                                     }
                                 </Dropdown.Menu>
                             </Dropdown>
@@ -606,7 +609,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
                             />
 
                             <Tooltip
-                                content={loadingChartData?CustomLoadingTooltip:CustomTooltip}
+                                content={loadingChartData ? CustomLoadingTooltip : CustomTooltip}
                             />
                             {showBrush &&
                                 <Brush onChange={(i) => {
@@ -618,7 +621,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
                                     dataKey="name"
                                     height={30}
                                     // width={500}
-                                    stroke={!loadingChartData?styles.secondaryBlue:styles.lightGrey}
+                                    stroke={!loadingChartData ? styles.secondaryBlue : styles.lightGrey}
                                     startIndex={startIndexBrush}
                                     endIndex={endIndexBrush}
                                 // className='pt-sm-2'
