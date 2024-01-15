@@ -223,13 +223,13 @@ export const AdminDashboard = () => {
         <div className="px-2">
             <Row className={"py-1"}>
 
-                <Col xs={8} className={"align-self-center"}>
+                <Col xs={dashboardMetricsGranularity != "custom" ? 8: 6} className={"align-self-center"}>
                     {userInfo.firstName !== null &&
                         <p style={{ fontSize: "calc(16px + 1.25vw)" }} className='mb-0 font-30 dark-text my-md-3 mt-2 text-nowrap'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
                     }
                 </Col>
 
-                <Col xs={4} className={"align-self-end"} >
+                <Col sm={dashboardMetricsGranularity != "custom" ? 4 : 6} className={"align-self-end"} >
                     <div className='text-nowrap float-end'>
                         {dashboardMetricsGranularity != "custom" ?
                             <>
@@ -279,11 +279,6 @@ export const AdminDashboard = () => {
                             </>
                             :
                             <>
-                                <p
-                                    className='d-inline-block me-2 ms-0 mb-0 mt-1'
-                                >
-
-                                </p>
                                 <CCGDateRangePicker dateRange={dateRange} setDateRange={setDateRange} additionalClasses={`float-lg-end mb-2 px-2 bg-white ${styles.dashboardDateRangePicker}`} />
                             </>
                         }
