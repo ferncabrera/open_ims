@@ -35,17 +35,23 @@ export const SimpleSummaryCard: React.FC<OpenIMSChartProps> = ({ id, titleConten
             {({ ref, ...triggerHandler }) => (
                 <Card className={`py-2 px-2 px-xxl-3 px-xl-2 py-xl-2 py-xxl-3 ${styles.simpleSummaryCardBorder}`}>
                     <Card.Body className={`${"p-1"}`}>
-                        <div className={`${styles.titleSimpleSummaryCard} text-capitalize`}>{titleContent}</div>
-                        <div className={`${styles.mainBodySimpleSummaryCard} ${loadingSummaryData ? styles.floatNumbersInf: styles.floatNumbersIntoPos} py-2`} style={{fontSize: "calc(.65vw + 2.75vh)"}}>{bodyContent}</div>
+                        <div className='w-100'>
+                            <span className={`${styles.titleSimpleSummaryCard} text-capitalize`}>
+                                {titleContent}
+                            </span>
+                            <span className={`${styles.commentIcon} ${loadingSummaryData ? styles.greyIconBackgroundPulse : null}  float-end m-1`} style={{ color: colorScheme }}>
+                                {icon}
+                                </span>
+                        </div>
+                        <div className={`${styles.mainBodySimpleSummaryCard} ${loadingSummaryData ? styles.floatNumbersInf : styles.floatNumbersIntoPos} py-2`} style={{ fontSize: "calc(.65vw + 2.75vh)" }}>{bodyContent}</div>
                         <div>
-                            <span className={`${styles.commentIcon} ${loadingSummaryData ? styles.geyIconBackgroundPulse : null}`} style={{ color: colorScheme }}>{icon}</span>
-                            <span className='ps-2' style={{fontSize: "calc(5px + 1.15vh)"}}>{commentContent}</span>
+                            <span style={{ fontSize: "calc(5px + 1.15vh)" }}>{commentContent}</span>
                             <span className="text-nowrap w-100 h-75" ref={ref} {...triggerHandler}>
                                 <span style={{ color: colorScheme, fontSize: "calc(6px + 1.25vh)" }} className={`${styles.commentMetricText} ps-1`}>{commentMetric}</span>
                                 {info && !loadingSummaryData &&
-                                        <span className={`ms-1`}>
-                                            <MdInfoOutline style={{ fontSize: "calc(.4vw + .1.25vh)", color: "#0d6efd" }} />
-                                        </span>
+                                    <span className={`ms-1`}>
+                                        <MdInfoOutline style={{ fontSize: "calc(.4vw + .1.25vh)", color: "#0d6efd" }} />
+                                    </span>
                                 }
                             </span>
                         </div>

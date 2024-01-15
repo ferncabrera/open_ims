@@ -13,7 +13,7 @@ interface IGetRequestHeaders {
 export const income_and_expense_by_date = async (req: Request, res: Response) => {
     let { startdate, enddate } = req.headers as unknown as IGetRequestHeaders;
     // console.log(startdate, enddate);
-    if (!startdate || !enddate)
+    if ((!startdate || !enddate))
         throw new Error("An object with keys startdate and enddate is required in the headers for this API function! Ex: {startdate: '2023-12-09' enddate: '2024-01-09'}");
     // TODO: Really need to write some unit tests to verify the data we are getting back from this query/API is right.... lol
 
@@ -247,14 +247,17 @@ export const income_and_expense_by_date = async (req: Request, res: Response) =>
         ORDER BY
             date, granularity; 
     `;
-
-    let profitTotalsByGranularity = await query(profitTotalsByGranularityQuery, [startdate, enddate]);
-
-    res.status(200).json({
-        data: profitTotalsByGranularity.rows,
-        rangeStartDateOfQuery: startdate,
-        rangeEndDateOfQuery: enddate
-    });
+        try {
+            let profitTotalsByGranularity = await query(profitTotalsByGranularityQuery, [startdate, enddate]);
+            res.status(200).json({
+                data: profitTotalsByGranularity.rows,
+                rangeStartDateOfQuery: startdate,
+                rangeEndDateOfQuery: enddate,
+                success: true
+            });
+        } catch (err: any) {
+            throw new customError({ message: err.message, code: 30 });
+        }
 
 };
 
