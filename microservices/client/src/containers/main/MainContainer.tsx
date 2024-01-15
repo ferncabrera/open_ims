@@ -8,6 +8,8 @@ import { OverlaySpinner } from '../../components/modals/OverlaySpinner';
 import { useRecoilValue } from 'recoil';
 import { overlaySpinnerState } from '../../atoms/state';
 import styles from "./index.module.scss";
+import { GlobalBanner } from '../../components/banners/GlobalBanner';
+import useWindowDimensions from '../../hooks/useWindowDimensions'
 
 export const MainContainer = (props: any) => {
 
@@ -15,7 +17,8 @@ export const MainContainer = (props: any) => {
     const spinnerState = useRecoilValue(overlaySpinnerState);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     // we should use a global state here tbh - but will do this temporarily to show we have access to cookie data
-    const [sidebarProps, setSidebarProps] = useState({})
+    const [sidebarProps, setSidebarProps] = useState({});
+    const { height: winHeight, width: winWidth } = useWindowDimensions();
 
     useEffect(() => {
         isUserAuth().then((response: any) => {
@@ -52,6 +55,8 @@ export const MainContainer = (props: any) => {
                         <Col
                             className={styles.contentColumn}
                         >
+                            <GlobalBanner
+                                customStyleObject={{ transform: winWidth <= 576 ? "translateX(-50%) translateY(60%)" : "translateX(-20%) translateY(40%)" }} />
                             <Outlet />
                         </Col>
 

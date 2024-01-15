@@ -8,11 +8,14 @@ $page-grey: #F8F8F8;
 
 
 $primary-blue: #6268FF;
+$primary-blue-shadow: #0a13ff;
 $secondary-blue: #9EA2FF;
+$secondary-blue-shadow: #373fff;
 $lightest-blue: #E5E6FF;
 
 $light-orange: #FDAD36;
 $light-green: #DEFFDD;
+$light-green-shadow: #036100;
 $magenta: #E15ECC;
 
 $invalid: #dc3545;
@@ -24,6 +27,7 @@ $dark-red: #930505;
 $dark-green: #036100;
 $dark-orange: #814003;
 $light-red: #FAD8D8;
+$light-red-shadow: #930505;
 
 // include colour exports here
 
@@ -46,6 +50,10 @@ $light-red: #FAD8D8;
     darkGreen: $dark-green;
     lightGreen: $light-green;
     darkOrange: $dark-orange;
+    lightRedShadow: $light-red-shadow;
+    lightGreenShadow: $light-green-shadow;
+    primaryBlueShadow: $primary-blue-shadow;
+    secondaryBlueShadow: $secondary-blue-shadow;
 }
 
 // include colour classes here

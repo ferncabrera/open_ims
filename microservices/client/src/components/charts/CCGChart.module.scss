@@ -6,6 +6,10 @@
     @include ccg-border-styling;
 }
 
+.chartTooltipBorderWrapper {
+    @include ccg-border-styling($box-shadow: none);
+}
+
 .chartBackground {
     background-color: $white;
 }
@@ -19,28 +23,40 @@
     color: $dark-text;
 }
 
+// Define default class for SVG rotation
+svg.iconStartRot {
+    transform: rotate(0deg);
+    transition: transform 0.3s ease;
+
+    &.iconEndRot {
+        transform: rotate(180deg);
+    }
+}
+
+
 // div.incomeExpenseChartGranularityDropdown {
 
 button#incomeExpenseChartGranularityDropdown {
-    width: 180px;
+    // width: 180px;
     border-radius: 10px;
-    height: 35px;
+    // height: 35px;
     background-color: $white;
     color: $dark-text;
     border: 1px solid var(--stroke-grey, #D6D6D6);
     // Button font
     font-family: Rubik;
-    font-size: 16px;
-    font-style: normal;
-    font-weight: 400;
-    line-height: normal;
+    // font-size: 16px;
+    // font-style: normal;
+    // font-weight: 400;
+    // line-height: normal;
+
     &::after {
         display: none;
     }
 
     // &:hover {
-        // background-color: $secondary-blue;
-        // border-color: $secondary-blue;
+    // background-color: $secondary-blue;
+    // border-color: $secondary-blue;
     // }
 }
 

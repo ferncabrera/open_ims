@@ -1,6 +1,6 @@
 import React, { useEffect, useState, PureComponent } from 'react'
 import { getJSONResponse } from '../../utilities/apiHelpers';
-import _ from 'lodash';
+import _, { stubFalse } from 'lodash';
 import styles from "./CCGChart.module.scss";
 import { Container, Row, Col, Dropdown, DropdownButton, NavItem } from 'react-bootstrap';
 import { ComposedChart, Line, BarChart, Bar, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Brush } from 'recharts';
@@ -8,7 +8,8 @@ import { DateRange } from '../../utilities/types/types';
 import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
 import { makeFriendlyDollarAmount } from '../../utilities/helpers/functions';
 import useWindowDimensions from '../../hooks/useWindowDimensions'
-import { SimpleSummaryCard } from "../cards/SimpleSummaryCard";
+import { bannerState } from '../../atoms/state';
+import { useRecoilState } from 'recoil';
 
 const renderColorfulLegendText = (value: string, entry: any) => {
     const hasUnderscores = value.includes('_');
@@ -22,7 +23,7 @@ const renderColorfulLegendText = (value: string, entry: any) => {
     }
 
     return (
-        <span className='dark-text px-1 pt-2' style={{ fontWeight: 400, fontSize: "16px", fontStyle: "normal", fontFamily: "Rubik" }}>
+        <span className='dark-text px-1 pt-2' style={{ fontWeight: 400, fontSize: "calc(14px + .35vh)", fontStyle: "normal", fontFamily: "Rubik" }}>
             {formattedValue}
         </span>
     );
@@ -50,7 +51,7 @@ function findMaxNumericValue(data, excludeArr: string[]) {
 };
 
 interface ICCGChartDataAttributes {
-    granularity: string
+    granularity: string,
 };
 
 function filterByGranularity(data: ICCGChartDataAttributes[], targetGranularity: string) {
@@ -59,7 +60,9 @@ function filterByGranularity(data: ICCGChartDataAttributes[], targetGranularity:
 }
 
 interface ICCGChartProps {
-    chartData?: ICCGChartDataAttributes[]
+    chartData?: ICCGChartDataAttributes[],
+    loadingChartData?: boolean
+
 };
 
 const CustomTooltip = ({ active, payload, label }) => {
@@ -98,7 +101,7 @@ const CustomTooltip = ({ active, payload, label }) => {
         });
 
         return (
-            <div className={`${styles.chartBorderWrapper} bg-white p-3`}>
+            <div className={`${styles.chartTooltipBorderWrapper} bg-white p-3`}>
                 <p className="mb-2 initialism">{`${label} ${payload[0].payload.granularity !== "year" ? new Date(payload[0].payload.date).getUTCFullYear() : ""}`}</p>
                 {
                     bodyItems
@@ -111,7 +114,44 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 };
 
-export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
+const CustomLoadingTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+        const bodyItems = payload.map((obj, index) => {
+            return ((obj.dataKey != "projected_income") &&
+                (obj.dataKey != "projected_expenses")) ? (
+                <p key={index} className="mb-1">
+                    {obj.name}:
+                    {/* <strong> */}
+                    <span className='ps-2' style={{ color: styles.darkText }}>loading....</span>
+                    {/* </strong> */}
+                </p>
+            ) :
+                (
+                    <p key={index} className="mb-1">
+                        {(obj.dataKey == "projected_expenses") ? "Unpaid PO balance" : "Unpaid invoice balance"}:
+                        {/* <strong> */}
+                        <span className='ps-2' style={{ color: styles.darkText }}>loading...</span>
+                        {/* </strong> */}
+                    </p>
+                );
+
+        });
+
+        return (
+            <div className={`${styles.chartTooltipBorderWrapper} bg-white p-3`}>
+                <p className="mb-2 initialism">{`${label} ${payload[0].payload.granularity !== "year" ? new Date(payload[0].payload.date).getUTCFullYear() : ""}`}</p>
+                {
+                    bodyItems
+                }
+            </div>
+        );
+    }
+
+    return null;
+
+};
+
+export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData = false }) => {
 
 
     const [showYReferenceLineRight, setShowYReferenceLineRight] = useState<boolean>(false);
@@ -125,6 +165,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
     const [showChartGranularityMenu, setShowChartGranularityMenu] = useState(false);
     const [data, setData] = useState<ICCGChartDataAttributes[]>([]);
     const { height: winHeight, width: winWidth } = useWindowDimensions();
+    const [bannerTextState, setBannerTextState] = useRecoilState(bannerState);
 
     // TODO in the future each chart can display its own custom date range, perhaps for him to create custom reports using the charts?
     // const [dateRange, setDateRange] = useState<DateRange>([new Date(new Date().setFullYear(new Date().getFullYear() - 1)), new Date()]);
@@ -152,6 +193,73 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
         }
 
         setData(newChartData);
+        // setEndIndexBrush(0);
+        // setShowBrush(false);
+        // setData(
+        //     [
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 500 / 2,
+        //             expenses: 500,
+        //             projected_income: 500 / 2,
+        //             income: 500,
+        //             profit: 500,
+        //             name: "Jan 2"
+        //         },
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 1000 / 2,
+        //             expenses: 1000,
+        //             projected_income: 1000 / 2,
+        //             income: 1000,
+        //             profit: 1000,
+        //             name: "Jan 2"
+        //         },
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 2000 / 2,
+        //             expenses: 2000,
+        //             projected_income: 2000 / 2,
+        //             income: 2000,
+        //             profit: 2000,
+        //             name: "Jan 2"
+        //         },
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 2000 / 2,
+        //             expenses: 2000,
+        //             projected_income: 2000 / 2,
+        //             income: 2000,
+        //             profit: 2000,
+        //             name: "Jan 2"
+        //         },
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 4000 / 2,
+        //             expenses: 4000,
+        //             projected_income: 4000 / 2,
+        //             income: 4000,
+        //             profit: 4000,
+        //             name: "Jan 2"
+        //         },
+        //         {
+        //             date: "Fake",
+        //             granularity: "fake",
+        //             projected_expenses: 10000 / 2,
+        //             expenses: 10000,
+        //             projected_income: 10000 / 2,
+        //             income: 10000,
+        //             profit: 10000,
+        //             name: "Jan 2"
+        //         },
+        //     ]
+        //     );
+        //     console.log("this is running");
     }, [chartData, chartGranularity, winWidth]);
 
 
@@ -319,6 +427,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
 
     // }, [globalDateRange]);
 
+
     return (
         <>
             {!loadingChart &&
@@ -329,14 +438,14 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                     <Row className="mx-0 pt-sm-2" >
 
                         <Col xs={"auto"}>
-                            <h4 className={`${styles.chartTitle} text-capitalize text-nowrap ps-1 ms-1 mt-2 pt-1`}>
+                            <h4 style={{ fontSize: "calc(20px + .85vh)" }} className={`${styles.chartTitle} text-capitalize text-nowrap ps-1 ms-1 mt-1 pt-1`}>
                                 income & expenses
                             </h4>
                         </Col>
 
-                        <Col className={`align-self-end d-flex justify-content-end`}>
+                        <Col sm={12} md={4} className={`py-1 ms-auto`}>
                             <Dropdown
-                                className='mt-sm-2 pt-1'
+                                className=''
                                 drop='down-centered'
                                 onToggle={show => {
                                     setShowChartGranularityMenu(show);
@@ -344,40 +453,43 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                             >
                                 <Dropdown.Toggle
                                     id={`${styles.incomeExpenseChartGranularityDropdown}`}
+                                    style={{height:"inherit", width: "100%"}}
                                 >
                                     {chartGranularity != "day" ?
-                                        <span>{`${chartGranularity.charAt(0).toUpperCase() + chartGranularity.slice(1)}ly view`}</span>
+                                        <span style={{ fontSize: "calc(14px + .25vh)" }} className="">{`${chartGranularity.charAt(0).toUpperCase() + chartGranularity.slice(1)}ly view`}</span>
 
-                                        : <span>Daily view</span>
+                                        : <span style={{ fontSize: "calc(14px + .25vh)" }} className="">Daily view</span>
                                     }
                                     {
-                                        showChartGranularityMenu ?
-                                            <IoIosArrowDropup className={"ms-4"} style={{ fontSize: "24px", paddingBottom: "3px" }} />
-                                            :
-                                            <IoIosArrowDropdown className={"ms-4"} style={{ fontSize: "24px", paddingBottom: "3px" }} />
+                                        // showChartGranularityMenu ?
+                                        <IoIosArrowDropup
+                                            className={`${styles.iconStartRot} ${showChartGranularityMenu ? styles.iconEndRot : ''} ms-3`}
+                                            style={{ fontSize: "calc(18px + .55vh)" }} />
+                                        // :
+                                        // <IoIosArrowDropdown className={"ms-4"} style={{ fontSize: "24px", paddingBottom: "3px" }} />
                                     }
                                 </Dropdown.Toggle>
 
-                                <Dropdown.Menu style={{ fontSize: "14px" }}>
+                                <Dropdown.Menu style={{ fontSize: "calc(14px + .35vh)" }}>
                                     {chartGranularity != "day" && <>
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily view</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily view</Dropdown.Item>
                                         <Dropdown.Divider />
                                     </>
                                     }
                                     {chartGranularity != "week" && <>
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("week"); }} >Weekly view</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("week"); }} >Weekly view</Dropdown.Item>
                                         <Dropdown.Divider />
                                     </>
                                     }
                                     {chartGranularity != "month" && <>
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("month"); }} >Monthly view</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("month"); }} >Monthly view</Dropdown.Item>
                                         {chartGranularity != "year" && <Dropdown.Divider />}
                                     </>
                                     }
-                                    {/* <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("quarter"); }} >Quarterly view</Dropdown.Item>
+                                    {/* <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("quarter"); }} >Quarterly view</Dropdown.Item>
                                     <Dropdown.Divider /> */}
                                     {chartGranularity != "year" &&
-                                        <Dropdown.Item style={{ color: styles.darkText }} className="py-0" onClick={() => { setChartGranularity("year"); }} >Yearly view</Dropdown.Item>
+                                        <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("year"); }} >Yearly view</Dropdown.Item>
                                     }
                                 </Dropdown.Menu>
                             </Dropdown>
@@ -387,7 +499,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
 
                     <ResponsiveContainer
                         width="100%"
-                        height="91%"
+                        height="85%"
                         className={"pb-sm-2"}
                     >
                         <ComposedChart
@@ -499,7 +611,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                             />
 
                             <Tooltip
-                                content={CustomTooltip}
+                                content={loadingChartData ? CustomLoadingTooltip : CustomTooltip}
                             />
                             {showBrush &&
                                 <Brush onChange={(i) => {
@@ -511,7 +623,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                     dataKey="name"
                                     height={30}
                                     // width={500}
-                                    stroke={styles.secondaryBlue}
+                                    stroke={!loadingChartData ? styles.secondaryBlue : styles.lightGrey}
                                     startIndex={startIndexBrush}
                                     endIndex={endIndexBrush}
                                 // className='pt-sm-2'
@@ -525,27 +637,54 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData }) => {
                                 wrapperStyle={{ paddingBottom: '25px', paddingLeft: "0px", paddingTop: "3px" }}
                                 formatter={renderColorfulLegendText}
                             />
-                            <Bar yAxisId={"left"} name="Income" dataKey="income" stackId="b" fill={styles.secondaryBlue} radius={[5, 5, 0, 0]} />
-                            <Bar yAxisId={"left"} name="Expenses" dataKey="expenses" stackId="a" fill={styles.primaryBlue} radius={[5, 5, 0, 0]} />
                             <Bar
-                                animationBegin={250}
+                                animationDuration={1000}
+                                animationBegin={50}
+                                style={{ filter: `drop-shadow(${endIndexBrush - startIndexBrush > 30 ? "2px" : "3px"} 0px ${styles.lightGrey})` }}
+                                yAxisId={"left"}
+                                name="Income"
+                                dataKey="income"
+                                stackId="b"
+                                fill={!loadingChartData ? styles.secondaryBlue : styles.lightGrey}
+                                radius={[5, 5, 0, 0]}
+                            />
+                            <Bar
+                                animationDuration={1000}
+                                animationBegin={200}
+                                style={{ filter: `drop-shadow(${endIndexBrush - startIndexBrush > 30 ? "2px" : "3px"} 0px ${styles.lightGrey})` }}
+                                yAxisId={"left"}
+                                name="Expenses"
+                                dataKey="expenses"
+                                stackId="a"
+                                fill={!loadingChartData ? styles.primaryBlue : styles.lightGrey}
+                                radius={[5, 5, 0, 0]}
+                            />
+                            <Bar
+                                style={{ filter: `drop-shadow(${endIndexBrush - startIndexBrush > 30 ? "2px" : "3px"} 0px ${styles.lightGrey})` }}
+                                animationDuration={1000}
+                                animationBegin={400}
                                 yAxisId={"left"}
                                 dataKey="projected_income"
                                 name={"Projected income"}
                                 stackId="b"
-                                fill={"#FFF1E3"}
+                                fill={`${!loadingChartData ? styles.lightGreen : styles.lightGrey}`}
                                 radius={[5, 5, 5, 5]}
                             />
                             <Bar
-                                animationBegin={250}
+                                style={{ filter: `drop-shadow(${endIndexBrush - startIndexBrush > 30 ? "2px" : "3px"} 0px ${styles.lightGrey})` }}
+                                animationDuration={1000}
+                                animationBegin={600}
                                 yAxisId={"left"}
                                 name="Projected expenses"
                                 dataKey="projected_expenses"
                                 stackId="a"
-                                fill={`${styles.lightRed}`}
+                                fill={`${!loadingChartData ? styles.lightRed : styles.lightGrey}`}
                                 radius={[5, 5, 5, 5]}
                             />
-                            <Line yAxisId={"right"} name="Profit" type="monotone" dataKey="profit" stroke={styles.lightOrange} />
+                            <Line
+                                animationDuration={1000}
+                                animationBegin={250}
+                                yAxisId={"right"} name="Profit" type="monotone" dataKey="profit" stroke={!loadingChartData ? styles.lightOrange : styles.darkGrey} />
                             {/* <Bar dataKey="amt" stackId="a" fill="#ffc658" /> */}
                         </ComposedChart>
                     </ResponsiveContainer>

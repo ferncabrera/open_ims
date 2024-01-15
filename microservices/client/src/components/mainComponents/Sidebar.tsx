@@ -24,7 +24,7 @@ export const Sidebar: React.FC<ISidebarProps> = (props) => {
     return (
         <>
 
-            <Nav className={`col-md-12 d-none d-md-block ${styles.sidebar}`}
+            <Nav className={`col-md-12 d-none d-md-block ${styles.sidebar} w-100`}
                 style={{width: "12.75rem"}}
                 defaultActiveKey={location.pathname}
                 // onSelect={selectedKey => alert(`selected ${selectedKey}`)}

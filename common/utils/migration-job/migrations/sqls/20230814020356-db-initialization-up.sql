@@ -432,7 +432,7 @@ BEGIN
       WHERE up.vendor_id = v.created_by
       LIMIT FLOOR(random() * 9) + 1
   ) item
-  CROSS JOIN LATERAL generate_series(1, 50) AS series
+  CROSS JOIN LATERAL generate_series(1, 100) AS series
   GROUP BY v.id, series;
 
   -- Invoices
@@ -475,7 +475,7 @@ BEGIN
       WHERE up.vendor_id = c.created_by
       LIMIT FLOOR(random() * 9) + 1
   ) item
-  CROSS JOIN LATERAL generate_series(1, 50) AS series -- Adjust the number of invoices as needed
+  CROSS JOIN LATERAL generate_series(1, 100) AS series -- Adjust the number of invoices as needed
   GROUP BY c.id, series;
 
 
