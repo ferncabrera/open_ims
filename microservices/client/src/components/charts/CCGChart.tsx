@@ -8,7 +8,8 @@ import { DateRange } from '../../utilities/types/types';
 import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
 import { makeFriendlyDollarAmount } from '../../utilities/helpers/functions';
 import useWindowDimensions from '../../hooks/useWindowDimensions'
-import { SimpleSummaryCard } from "../cards/SimpleSummaryCard";
+import { bannerState } from '../../atoms/state';
+import { useRecoilState } from 'recoil';
 
 const renderColorfulLegendText = (value: string, entry: any) => {
     const hasUnderscores = value.includes('_');
@@ -164,6 +165,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
     const [showChartGranularityMenu, setShowChartGranularityMenu] = useState(false);
     const [data, setData] = useState<ICCGChartDataAttributes[]>([]);
     const { height: winHeight, width: winWidth } = useWindowDimensions();
+    const [bannerTextState, setBannerTextState] = useRecoilState(bannerState);
 
     // TODO in the future each chart can display its own custom date range, perhaps for him to create custom reports using the charts?
     // const [dateRange, setDateRange] = useState<DateRange>([new Date(new Date().setFullYear(new Date().getFullYear() - 1)), new Date()]);
@@ -454,9 +456,9 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
                                     style={{height:"inherit", width: "100%"}}
                                 >
                                     {chartGranularity != "day" ?
-                                        <span style={{ fontSize: "calc(14px + .35vh)" }} className="">{`${chartGranularity.charAt(0).toUpperCase() + chartGranularity.slice(1)}ly view`}</span>
+                                        <span style={{ fontSize: "calc(14px + .25vh)" }} className="">{`${chartGranularity.charAt(0).toUpperCase() + chartGranularity.slice(1)}ly view`}</span>
 
-                                        : <span style={{ fontSize: "calc(14px + .35vh)" }} className="">Daily view</span>
+                                        : <span style={{ fontSize: "calc(14px + .25vh)" }} className="">Daily view</span>
                                     }
                                     {
                                         // showChartGranularityMenu ?
@@ -468,7 +470,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
                                     }
                                 </Dropdown.Toggle>
 
-                                <Dropdown.Menu style={{ fontSize: "calc(14px + .45vh)" }}>
+                                <Dropdown.Menu style={{ fontSize: "calc(14px + .35vh)" }}>
                                     {chartGranularity != "day" && <>
                                         <Dropdown.Item style={{ color: styles.darkText, fontSize: "inherit" }} className="py-0" onClick={() => { setChartGranularity("day"); }} >Daily view</Dropdown.Item>
                                         <Dropdown.Divider />

@@ -9,7 +9,8 @@ import { DateRange } from '../../utilities/types/types';
 import styles from "./index.module.scss";
 import { SimpleSummaryCard } from '../../components/cards/SimpleSummaryCard';
 import { MdMoving, MdInfoOutline } from "react-icons/md";
-import DateRangePicker from '@wojtekmaj/react-daterange-picker';
+import { bannerState } from '../../atoms/state';
+import { useRecoilState } from 'recoil';
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -72,6 +73,7 @@ export const AdminDashboard = () => {
     const [timeRangeSummary, setTimeRangeSummary] = useState<TimeRangeSummaryObj>();
     const [loadingTileData, setLoadingTileData] = useState<boolean>(false);
     const [randomNumbers, setRandomNumbers] = useState<number>(0);
+    const [bannerTextState, setBannerTextState] = useRecoilState(bannerState);
 
     const getIncomeExpenseByDate = async ({ startdate = null, enddate = null }) => {
         const response: any = await getJSONResponse({ endpoint: '/api/server/income_and_expense_by_date', params: { startdate, enddate } });
@@ -156,6 +158,8 @@ export const AdminDashboard = () => {
             setDashboardMetricsGranularity("month");
         else
             (async () => {
+                let currDateRangeRes: false | any = false;
+                let prevDateRangeRes: false | any = false;
                 try {
                     // ! need to set comparison metrics for when all or custom range is selected
                     setLoadingTileData(true);
@@ -163,8 +167,12 @@ export const AdminDashboard = () => {
                     const startDate: any = dateRange[0].toISOString().substring(0, 10);
                     const prevStartDate: any = prevDateRange[0].toISOString().substring(0, 10);
                     const prevEndDate: any = new Date(new Date(prevDateRange[1]).setHours(0, 0, 0, 0)).toISOString().substring(0, 10);
-                    const currDateRangeRes = await getIncomeExpenseByDate({ startdate: startDate, enddate: isoEndDate.toISOString().substring(0, 10) });
-                    const prevDateRangeRes = await getIncomeExpenseByDate({ startdate: prevStartDate, enddate: prevEndDate });
+                    currDateRangeRes = await getIncomeExpenseByDate({ startdate: startDate, enddate: isoEndDate.toISOString().substring(0, 10) });
+                    prevDateRangeRes = await getIncomeExpenseByDate({ startdate: prevStartDate, enddate: prevEndDate });
+                    if (!prevDateRangeRes.success)
+                        throw new Error(prevDateRangeRes.message);
+                    if (!currDateRangeRes.success)
+                        throw new Error(currDateRangeRes.message);
                     const currTimeSummary = getSummaryOfTimePeriod(currDateRangeRes.data);
                     const prevTimeSummary = getSummaryOfTimePeriod(prevDateRangeRes.data);
                     // console.log("prevData : ", prevDateRangeRes.rangeStartDateOfQuery, prevDateRangeRes.rangeEndDateOfQuery, prevTimeSummary);
@@ -184,9 +192,16 @@ export const AdminDashboard = () => {
                         income_percent_movement: ((currTimeSummary.aggregatedData.income - prevTimeSummary.aggregatedData.income) / Math.abs(prevTimeSummary.aggregatedData.income) * 100).toFixed(2)
                     });
                     setIncomeExpenseProfitQueryData(currDateRangeRes.data);
-                } catch (e) {
-                    //! open ticket for this
-                    console.log("Error fetching income and expense date by date! ", e);
+                } catch (e: any) {
+                    let additionalErrorDetails = false;
+                    if (currDateRangeRes) {
+                        additionalErrorDetails = currDateRangeRes.additionalErrorDetails
+                    }
+                    if (prevDateRangeRes) {
+                        additionalErrorDetails = prevDateRangeRes.additionalErrorDetails
+                    }
+                    setBannerTextState({ message: e.message, variant: 'danger', additionalErrorDetails: additionalErrorDetails});
+
                 }
             })().then(() => { setLoadingTileData(false) });
     }, [dateRange]);
@@ -208,19 +223,19 @@ export const AdminDashboard = () => {
         <div className="px-2">
             <Row className={"py-1"}>
 
-                <Col md={12} lg={6} className={"align-self-center"}>
+                <Col xs={8} className={"align-self-center"}>
                     {userInfo.firstName !== null &&
-                        <p style={{ fontSize: "calc(22px + 1vw)" }} className='mb-0 font-30 dark-text my-lg-4 mt-2'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
+                        <p style={{ fontSize: "calc(16px + 1.25vw)" }} className='mb-0 font-30 dark-text my-md-3 mt-2 text-nowrap'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
                     }
                 </Col>
 
-                <Col className={"align-self-end"} >
+                <Col xs={4} className={"align-self-end"} >
                     <div className='text-nowrap float-end'>
                         {dashboardMetricsGranularity != "custom" ?
                             <>
                                 <p
                                     className='d-inline-block mb-0'
-                                    style={{ fontSize: "calc(14px + .45vw)" }}
+                                    style={{ fontSize: "calc(12px + .65vw)" }}
                                 >
                                     here's your
                                 </p>
@@ -233,9 +248,9 @@ export const AdminDashboard = () => {
                                     className='d-inline-block'
                                 >
                                     <Dropdown.Toggle
-                                        className='px-1'
+                                        className='px-1 pb-1'
                                         id={`${styles.dashboardMetricsGranularityDropdown}`}
-                                        style={{ fontSize: "calc(12px + .35vw)" }}
+                                        style={{ fontSize: "calc(12px + .65vw)" }}
                                     >
                                         <span
                                         >
@@ -253,11 +268,11 @@ export const AdminDashboard = () => {
                                             if (r == "custom")
                                                 return <>
                                                     <Dropdown.Divider key={`${r}divider`} />
-                                                    <Dropdown.Item style={{ fontSize: "calc(14px + .45vh)" }} key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r} range`}</Dropdown.Item>
+                                                    <Dropdown.Item style={{ fontSize: "calc(14px + .35vh)" }} key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r} range`}</Dropdown.Item>
                                                 </>
                                             if (r == "all")
-                                                return <Dropdown.Item style={{ fontSize: "calc(14px + .45vh)" }} key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r} time`}</Dropdown.Item>
-                                            return <Dropdown.Item style={{ fontSize: "calc(14px + .45vh)" }} key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r}`}</Dropdown.Item>
+                                                return <Dropdown.Item style={{ fontSize: "calc(14px + .35vh)" }} key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r} time`}</Dropdown.Item>
+                                            return <Dropdown.Item style={{ fontSize: "calc(14px + .35vh)" }} key={r} className={`py-1 ${styles.dashboardMetricsGranularityDropdownMenuItem}`} onClick={() => { setDashboardMetricsGranularity(r); }} >{`${r}`}</Dropdown.Item>
                                         })}
                                     </Dropdown.Menu>
                                 </Dropdown>
@@ -300,7 +315,7 @@ export const AdminDashboard = () => {
                                             backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed,
                                             // width: "6%",
                                             // height: "6%"
-                                            fontSize: "calc(14px + .55vh)"
+                                            fontSize: "calc(16px + 1.3vh)"
                                         }}
                                     />
                                 }
@@ -325,7 +340,7 @@ export const AdminDashboard = () => {
                                             backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? styles.lightRed : styles.lightGreen,
                                             // width: "6%",
                                             // height: "6%"
-                                            fontSize: "calc(14px + .55vh)"
+                                            fontSize: "calc(16px + 1.3vh)"
                                         }}
                                     />
                                 }
@@ -351,7 +366,7 @@ export const AdminDashboard = () => {
                                             backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed,
                                             // width: "6%",
                                             // height: "6%"
-                                            fontSize: "calc(14px + .35vh)"
+                                            fontSize: "calc(16px + 1.3vh)"
                                         }}
                                     />
                                 }

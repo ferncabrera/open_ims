@@ -143,8 +143,8 @@
     svg {
         @include ccg-icon-button-styling($backgroundcolor: inherit, $hovercolor: inherit, $color: inherit);
         border-radius: 10px;
-        width: 31px;
-        height: 28px;
+        width: inherit;
+        height: inherit;
         display: inline;
     }
 }
