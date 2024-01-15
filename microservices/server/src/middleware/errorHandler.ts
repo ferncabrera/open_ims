@@ -5,8 +5,6 @@ const errorHandler = (error: any, req: Request, res: Response, next: NextFunctio
     let errorMessage;
     let additionalErrorDetails: (string | false) = false;
 
-    console.log("err ahndling is running !!!", error.message, error.code);
-
     switch (error.code) {
         case 10: // case 10 represents custom with 401
             statusCode = 401;
