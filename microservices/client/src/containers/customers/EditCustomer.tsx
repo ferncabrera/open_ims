@@ -155,7 +155,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
 
               <Form.Group as={Row} className='mb-5' >
                 <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
-                  Connect to Existing Vendor:
+                  Link to Existing Vendor:
                 </Form.Label>
                 <Col className='mrp-50' md={3}>
                   <Form.Select
