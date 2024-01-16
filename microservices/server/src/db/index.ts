@@ -19,6 +19,33 @@ export const query = async (text: string, params?: (any)[]) => {
     return res;
 };
 
+export const chained_query = async (queries: IChainedQueryProps[]) => {
+    let client;
+    let current_query;
+
+    try {
+        client = await getClient();
+
+        await client.query('BEGIN');
+
+        for (const query of queries) {
+            current_query = query;
+            await client.query(query.text, query.params)
+        };
+
+        await client.query('COMMIT');
+    } catch (error) {
+        await client?.query('ROLLBACK');
+
+        console.log('Query failed', current_query, error);
+        throw error;
+    } finally {
+        if (client) {
+            client.release();
+        }
+    }
+};
+
 export const getClient = async () => {
     const client = await pool.connect();
     const query = client.query;

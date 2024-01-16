@@ -7,9 +7,12 @@
 
         label {
             font-weight: 500;
+            &.fw-normal {
+                font-weight: 400;
+            }
         }
 
-        input {
+        input, select {
             border-radius: 10px;
             border-color: $grey;
 
@@ -55,6 +58,10 @@
 
         div {
             margin-bottom: 10px;
+
+            &.form-check {
+                margin: 0;
+            }
         }
 
         .form-control.is-invalid {

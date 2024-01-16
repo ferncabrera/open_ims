@@ -80,6 +80,7 @@ export const Columns = [
                     redirectTo={`/ccg/customers/edit/${id}`}
                     action="update"
                     category="customers"
+                    id={id}
                 >
                     <GoPencil />
                 </TableLink>

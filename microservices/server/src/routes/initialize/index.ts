@@ -6,6 +6,7 @@ import forgot_pass_routes from "../forgot_pass";
 import user_routes from "../users";
 import customer_routes from "../customers";
 import chart_routes from "../charts"
+import vendor_routes from "../vendors";
 
 export const initializeRoutes = (app: Express) => {
   // All routes that need to be passed into Express' middleware put here
@@ -14,4 +15,5 @@ export const initializeRoutes = (app: Express) => {
   app.use(user_routes);
   app.use(customer_routes);
   app.use(chart_routes);
+  app.use(vendor_routes);
 };

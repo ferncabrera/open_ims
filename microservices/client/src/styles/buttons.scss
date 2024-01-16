@@ -16,6 +16,15 @@
                 border-color: $secondary-blue;
             }
         }
+        &.btn-secondary {
+            background-color: $page-grey;
+            border-color: $light-grey;
+            color: $dark-grey2;
+            font-weight: 700;
+            &:hover {
+                background-color: $light-grey;
+            }
+        }
 
         // @include ccg-bs-primary-button-styling;
 
