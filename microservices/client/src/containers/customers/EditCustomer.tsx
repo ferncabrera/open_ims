@@ -3,6 +3,8 @@ import { getJSONResponse, sendPatchRequest } from '../../utilities/apiHelpers';
 import { CrudForm } from '../../components/forms/CrudForm';
 import { Form, Row, Col, Spinner } from 'react-bootstrap';
 import { hasEmptyKeys } from '../../utilities/helpers/functions';
+import { IValidate } from "../../utilities/types/validationTypes";
+import { fieldValidation } from '../../utilities/validation';
 import _ from 'lodash';
 
 interface IEditCustomerProps {
@@ -36,6 +38,24 @@ interface ICustomerData {
   }
 }
 
+interface IErrorFields {
+  companyName: IErrorObject;
+  firstName: IErrorObject;
+  lastName: IErrorObject;
+  email: IErrorObject;
+  phone: IErrorObject;
+}
+
+const initialErrorState = {
+  companyName: null,
+  firstName: null,
+  lastName: null,
+  email: null,
+  phone: null
+};
+
+let trackErrorList = [];
+
 export const EditCustomer = (props: IEditCustomerProps) => {
 
   const { customerId } = props;
@@ -45,6 +65,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
   const [isCheckedBilling, setIsCheckedBilling] = useState(false);
   const [vendorList, setVendorList] = useState([]);
   const [initialVendor, setInitialVendor] = useState('');
+  const [error, setError] = useState<IErrorFields>(initialErrorState);
   const [customerData, setCustomerData] = useState<ICustomerData>(
     {
       vendor: '',
@@ -98,7 +119,27 @@ export const EditCustomer = (props: IEditCustomerProps) => {
     setVendorList(response.data);
   }
 
+  const validate = (data: IValidate) => {
+    const valid = fieldValidation(data)
+    const name = valid.fieldName;
+    if (!valid.isValid) {
+      setError((prevError) => ({ ...prevError, [name]: { valid: valid.isValid, message: valid.message } }));
+    } else {
+      setError((prevError) => ({ ...prevError, [name]: null }))
+    }
+    return valid.isValid;
+  };
+
   const handleSave = async () => {
+    _.forIn({...customerData}, (value, key: string) => {
+      const data = { value, name: key, required: true }
+      const isValid = validate(data);
+      trackErrorList.push(isValid)
+    });
+    if (_.some(trackErrorList, (validEntity) => validEntity === false)) {
+      trackErrorList = [];
+      return false
+    }
     setIsLoadingSubmit(true);
     try {
       const data = { ...customerData };
@@ -109,12 +150,12 @@ export const EditCustomer = (props: IEditCustomerProps) => {
         delete data.shipping;
       }
       await sendPatchRequest({ endpoint: '/api/server/customer', data });
-    } catch(e) {
+    } catch (e) {
       console.log(e, '!Error! we need to display this on banner for the user');
     };
 
     setIsLoadingSubmit(false);
-    
+
   }
 
   const handleCheck = (isChecked) => {
@@ -188,10 +229,20 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                 </Form.Label>
                 <Col className='mrp-50' md={3}>
                   <Form.Control
+                    name='companyName'
                     type='input'
                     value={customerData.companyName}
                     onChange={(e) => setCustomerData({ ...customerData, companyName: e.target.value })}
+                    required
+                    isInvalid={error.companyName?.valid === false}
+                    onBlur={(e) => {
+                      const { value, name, required } = e.target;
+                      validate({ value, name, required })
+                    }}
                   />
+                  {error.companyName?.valid === false &&
+                    <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.companyName.message}</Form.Control.Feedback>
+                  }
                 </Col>
               </Form.Group>
 
@@ -201,10 +252,20 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                 </Form.Label>
                 <Col className='mrp-50' md={3}>
                   <Form.Control
+                    name='firstName'
                     type='input'
                     value={customerData.firstName}
                     onChange={(e) => setCustomerData({ ...customerData, firstName: e.target.value })}
+                    required
+                    isInvalid={error.firstName?.valid === false}
+                    onBlur={(e) => {
+                      const { value, name, required } = e.target;
+                      validate({ value, name, required })
+                    }}
                   />
+                  {error.firstName?.valid === false &&
+                    <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.firstName.message}</Form.Control.Feedback>
+                  }
                 </Col>
               </Form.Group>
 
@@ -214,10 +275,20 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                 </Form.Label>
                 <Col className='mrp-50' md={3}>
                   <Form.Control
+                    name='lastName'
                     type='input'
                     value={customerData.lastName}
                     onChange={(e) => setCustomerData({ ...customerData, lastName: e.target.value })}
+                    required
+                    isInvalid={error.lastName?.valid === false}
+                    onBlur={(e) => {
+                      const { value, name, required } = e.target;
+                      validate({ value, name, required })
+                    }}
                   />
+                  {error.lastName?.valid === false &&
+                    <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.lastName.message}</Form.Control.Feedback>
+                  }
                 </Col>
               </Form.Group>
 
@@ -227,10 +298,20 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                 </Form.Label>
                 <Col className='mrp-50' md={3}>
                   <Form.Control
+                    name='email'
                     type='input'
                     value={customerData.email}
                     onChange={(e) => setCustomerData({ ...customerData, email: e.target.value })}
+                    required
+                    isInvalid={error.email?.valid === false}
+                    onBlur={(e) => {
+                      const { value, name, required } = e.target;
+                      validate({ value, name, required })
+                    }}
                   />
+                  {error.email?.valid === false &&
+                    <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.email.message}</Form.Control.Feedback>
+                  }
                 </Col>
               </Form.Group>
 
@@ -240,10 +321,20 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                 </Form.Label>
                 <Col className='mrp-50' md={3}>
                   <Form.Control
+                    name='phone'
                     type='input'
                     value={customerData.phone}
                     onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })}
+                    required
+                    isInvalid={error.email?.valid === false}
+                    onBlur={(e) => {
+                      const { value, name, required } = e.target;
+                      validate({ value, name, required })
+                    }}
                   />
+                  {error.phone?.valid === false &&
+                    <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.phone.message}</Form.Control.Feedback>
+                  }
                 </Col>
               </Form.Group>
 
@@ -287,7 +378,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
 
               <Row className=''>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className='mb-3'>
                     <Form.Label className='fw-normal' column lg={4}>
                       Address Line 1:
                     </Form.Label>
@@ -301,7 +392,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                   </Form.Group>
                 </Col>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className='mb-3'>
                     <Form.Label className={'fw-normal'} column sm={4}>
                       Address Line 1:
                     </Form.Label>
@@ -320,7 +411,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
 
               <Row className=''>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className='mb-3'>
                     <Form.Label className='fw-normal' column lg={4}>
                       Address Line 2:
                     </Form.Label>
@@ -334,7 +425,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                   </Form.Group>
                 </Col>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className='mb-3'>
                     <Form.Label className={'fw-normal'} column sm={4}>
                       Address Line 2:
                     </Form.Label>
@@ -353,7 +444,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
 
               <Row className=''>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className='mb-3'>
                     <Form.Label className='fw-normal' column lg={4}>
                       City:
                     </Form.Label>
@@ -367,7 +458,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                   </Form.Group>
                 </Col>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className='mb-3'>
                     <Form.Label className={'fw-normal'} column sm={4}>
                       City:
                     </Form.Label>
@@ -386,7 +477,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
 
               <Row className=''>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className='mb-3'>
                     <Form.Label className='fw-normal' column lg={4}>
                       Province:
                     </Form.Label>
@@ -400,7 +491,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                   </Form.Group>
                 </Col>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className='mb-3'>
                     <Form.Label className={'fw-normal'} column sm={4}>
                       Province:
                     </Form.Label>
@@ -419,7 +510,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
 
               <Row className=''>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className='mb-3'>
                     <Form.Label className='fw-normal' column lg={4}>
                       Country:
                     </Form.Label>
@@ -433,7 +524,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                   </Form.Group>
                 </Col>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className=''>
                     <Form.Label className={'fw-normal'} column sm={4}>
                       Country:
                     </Form.Label>
@@ -449,9 +540,9 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                 </Col>
               </Row>
 
-              <Row className='mt-3'>
+              <Row className=''>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className=''>
                     <Form.Label className='fw-normal' column lg={4}>
                       Postal Code:
                     </Form.Label>
@@ -465,7 +556,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                   </Form.Group>
                 </Col>
                 <Col>
-                  <Form.Group as={Row} className='mb-1'>
+                  <Form.Group as={Row} className='mb-3'>
                     <Form.Label className={'fw-normal'} column sm={4}>
                       Postal Code:
                     </Form.Label>

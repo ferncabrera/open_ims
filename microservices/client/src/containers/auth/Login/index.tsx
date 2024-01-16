@@ -153,7 +153,7 @@ export const Login = () => { // test comment
                 </div>
             </div>
             <Form noValidate onSubmit={handleSignIn}>
-                <Form.Group>
+                <Form.Group className='mb-3'>
                     <Form.Label htmlFor='email'>Email:</Form.Label>
                     <Form.Control
                         name="email"
