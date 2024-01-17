@@ -178,7 +178,7 @@ export const AdminDashboard = () => {
                     // console.log("prevData : ", prevDateRangeRes.rangeStartDateOfQuery, prevDateRangeRes.rangeEndDateOfQuery, prevTimeSummary);
                     // console.log("CurrData : ", currDateRangeRes.rangeStartDateOfQuery, currDateRangeRes.rangeEndDateOfQuery, currTimeSummary);
                     //! This should really just become another SQL query that is more efficient at getting profit data but oh well for now
-                    await delay(100);
+                    await delay(3000);
                     setTimeRangeSummary({
                         expenses: currTimeSummary.aggregatedData.expenses,
                         income: currTimeSummary.aggregatedData.income,
@@ -307,10 +307,10 @@ export const AdminDashboard = () => {
                                     <MdMoving
                                         style={{
                                             transform: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? "none" : loadingTileData ? "none" : "scaleY(-1)",
-                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed,
+                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? styles.lightGreen : !loadingTileData ? styles.lightRed: "inherit",
                                             // width: "6%",
                                             // height: "6%"
-                                            transition: "all 2s",
+                                            transition: "all 1s",
                                             fontSize: "calc(16px + 1.3vh)"
                                         }}
                                     />
@@ -333,10 +333,10 @@ export const AdminDashboard = () => {
                                     <MdMoving
                                         style={{
                                             transform: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? "none" : loadingTileData ? "none" : "scaleY(-1)",
-                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? styles.lightRed : styles.lightGreen,
+                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? styles.lightRed : !loadingTileData ? styles.lightGreen: "inherit",
                                             // width: "6%",
                                             // height: "6%"
-                                            transition: "all 2s",
+                                            transition: "all 1s",
                                             fontSize: "calc(16px + 1.3vh)"
                                         }}
                                     />
@@ -360,10 +360,11 @@ export const AdminDashboard = () => {
                                     <MdMoving
                                         style={{
                                             transform: !loadingTileData ? (timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? "none" : "scaleY(-1)") : (Math.floor(randomNumbers) % 2 == 0 ? randomNumbers * -1 : randomNumbers) > 0 ? "none" : "scaleY(-1)",
-                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed,
+                                            backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? styles.lightGreen : !loadingTileData ? styles.lightRed: "inherit",
                                             // width: "6%",
                                             // height: "6%"
-                                            transition: "all 2s",
+                                            // transition: "background-color 1000ms linear",
+                                            transition: "all 1s",
                                             fontSize: "calc(16px + 1.3vh)"
                                         }}
                                     />
