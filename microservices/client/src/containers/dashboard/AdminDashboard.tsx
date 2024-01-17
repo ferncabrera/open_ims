@@ -310,6 +310,7 @@ export const AdminDashboard = () => {
                                             backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.income_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed,
                                             // width: "6%",
                                             // height: "6%"
+                                            transition: "all 2s",
                                             fontSize: "calc(16px + 1.3vh)"
                                         }}
                                     />
@@ -335,6 +336,7 @@ export const AdminDashboard = () => {
                                             backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.expense_percent_movement.toString()) > 0 ? styles.lightRed : styles.lightGreen,
                                             // width: "6%",
                                             // height: "6%"
+                                            transition: "all 2s",
                                             fontSize: "calc(16px + 1.3vh)"
                                         }}
                                     />
@@ -361,6 +363,7 @@ export const AdminDashboard = () => {
                                             backgroundColor: !loadingTileData && timeRangeSummary && parseFloat(timeRangeSummary.profit_percent_movement.toString()) > 0 ? styles.lightGreen : styles.lightRed,
                                             // width: "6%",
                                             // height: "6%"
+                                            transition: "all 2s",
                                             fontSize: "calc(16px + 1.3vh)"
                                         }}
                                     />
