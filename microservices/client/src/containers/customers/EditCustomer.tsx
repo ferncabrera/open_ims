@@ -6,7 +6,7 @@ import { hasEmptyKeys } from '../../utilities/helpers/functions';
 import _ from 'lodash';
 
 interface IEditCustomerProps {
-  customerId: string;
+  customerId: number;
 }
 
 interface ICustomerData {

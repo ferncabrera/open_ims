@@ -38,6 +38,7 @@ export const Columns = [
                         redirectTo={`/ccg/customers/read/${id}`}
                         action="read"
                         category="customers"
+                        id={id}
                     >
                         {companyName}
                     </TableLink>

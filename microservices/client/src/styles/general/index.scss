@@ -112,6 +112,13 @@ html, body {
     }
 
     //spacing
+    .no-space {
+        p, div {
+            margin: 0;
+            padding: 0;
+        };
+    }
+
     .m-0 {
         margin: 0;
     }
