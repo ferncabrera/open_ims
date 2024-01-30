@@ -139,7 +139,7 @@
     line-height: normal;
 }
 
-.commentIcon {
+.topRightIcon {
     svg {
         @include ccg-icon-button-styling($backgroundcolor: inherit, $hovercolor: inherit, $color: inherit);
         border-radius: 10px;
@@ -148,18 +148,3 @@
         display: inline;
     }
 }
-
-.greyIconBackgroundPulse {
-    svg {
-        animation: pulse 3s infinite;
-    }
-  }
-  
-@keyframes pulse {
-    0%, 100% {
-      background-color: $page-grey;
-    }
-    50% {
-      background-color: $light-grey;
-    }
-  }

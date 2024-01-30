@@ -39,7 +39,7 @@ export const SimpleSummaryCard: React.FC<OpenIMSChartProps> = ({ id, titleConten
                             <span className={`${styles.titleSimpleSummaryCard} text-capitalize`}>
                                 {titleContent}
                             </span>
-                            <span className={`${styles.commentIcon} ${loadingSummaryData ? styles.greyIconBackgroundPulse : null}  float-end m-1`} style={{ color: colorScheme }}>
+                            <span className={`${styles.topRightIcon} float-end m-1`} style={{ color: colorScheme, backgroundColor: loadingSummaryData? styles.pageGrey: "inherit" }}>
                                 {icon}
                                 </span>
                         </div>
@@ -47,7 +47,7 @@ export const SimpleSummaryCard: React.FC<OpenIMSChartProps> = ({ id, titleConten
                         <div>
                             <span style={{ fontSize: "calc(5px + 1.15vh)" }}>{commentContent}</span>
                             <span className="text-nowrap w-100 h-75" ref={ref} {...triggerHandler}>
-                                <span style={{ color: colorScheme, fontSize: "calc(6px + 1.25vh)" }} className={`${styles.commentMetricText} ps-1`}>{commentMetric}</span>
+                                <span style={{ color: colorScheme, fontSize: "calc(6px + 1.25vh)", transition: "all 2s" }} className={`${styles.commentMetricText} ps-1`}>{commentMetric}</span>
                                 {info && !loadingSummaryData &&
                                     <span className={`ms-1`}>
                                         <MdInfoOutline style={{ fontSize: "calc(.4vw + .1.25vh)", color: "#0d6efd" }} />
