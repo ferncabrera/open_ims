@@ -15,6 +15,7 @@ html, body {
     padding: 0;
     font-family: 'Rubik';
     color: $dark-grey;
+    overflow-anchor: none;
 
     ::selection {
         background-color: $secondary-blue;

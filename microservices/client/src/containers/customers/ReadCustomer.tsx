@@ -3,6 +3,8 @@ import { CrudForm } from "../../components/forms/CrudForm";
 import { getJSONResponse } from '../../utilities/apiHelpers';
 import { Row, Col } from "react-bootstrap";
 import { hasEmptyKeys } from '../../utilities/helpers/functions';
+import { CCGTable } from '../../components/table/CCGTable';
+import { Columns } from "./ReadTableSchema";
 import _ from 'lodash';
 
 interface IReadCustomerProps {
@@ -67,13 +69,15 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
 
   const customerId = props.customerId;
   const basicInfo = ['Customer ID', 'Company Name', 'Contact Name', 'Email', 'Phone', 'Vendor', 'Net Terms'];
-  const addressInfo = ['']
 
   const [customerData, setCustomerData] = useState<ICustomerData>(initialCustomerData);
+  const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [tableLoading, setTableLoading] = useState(true);
 
   useEffect(() => {
     getCustomerData();
+    getInvoiceData(10, 0);
   }, []);
 
   const getCustomerData = async () => {
@@ -81,6 +85,16 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
     setCustomerData(response.data);
     setIsLoading(false);
   };
+
+  const getInvoiceData = async (pagesize, pageindex, searchQuery = '') => {
+    const response: IResponse = await getJSONResponse({ endpoint: '/api/server/invoice', params: { id: customerId, pagesize, pageindex, searchQuery } });
+    setTableData(response.data);
+    setTableLoading(false);
+  }
+
+  const test = () => {
+    return null
+  }
 
   const RenderCustomerBasicInfo = () => {
 
@@ -190,6 +204,17 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
             </Col>
           </Row>
         }
+        <div className='my-4 pt-5' style={{marginTop: "70px"}}>
+
+          <CCGTable
+            columns={Columns}
+            data={_.get(tableData, 'invoices', [])}
+            fetchDataFunction={getInvoiceData}
+            totalCount={_.get(tableData, 'totalCount', 0)}
+            pageSize={_.get(tableData, 'pagesize', 0)}
+            pageIndex={_.get(tableData, 'pageindex', 0)}
+          />
+        </div>
       </CrudForm>
     </>
   )
