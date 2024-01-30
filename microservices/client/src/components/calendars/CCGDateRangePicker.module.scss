@@ -7,10 +7,13 @@ div.dateRangePickerStyling {
     :global(div.react-daterange-picker__wrapper) {
         border: none;
     }
+    font-family: Rubik;
 }
 
 div.calendarStyling {
     @include ccg-border-styling($overflow: hidden, $box-shadow: none);
+
+    font-family: Rubik;
 
     :global(div.react-calendar) {
         border: none;
@@ -25,6 +28,7 @@ button.tileStyling {
     //     background: $secondary-blue;
     // }
 
+    font-family: Rubik;
     &:global(.react-calendar__tile--active) {
         background: $lightest-blue;
         // color: $dark-text
