@@ -30,7 +30,9 @@ exports[`Login Component > Login renders correctly 1`] = `
     noValidate={true}
     onSubmit={[Function]}
   >
-    <div>
+    <div
+      className="mb-3"
+    >
       <label
         className="form-label"
         htmlFor="email"

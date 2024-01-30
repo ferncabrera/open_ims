@@ -90,7 +90,7 @@ export const Register = () => {
                 </div>
             </div>
             <Form noValidate onSubmit={handleRegister}>
-                <Form.Group>
+                <Form.Group className='mb-3'>
                     <Form.Label htmlFor='firstName'>First Name:</Form.Label>
                     <Form.Control
                         name='firstName'
@@ -111,7 +111,7 @@ export const Register = () => {
                         <Form.Control.Feedback data-testid="firstName-error" type='invalid'>{error.firstName.message}</Form.Control.Feedback>
                     }
                 </Form.Group>
-                <Form.Group>
+                <Form.Group className='mb-3'>
                     <Form.Label htmlFor='lastName'>Last Name:</Form.Label>
                     <Form.Control
                         name='lastName'
@@ -132,7 +132,7 @@ export const Register = () => {
                         <Form.Control.Feedback data-testid="lastName-error" type='invalid'>{error.lastName.message}</Form.Control.Feedback>
                     }
                 </Form.Group>
-                <Form.Group>
+                <Form.Group className='mb-3'>
                     <Form.Label htmlFor='email'>Email:</Form.Label>
                     <Form.Control
                         name='email'
