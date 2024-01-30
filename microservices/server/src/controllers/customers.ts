@@ -164,6 +164,10 @@ export const update_customer = async (req: Request, res: Response) => {
 
   const { id, firstName, lastName, companyName, email, phone, netTerms } = data;
 
+  if (!(id && firstName && lastName && companyName && email && phone)) {
+    throw new customError({message: "Missing required fields!", code:20});
+  }
+
   const create_or_update_address = async (type: string, address_data: any) => {
 
     const { address1, address2, city, province, postalCode, country } = address_data;
