@@ -7,7 +7,7 @@ import { useResetRecoilState, useRecoilState } from 'recoil';
 interface ICrudForm {
     children: ReactNode;
     header: string;
-    handleSubmit(): Promise<void>;
+    handleSubmit(): Promise<void | boolean>;
     handleCancel?: () => void;
     disablePrimary?: boolean;
     disableSecondary?: boolean;
@@ -30,7 +30,11 @@ export const CrudForm = (props: ICrudForm) => {
     const handleSubmitClick = async () => {
         setOverlaySpinner(true);
         try {
-            await handleSubmit();
+            const res = await handleSubmit();
+            if (!res) {
+                setOverlaySpinner(false);
+                return
+            }
             resetEntityState();
         } catch(err) {} // might not be necessary for error handelling, but we don't want the entity state to reset or continue if the submission did not work
         setOverlaySpinner(false);
