@@ -178,7 +178,7 @@ export const AdminDashboard = () => {
                     // console.log("prevData : ", prevDateRangeRes.rangeStartDateOfQuery, prevDateRangeRes.rangeEndDateOfQuery, prevTimeSummary);
                     // console.log("CurrData : ", currDateRangeRes.rangeStartDateOfQuery, currDateRangeRes.rangeEndDateOfQuery, currTimeSummary);
                     //! This should really just become another SQL query that is more efficient at getting profit data but oh well for now
-                    await delay(3000);
+                    await delay(100);
                     setTimeRangeSummary({
                         expenses: currTimeSummary.aggregatedData.expenses,
                         income: currTimeSummary.aggregatedData.income,
