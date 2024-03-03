@@ -1,7 +1,18 @@
 import React from 'react'
+import { ReadCustomer } from '../customers/ReadCustomer';
 
-export const RenderRead = () => {
-  return (
-    <div>RenderRead</div>
-  )
+interface IRenderReadProps {
+  entity: IEntityState;
+}
+
+export const RenderRead = (props: IRenderReadProps) => {
+  const {entity} = props;
+
+  switch(entity.category) {
+    case "customers":
+      return(
+        <ReadCustomer customerId={entity.id}/>
+      )
+  }
+  
 }

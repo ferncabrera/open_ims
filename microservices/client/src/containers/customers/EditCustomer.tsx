@@ -8,7 +8,7 @@ import { fieldValidation } from '../../utilities/validation';
 import _ from 'lodash';
 
 interface IEditCustomerProps {
-  customerId: string;
+  customerId: number;
 }
 
 interface ICustomerData {

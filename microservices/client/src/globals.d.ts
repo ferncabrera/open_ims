@@ -27,6 +27,6 @@ interface IEntityState {
     action: "create" | "read" | "update" | "delete" | null;
     category: string;
     path: string;
-    id: string | null;
+    id: number | null;
 }
 
