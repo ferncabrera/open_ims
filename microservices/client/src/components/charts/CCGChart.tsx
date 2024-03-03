@@ -439,7 +439,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
 
                         <Col xs={"auto"}>
                             <h4 style={{ fontSize: "calc(20px + .85vh)" }} className={`${styles.chartTitle} text-capitalize text-nowrap ps-1 ms-1 mt-1 pt-1`}>
-                                income & expenses
+                                income & memes
                             </h4>
                         </Col>
 
