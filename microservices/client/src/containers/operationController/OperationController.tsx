@@ -44,6 +44,8 @@ export const OperationController = () => {
       )
 
     case "read":
-      return <RenderRead />
+      return <RenderRead 
+        entity={entity}
+      />
   }
 };
