@@ -33,4 +33,24 @@
     button.pagination {
         @include ccg-icon-button-styling;
     }
+
+    .pill {
+        border: none;
+        border-width: 1px;
+        border-radius: 40%;
+        padding: 5px;
+        background-color: $white;
+        border-color: $light-grey;
+        margin-right: 2px;
+
+        &:hover {
+            border-color: $light-grey;
+            background-color: $light-grey;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
+    }
 }

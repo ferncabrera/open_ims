@@ -5,6 +5,8 @@ import { Row, Col } from "react-bootstrap";
 import { hasEmptyKeys } from '../../utilities/helpers/functions';
 import { CCGTable } from '../../components/table/CCGTable';
 import { Columns } from "./ReadTableSchema";
+import { useRecoilState } from 'recoil';
+import { breadcrumbsState } from '../../atoms/state';
 import _ from 'lodash';
 
 interface IReadCustomerProps {
@@ -70,6 +72,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
   const customerId = props.customerId;
   const basicInfo = ['Customer ID', 'Company Name', 'Contact Name', 'Email', 'Phone', 'Vendor', 'Net Terms'];
 
+  const [breadcrumbs, setBreadcrumb] = useRecoilState(breadcrumbsState)
   const [customerData, setCustomerData] = useState<ICustomerData>(initialCustomerData);
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -83,6 +86,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
   const getCustomerData = async () => {
     const response: IResponse = await getJSONResponse({ endpoint: '/api/server/customer', params: { id: customerId } });
     setCustomerData(response.data);
+    setBreadcrumb({pathArr:[...breadcrumbs.pathArr, <span>{response.data.companyName}</span> ]})
     setIsLoading(false);
   };
 
@@ -90,10 +94,6 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
     const response: IResponse = await getJSONResponse({ endpoint: '/api/server/invoice', params: { id: customerId, pagesize, pageindex, searchQuery } });
     setTableData(response.data);
     setTableLoading(false);
-  }
-
-  const test = () => {
-    return null
   }
 
   const RenderCustomerBasicInfo = () => {

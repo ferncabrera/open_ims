@@ -5,6 +5,9 @@ import { Form, Row, Col, Spinner } from 'react-bootstrap';
 import { hasEmptyKeys } from '../../utilities/helpers/functions';
 import { IValidate } from "../../utilities/types/validationTypes";
 import { fieldValidation } from '../../utilities/validation';
+import { bannerState, breadcrumbsState } from '../../atoms/state';
+import { useRecoilState } from 'recoil';
+import { useNavigate } from 'react-router';
 import _ from 'lodash';
 
 interface IEditCustomerProps {
@@ -60,12 +63,16 @@ export const EditCustomer = (props: IEditCustomerProps) => {
 
   const { customerId } = props;
 
+  const navigate = useNavigate();
+
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [isCheckedBilling, setIsCheckedBilling] = useState(false);
   const [vendorList, setVendorList] = useState([]);
   const [initialVendor, setInitialVendor] = useState('');
   const [error, setError] = useState<IErrorFields>(initialErrorState);
+  const [bannerTextState, setBannerTextState] = useRecoilState(bannerState)
+  const [breadcrumbs, setBreadcrumb] = useRecoilState(breadcrumbsState);
   const [customerData, setCustomerData] = useState<ICustomerData>(
     {
       vendor: '',
@@ -97,9 +104,10 @@ export const EditCustomer = (props: IEditCustomerProps) => {
 
   useEffect(() => {
     setIsLoading(true);
+    setBreadcrumb({pathArr:[...breadcrumbs.pathArr, <span>Edit Customer</span> ]})
     Promise.all([getCustomerData(), getAllAvailableVendors()])
       .then(() => setIsLoading(false))
-      .catch((e) => console.log(e, 'Error! Have this display in the banner please'));
+      .catch((e) =>  setBannerTextState({message: 'Something went wrong retrieving data', variant:'danger'}));
   }, []);
 
   useEffect(() => {
@@ -150,8 +158,10 @@ export const EditCustomer = (props: IEditCustomerProps) => {
         delete data.shipping;
       }
       await sendPatchRequest({ endpoint: '/api/server/customer', data });
+      setBannerTextState({message: 'Customer successfully updated!', variant:'success'})
+      navigate('/ccg/customers')
     } catch (e) {
-      console.log(e, '!Error! we need to display this on banner for the user');
+      setBannerTextState({message: 'Something went wrong trying to update customer', variant:'danger'})
     };
 
     setIsLoadingSubmit(false);

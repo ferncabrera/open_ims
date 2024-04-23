@@ -2,13 +2,18 @@ import React, {useEffect, useState} from 'react'
 import { CCGTable } from '../../components/table/CCGTable';
 import { Columns } from "./TableSchema";
 import { getJSONResponse } from '../../utilities/apiHelpers';
+import { breadcrumbsState } from '../../atoms/state';
+import { useRecoilState } from 'recoil';
+import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
 export const DefaultCustomers = () => {
 
   const [responseData, setResponseData] = useState<any>([]);
+  const [breadcrumbState, setBreadcrumb] = useRecoilState(breadcrumbsState)
 
   useEffect(() => {
+    setBreadcrumb({pathArr: [<Link to='/ccg/customers'>Customers</Link>]})
     getDataList(10, 0).catch((e) => console.log(e))
   }, []);
 
