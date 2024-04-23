@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react'
 import { CrudForm } from "../../components/forms/CrudForm";
+import { PillButton } from '../../components/buttons/PillButton';
 import { getJSONResponse } from '../../utilities/apiHelpers';
 import { Row, Col } from "react-bootstrap";
 import { hasEmptyKeys } from '../../utilities/helpers/functions';
 import { CCGTable } from '../../components/table/CCGTable';
 import { Columns } from "./ReadTableSchema";
+import { useRecoilState } from 'recoil';
+import { breadcrumbsState } from '../../atoms/state';
+import { MdOutlineEdit, MdOutlinePictureAsPdf } from "react-icons/md";
+import { FaRegTrashAlt } from "react-icons/fa";
+
 import _ from 'lodash';
 
 interface IReadCustomerProps {
@@ -70,6 +76,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
   const customerId = props.customerId;
   const basicInfo = ['Customer ID', 'Company Name', 'Contact Name', 'Email', 'Phone', 'Vendor', 'Net Terms'];
 
+  const [breadcrumbs, setBreadcrumb] = useRecoilState(breadcrumbsState)
   const [customerData, setCustomerData] = useState<ICustomerData>(initialCustomerData);
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -83,6 +90,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
   const getCustomerData = async () => {
     const response: IResponse = await getJSONResponse({ endpoint: '/api/server/customer', params: { id: customerId } });
     setCustomerData(response.data);
+    setBreadcrumb({pathArr:[...breadcrumbs.pathArr, <span>{response.data.companyName}</span> ]})
     setIsLoading(false);
   };
 
@@ -90,10 +98,6 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
     const response: IResponse = await getJSONResponse({ endpoint: '/api/server/invoice', params: { id: customerId, pagesize, pageindex, searchQuery } });
     setTableData(response.data);
     setTableLoading(false);
-  }
-
-  const test = () => {
-    return null
   }
 
   const RenderCustomerBasicInfo = () => {
@@ -180,6 +184,13 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
 
   return (
     <>
+    <Row className=' justify-content-end'>
+        <Col className='d-flex justify-content-end' xs={7} >
+            <PillButton className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
+            <PillButton className='me-2' text='Delete' color='standard' icon={<FaRegTrashAlt />} />
+            <PillButton className='me-1' text='Edit Customer' color='blue' icon={<MdOutlineEdit/>} />
+        </Col>
+      </Row>
       <CrudForm
         header={customerData.companyName || 'Retrieving...'}
         handleSubmit={() => null}

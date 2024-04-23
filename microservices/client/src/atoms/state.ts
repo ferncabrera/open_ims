@@ -19,3 +19,10 @@ export const overlaySpinnerState = atom({
     key: 'overlaySpinnerState',
     default: false
 });
+
+export const breadcrumbsState = atom({
+    key: 'breadcrumbsState',
+    default: {
+        pathArr: [],
+    }
+})

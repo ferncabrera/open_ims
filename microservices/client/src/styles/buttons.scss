@@ -26,11 +26,46 @@
             }
         }
 
+        &.btn-white {
+            background-color: $white;
+            color: $dark-grey2;
+            border-color: $light-grey;
+            &:hover {
+                background-color: $light-grey;
+                border-color: $light-grey;
+                color: $dark-text;
+            }
+        }
+
+        &.btn-auto {
+            width: auto;
+        }
+
         // @include ccg-bs-primary-button-styling;
 
     }
 
     button.pagination {
         @include ccg-icon-button-styling;
+    }
+
+    .pill {
+        border: none;
+        border-width: 1px;
+        border-radius: 20px;
+        padding: 5px;
+        background-color: $white;
+        border-color: $light-grey;
+        margin-right: 2px;
+
+        &:hover {
+            border-color: $light-grey;
+            background-color: $light-grey;
+        }
+
+        a {
+            text-decoration: none;
+            color: black;
+        }
     }
 }
