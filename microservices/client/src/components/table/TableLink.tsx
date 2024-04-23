@@ -10,6 +10,7 @@ interface ITableLinkProps {
     redirectTo: string;
     action: "create" | "update" | "read" | "delete" | null;
     category: string;
+    id?: string;
 }
 
 export const TableLink = (props: ITableLinkProps) => {
@@ -20,7 +21,8 @@ export const TableLink = (props: ITableLinkProps) => {
         setEntity({
             action: props.action,
             category: props.category,
-            path: props.redirectTo
+            path: props.redirectTo,
+            id: props.id || null
         })
     };
 

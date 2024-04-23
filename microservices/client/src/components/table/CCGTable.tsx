@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react'
+import React, { useMemo, useState, useEffect, useRef } from 'react'
 import {
   useReactTable,
   getCoreRowModel,
@@ -128,29 +128,28 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
             <Spinner />
           </div>
         }
-        {(data && !isLoading) &&
-          <table>
-            <thead>
-              {table.getHeaderGroups().map((headerGroup) => {
-                return (
-                  <tr key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      return (
-                        <th key={header.id} id={header.id}>
-                          {" "}
-                          {header.isPlaceholder
-                            ? null
-                            : flexRender(
-                              header.column.columnDef.header,
-                              header.getContext()
-                            )}
-                        </th>
-                      );
-                    })}
-                  </tr>
-                )
-              })}
-            </thead>
+        <table>
+          <thead>
+            {table.getHeaderGroups().map((headerGroup) => {
+              return (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <th key={header.id} id={header.id}>
+                        {" "}
+                        {header.isPlaceholder
+                          ? null
+                          : flexRender(
+                            header.column.columnDef.header,
+                            header.getContext()
+                          )}
+                      </th>
+                    );
+                  })}
+                </tr>
+              )
+            })}
+          </thead>
             <tbody>
               {table.getRowModel().rows.map((row) => {
                 return (
@@ -166,15 +165,16 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                 );
               })}
             </tbody>
-          </table>
-        }
+          
+        </table>
         <div className='bg-white pt-3 pb-2'>
           <Row>
             <Col className='ms-3'>
               <Button
                 className='pagination'
                 variant='info'
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   setIsLoading(true)
                   setCurrentPage(1);
                   fetchDataFunction(pageSize, Number(pageIndex) - 1, searchValue)
@@ -191,6 +191,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                   size='sm'
                   value={!currentPage ? '' : (Number(pageIndex) + 1)}
                   onChange={(e) => {
+                    e.preventDefault()
                     const input = Number(e.target.value);
                     if (!isNaN(input) && (input >= 1) && ((input + (Number(pageIndex) + 1) >= 1) && (input <= Math.ceil(totalCount / pageSize)))) {
                       setIsLoading(true);
@@ -208,7 +209,8 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
               <Button
                 className='pagination'
                 variant='info'
-                onClick={() => {
+                onClick={(event) => {
+                  event.preventDefault();
                   setIsLoading(true);
                   setCurrentPage(1);
                   fetchDataFunction(pageSize, Number(pageIndex) + 1, searchValue)

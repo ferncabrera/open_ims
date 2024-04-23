@@ -39,11 +39,13 @@ export const OperationController = () => {
     case "update":
       return (
         <RenderEdit
-        
+          entity={entity}
         />
       )
 
     case "read":
-      return <RenderRead />
+      return <RenderRead 
+        entity={entity}
+      />
   }
 };

@@ -30,7 +30,9 @@ exports[`Register Component > Register renders correctly 1`] = `
     noValidate={true}
     onSubmit={[Function]}
   >
-    <div>
+    <div
+      className="mb-3"
+    >
       <label
         className="form-label"
         htmlFor="firstName"
@@ -48,7 +50,9 @@ exports[`Register Component > Register renders correctly 1`] = `
         type="text"
       />
     </div>
-    <div>
+    <div
+      className="mb-3"
+    >
       <label
         className="form-label"
         htmlFor="lastName"
@@ -66,7 +70,9 @@ exports[`Register Component > Register renders correctly 1`] = `
         type="text"
       />
     </div>
-    <div>
+    <div
+      className="mb-3"
+    >
       <label
         className="form-label"
         htmlFor="email"

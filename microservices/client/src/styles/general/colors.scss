@@ -1,5 +1,3 @@
-
-
 $white: #FFFFFF;
 $dark-text: #2C2C2C;
 $dark-grey: #494949;
@@ -10,16 +8,53 @@ $page-grey: #F8F8F8;
 
 
 $primary-blue: #6268FF;
+$primary-blue-shadow: #0a13ff;
 $secondary-blue: #9EA2FF;
+$secondary-blue-shadow: #373fff;
 $lightest-blue: #E5E6FF;
 
 $light-orange: #FDAD36;
+$light-green: #DEFFDD;
+$light-green-shadow: #036100;
 $magenta: #E15ECC;
 
 $invalid: #dc3545;
 $invalid-faded: #dc354640;
 
 $success-faded: #089e1240;
+
+$dark-red: #930505;
+$dark-green: #036100;
+$dark-orange: #814003;
+$light-red: #FAD8D8;
+$light-red-shadow: #930505;
+
+// include colour exports here
+
+:export {
+    primaryBlue: $primary-blue;
+    secondaryBlue: $secondary-blue;
+    lightestBlue: $lightest-blue;
+
+    lightOrange: $light-orange;
+
+    darkText: $dark-text;
+
+    grey: $grey;
+    lightGrey: $light-grey;
+    lightRed: $light-red;
+    darkGrey: $dark-grey;
+    pageGrey: $page-grey;
+    darkGreyTwo: $dark-grey2;
+    darkRed: $dark-red;
+    darkGreen: $dark-green;
+    lightGreen: $light-green;
+    darkOrange: $dark-orange;
+    lightRedShadow: $light-red-shadow;
+    lightGreenShadow: $light-green-shadow;
+    primaryBlueShadow: $primary-blue-shadow;
+    secondaryBlueShadow: $secondary-blue-shadow;
+}
 
 // include colour classes here
 

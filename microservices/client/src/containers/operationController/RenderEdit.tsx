@@ -1,15 +1,20 @@
-import React, {useEffect, useState} from 'react'
-import { getJSONResponse } from '../../utilities/apiHelpers';
+import React, {useEffect, useState} from 'react';
+import { EditCustomer } from '../customers/EditCustomer';
 
-export const RenderEdit = () => {
+interface IRenderEditProps {
+  entity: IEntityState;
+}
 
-  const [data, setData] = useState({});
+export const RenderEdit = (props : IRenderEditProps) => {
 
-  useEffect(() => {
-    console.log('rendered edit screen')
-  }, [])
+  const {entity} = props;
 
-  return (
-    <div>RenderEdit</div>
-  )
+  switch (entity.category) {
+    case "customers":
+      return (
+      <EditCustomer
+        customerId = {entity.id}
+      />
+      )
+  }
 }

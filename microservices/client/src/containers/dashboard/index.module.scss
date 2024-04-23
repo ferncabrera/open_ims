@@ -1,0 +1,36 @@
+@import "../../styles/general/colors.scss";
+
+button#dashboardMetricsGranularityDropdown {
+    height: auto;
+    padding: 0;
+    width: auto;
+    background-color: transparent;
+    color: $primary-blue;
+    border: none;
+    // Button font
+    font-family: Rubik;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: normal;
+    &::after {
+        display: none;
+    }
+
+    &:hover {
+        color: $secondary-blue;
+    }
+}
+
+div.dashboardMetricsGranularityDropdownMenu {
+    min-width: 0rem;
+}
+
+a.dashboardMetricsGranularityDropdownMenuItem {
+    font-size: 14px;
+    font-family: Rubik;
+    color: $dark-text;
+}
+
+.dashboardDateRangePicker {
+    font-size: 14px;
+}
