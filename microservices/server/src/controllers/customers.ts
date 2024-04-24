@@ -16,7 +16,6 @@ export const get_customers = async (req: Request, res: Response) => {
 
   const { pageindex, pagesize, searchquery } = req.headers as unknown as IGetListRequestHeaders;
   const offset: number = Number(pageindex) * Number(pagesize);
-  // !!! should look into sanitizing this.
 
   let customers_query;
   let count_query;
@@ -71,6 +70,7 @@ export const get_customers = async (req: Request, res: Response) => {
     pageindex,
     pagesize,
     offset,
+    searchquery,
     total: totalCount,
     data: customers_query.rows
   });
@@ -165,7 +165,7 @@ export const update_customer = async (req: Request, res: Response) => {
   const { id, firstName, lastName, companyName, email, phone, netTerms } = data;
 
   if (!(id && firstName && lastName && companyName && email && phone)) {
-    throw new customError({message: "Missing required fields!", code:20});
+    throw new customError({ message: "Missing required fields!", code: 20 });
   }
 
   const create_or_update_address = async (type: string, address_data: any) => {
@@ -176,7 +176,7 @@ export const update_customer = async (req: Request, res: Response) => {
     const address_query: any = await query(
       "SELECT * FROM customer_addresses WHERE customer_id = $1 AND address = $2"
       , [data.id, type]);
-    
+
     const address = address_query.rows[0];
     if (address && address.address) {
       // update
@@ -288,4 +288,25 @@ export const update_customer = async (req: Request, res: Response) => {
 
   res.status(200).json({ message: "Successfully updated customer" });
 
+}
+
+export const delete_customers = async (req: Request, res: Response) => {
+
+  const delete_ids = req.body;
+
+  for (const id of delete_ids) {
+    const delete_invoice_query = {
+      text: "DELETE FROM invoice_orders WHERE customer_id = $1",
+      params: [id]
+    };
+
+    const delete_customer_query = {
+      text:"DELETE FROM customer_table WHERE id = $1",
+      params: [id]
+    }
+
+    await chained_query([delete_invoice_query, delete_customer_query]);
+
+  }
+  res.status(200).json({ message: 'Successfully Deleted All Customers' });
 }
