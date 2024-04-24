@@ -310,3 +310,17 @@ export const delete_customers = async (req: Request, res: Response) => {
   }
   res.status(200).json({ message: 'Successfully Deleted All Customers' });
 }
+
+export const delete_customer = async( req: Request, res: Response) => {
+  const data = req.body;
+  const delete_invoice_query = {
+    text: "DELETE FROM invoice_orders WHERE customer_id = $1",
+    params: [data.customer_id]
+  };
+  const delete_customer_query = {
+    text:"DELETE FROM customer_table WHERE id = $1",
+    params: [data.customer_id]
+  };
+  await chained_query([delete_invoice_query, delete_customer_query]);
+  res.status(200).json({ message: 'Customer Successfully Deleted' });
+}
