@@ -138,7 +138,6 @@ export const Login = () => { // test comment
             setIsSigningIn(false);
         } catch (e) {
             //need our global state banner here to handle our errors
-            console.log('error', e);
             setBannerTextState({variant: 'danger', message: e})
         }
     }

@@ -16,6 +16,7 @@ interface ICCGTableProps {
   // columns and data must be compatible with eachother when passed in as props
   totalCount: number;
   fetchDataFunction: (pageSize, pageIndex, searchQuery?) => void;
+  handleSelectedRows?: (selectedRows) => void;
   pageSize: number,
   pageIndex: number,
 }
@@ -29,6 +30,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     fetchDataFunction,
     pageSize,
     pageIndex,
+    handleSelectedRows = null,
 
   } = props;
 
@@ -61,6 +63,13 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
       setIsLoading(false);
     }
   }, [data, isLoading]);
+
+  useEffect(() => {
+    //Everytime a row is selected or de-selected, an array of row id's are sent to the parent
+    if(handleSelectedRows){
+      handleSelectedRows(rowSelection)
+    }
+  }, [rowSelection])
 
   const handleSearch = (searchQuery: string) => {
     setSearchValue(searchQuery)
@@ -130,22 +139,22 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
               )
             })}
           </thead>
-            <tbody>
-              {table.getRowModel().rows.map((row) => {
-                return (
-                  <tr key={row.id}>
-                    {row.getVisibleCells().map((cell) => {
-                      return (
-                        <td key={cell.id}>
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                        </td>
-                      );
-                    })}
-                  </tr>
-                );
-              })}
-            </tbody>
-          
+          <tbody>
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <tr key={row.id}>
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <td key={cell.id}>
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+
         </table>
         <div className='bg-white pt-3 pb-2'>
           <Row>
