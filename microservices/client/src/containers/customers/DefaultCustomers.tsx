@@ -51,7 +51,6 @@ export const DefaultCustomers = () => {
     } else {
       setDisableDelete(true)
     }
-    console.log('does this run again after deletion?')
     setSelectedIds(id_keys)
   }
 
