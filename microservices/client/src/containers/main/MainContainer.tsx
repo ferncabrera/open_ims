@@ -31,7 +31,6 @@ export const MainContainer = (props: any) => {
                 navigate('/');
                 return
             } else {
-                console.log(response);
                 const { firstName, permission } = response;
                 setIsAuthenticated(true);
                 setSidebarProps({ firstName, permission })
