@@ -54,7 +54,7 @@ This command will execute the _start.sh_ file that will ensure the Kubernetes _c
 <br/>
 Once you start seeing service logs, feel free to make changes (to relevant files) as you usually would and observe the logs Skaffold outputs as it re-builds our application (or in our case specifically, "injects" the changes directly into our running containers). 
 
-__To see how we handle secrets and environment variables check out the README.md in the ./common/config! directory!__
+__To see how we handle secrets and environment variables check out the README.md in the ./common/config directory!__
 
 #### Stopping the dev env
 In the same terminal that was used to run ```./start.sh```, simply press ```CTRL+C``` to kill the process. Skaffold will take care of the rest and teardown all pods and services/prune any dangling images :D!
@@ -88,7 +88,7 @@ Then try running ```kubectl delete -A ValidatingWebhookConfiguration ingress-ngi
 We use a self-maintained postgres instance built using an official image from the project. The pod containing the running postgres instance itself is maintained by a statefulset exposed to our applications cluster through a headless kubernetes service.
 <br/>
 <br/>
-To interact with the database itself, we can use Docker Desktop. First, run the app using ```skaffold dev``` to startup the application along with the development database. On the Docker Desktop app look for a pod named something similar to **k8s_postgres_dev-postgres-stateful-set-0** (it may have a lot of random letters and nums appended to the end). Click on it and then select the **Terminal** tab.
+To interact with the database itself, we can use Docker Desktop. First, run the app using ```./start.sh``` to startup the application along with the development database. On the Docker Desktop app look for a pod named something similar to **k8s_postgres_dev-postgres-stateful-set-0** (it may have a lot of random letters and nums appended to the end). Click on it and then select the **Terminal** tab.
 
 <img width="444" alt="image" src="https://github.com/ferncabrera/open_ims/assets/73137447/a2b17ae2-5843-4abd-87e2-ed6810a7e53c">
 
