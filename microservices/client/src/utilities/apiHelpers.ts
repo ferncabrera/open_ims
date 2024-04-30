@@ -45,3 +45,16 @@ export const sendPatchRequest = async (props: IPostRequest) => {
   });
   return response;
 };
+
+export const sendDeleteRequest = async (props: IPostRequest) => {
+  const {endpoint, headers, data} = props;
+
+  const url = `http://${HOST}${endpoint}`;
+  const response: object = await apiCall({
+    url,
+    method: "DELETE",
+    headers,
+    data,
+  });
+  return response;
+};

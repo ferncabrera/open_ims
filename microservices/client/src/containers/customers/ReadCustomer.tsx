@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react'
 import { CrudForm } from "../../components/forms/CrudForm";
 import { PillButton } from '../../components/buttons/PillButton';
-import { getJSONResponse } from '../../utilities/apiHelpers';
+import { getJSONResponse, sendDeleteRequest } from '../../utilities/apiHelpers';
 import { Row, Col } from "react-bootstrap";
 import { hasEmptyKeys } from '../../utilities/helpers/functions';
 import { CCGTable } from '../../components/table/CCGTable';
 import { Columns } from "./ReadTableSchema";
 import { useRecoilState } from 'recoil';
-import { breadcrumbsState } from '../../atoms/state';
+import { breadcrumbsState, bannerState } from '../../atoms/state';
 import { MdOutlineEdit, MdOutlinePictureAsPdf } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
+import { useNavigate } from 'react-router';
 
 import _ from 'lodash';
+import { response } from 'msw';
 
 interface IReadCustomerProps {
   customerId: number;
@@ -76,7 +78,9 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
   const customerId = props.customerId;
   const basicInfo = ['Customer ID', 'Company Name', 'Contact Name', 'Email', 'Phone', 'Vendor', 'Net Terms'];
 
+  const navigate = useNavigate();
   const [breadcrumbs, setBreadcrumb] = useRecoilState(breadcrumbsState)
+  const [banner, setBanner] = useRecoilState(bannerState)
   const [customerData, setCustomerData] = useState<ICustomerData>(initialCustomerData);
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -98,6 +102,18 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
     const response: IResponse = await getJSONResponse({ endpoint: '/api/server/invoice', params: { id: customerId, pagesize, pageindex, searchQuery } });
     setTableData(response.data);
     setTableLoading(false);
+  }
+
+  const handleDelete = async (customerId) => {
+    try {
+      const response: any = await sendDeleteRequest({endpoint: '/api/server/customer', data: {customer_id: customerId}});
+      setBanner({message: response.message, variant:'success'});
+      
+    } catch (e) {
+      setBanner({message: 'Something went wrong with deleting customer', variant: 'danger'});
+      return
+    }
+    navigate('/ccg/customers');
   }
 
   const RenderCustomerBasicInfo = () => {
@@ -186,9 +202,9 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
     <>
     <Row className=' justify-content-end'>
         <Col className='d-flex justify-content-end' xs={7} >
-            <PillButton className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
-            <PillButton className='me-2' text='Delete' color='standard' icon={<FaRegTrashAlt />} />
-            <PillButton className='me-1' text='Edit Customer' color='blue' icon={<MdOutlineEdit/>} />
+            <PillButton className='me-2' onClick={null} text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
+            <PillButton className='me-2' onClick={() => handleDelete(customerData.id)} text='Delete' color='standard' icon={<FaRegTrashAlt />} />
+            <PillButton className='me-1' onClick={null} text='Edit Customer' color='blue' icon={<MdOutlineEdit/>} />
         </Col>
       </Row>
       <CrudForm
