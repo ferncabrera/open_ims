@@ -160,7 +160,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
           <Col sm={4}>{`${addressType} Address:`}</Col>
           <Col className='no-space'>
             {/* <Row> */}
-            <p className=''>Name? Need name change here in DB</p>
+            <p className=''>{addressData.customerAddressName}</p>
             <p className='' >{addressData.address1}</p>
             <p className='' >{addressData.address2}</p>
             <p className='' >{addressData.city}</p>

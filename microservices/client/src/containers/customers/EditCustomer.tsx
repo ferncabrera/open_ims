@@ -24,6 +24,7 @@ interface ICustomerData {
   phone: string;
   netTerms: any;
   shipping: {
+    customerAddressName: string;
     address1: string;
     address2: string;
     city: string;
@@ -32,6 +33,7 @@ interface ICustomerData {
     postalCode: string;
   };
   billing: {
+    customerAddressName: string;
     address1: string;
     address2: string;
     city: string;
@@ -84,6 +86,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
       phone: '',
       netTerms: '',
       shipping: {
+        customerAddressName: '',
         address1: '',
         address2: '',
         city: '',
@@ -92,6 +95,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
         postalCode: '',
       },
       billing: {
+        customerAddressName: '',
         address1: '',
         address2: '',
         city: '',
@@ -176,6 +180,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
       setIsCheckedBilling(false);
       setCustomerData({
         ...customerData, billing: {
+          customerAddressName: '',
           address1: '',
           address2: '',
           city: '',
@@ -379,6 +384,39 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                       <Form.Check
                         label="Same as shipping address"
                         onChange={(e) => handleCheck(e.target.checked)}
+                      />
+                    </Col>
+                  </Form.Group>
+
+                </Col>
+              </Row>
+
+              <Row className=''>
+                <Col>
+                  <Form.Group as={Row} className='mb-3'>
+                    <Form.Label className='fw-normal' column lg={4}>
+                      Shipping Contact Name:
+                    </Form.Label>
+                    <Col className='mr' md={6}>
+                      <Form.Control
+                        type='input'
+                        value={customerData.shipping.customerAddressName}
+                        onChange={(e) => setCustomerData({ ...customerData, shipping: { ...customerData.shipping, customerAddressName: e.target.value } })}
+                      />
+                    </Col>
+                  </Form.Group>
+                </Col>
+                <Col>
+                  <Form.Group as={Row} className='mb-3'>
+                    <Form.Label className={'fw-normal'} column sm={4}>
+                      Billing Contact Name:
+                    </Form.Label>
+                    <Col className='mrp-20'>
+                      <Form.Control
+                        type='input'
+                        value={customerData.billing.customerAddressName}
+                        disabled={isCheckedBilling}
+                        onChange={(e) => setCustomerData({ ...customerData, billing: { ...customerData.billing, customerAddressName: e.target.value } })}
                       />
                     </Col>
                   </Form.Group>
