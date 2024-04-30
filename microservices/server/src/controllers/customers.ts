@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { query, chained_query } from "../db";
+import { get_user_id } from "./users";
 import customError from "../utils/customError";
 
 interface IGetListRequestHeaders {
@@ -157,6 +158,81 @@ export const get_customer = async (req: Request, res: Response) => {
 
 }
 
+export const create_customer = async (req: Request, res: Response) => {
+  const data = req.body;
+
+  const connected_vendor = data.vendor ? data.vendor : '';
+  const queriesList = [] as { text: string; params: any[] }[];
+  const { id, firstName, lastName, companyName, email, phone, netTerms } = data;
+
+  const net_terms = netTerms ? netTerms : 0;
+
+  if (!(firstName && lastName && companyName && email && phone)) {
+    throw new customError({ message: "Missing required fields!", code: 20 });
+  }
+  
+  const user_id = await get_user_id(req, res)
+
+  const result = await query(`INSERT INTO customer_table (first_name,last_name,company_name,email,phone,net_terms, created_by) 
+  VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`, [firstName, lastName, companyName, email, phone, net_terms, user_id]);
+
+  const new_id = result.rows[0].id
+
+
+  try {
+
+    if (connected_vendor) { // only create new one if we have a passed in vendor
+
+      const vendor_query = await query("SELECT * FROM vendor_table WHERE company_name = $1", [connected_vendor]);
+      const new_vendor_id = vendor_query.rows[0].id;
+
+      const create_vendor_customer_query: IChainedQueryProps = {
+        text: 'INSERT INTO vendor_and_customer (vendor_id, customer_id) VALUES ($1, $2)',
+        params: [new_vendor_id, new_id]
+      }
+      queriesList.push(create_vendor_customer_query)
+    };
+
+    const create_address = async (type: string, address_data: any) => {
+      const { customerAddressName, address1, address2, city, province, postalCode, country } = address_data;
+
+      const create_address_query: IChainedQueryProps = {
+        text: `
+      INSERT INTO customer_addresses 
+      (customer_id,
+        address, 
+        street_address_line1, 
+        street_address_line2,
+        city,
+        province,
+        postal,
+        country,
+        customer_address_name)
+      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9 )`,
+        params: [new_id, type, address1, address2, city, province, postalCode, country, customerAddressName]
+      };
+
+      queriesList.push(create_address_query)
+    }
+
+    if (data.shipping) {
+      create_address('Shipping', data.shipping)
+    };
+    if (data.billing) {
+      create_address('Billing', data.billing)
+    };
+
+    await chained_query(queriesList)
+  } catch (err) {
+    await query('DELETE FROM customer_table WHERE id = $1', [new_id])
+    throw new customError({message: 'Failed database operation', code:20})
+  }
+
+
+  res.status(200).json({ message: "Successfully created customer" });
+
+}
+
 export const update_customer = async (req: Request, res: Response) => {
 
   const data = req.body
@@ -165,6 +241,8 @@ export const update_customer = async (req: Request, res: Response) => {
   const queriesList = [] as { text: string; params: any[] }[];
 
   const { id, firstName, lastName, companyName, email, phone, netTerms } = data;
+  const net_terms = netTerms ? netTerms : 0;
+
 
   if (!(id && firstName && lastName && companyName && email && phone)) {
     throw new customError({ message: "Missing required fields!", code: 20 });
@@ -172,7 +250,7 @@ export const update_customer = async (req: Request, res: Response) => {
 
   const create_or_update_address = async (type: string, address_data: any) => {
 
-    const {customerAddressName, address1, address2, city, province, postalCode, country } = address_data;
+    const { customerAddressName, address1, address2, city, province, postalCode, country } = address_data;
 
     // Have to check if shipping or billing already exists. This decides on the user's edit whether we create, read, update, or delete
     const address_query: any = await query(
@@ -200,7 +278,6 @@ export const update_customer = async (req: Request, res: Response) => {
         params: [id, data.id, type, address1, address2, city, province, postalCode, country, customerAddressName]
       };
       queriesList.push(update_address_query);
-      console.log('so we reach here?', update_address_query)
 
     } else if (!address || !address.address) {
       // create
@@ -281,7 +358,7 @@ export const update_customer = async (req: Request, res: Response) => {
         phone = $6,
         net_terms = $7
       WHERE id = $1`,
-    params: [id, firstName, lastName, companyName, email, phone, netTerms]
+    params: [id, firstName, lastName, companyName, email, phone, net_terms]
   };
 
   queriesList.push(customer_query)
@@ -305,7 +382,7 @@ export const delete_customers = async (req: Request, res: Response) => {
     };
 
     const delete_customer_query = {
-      text:"DELETE FROM customer_table WHERE id = $1",
+      text: "DELETE FROM customer_table WHERE id = $1",
       params: [id]
     }
 
@@ -315,14 +392,14 @@ export const delete_customers = async (req: Request, res: Response) => {
   res.status(200).json({ message: 'Successfully Deleted All Customers' });
 }
 
-export const delete_customer = async( req: Request, res: Response) => {
+export const delete_customer = async (req: Request, res: Response) => {
   const data = req.body;
   const delete_invoice_query = {
     text: "DELETE FROM invoice_orders WHERE customer_id = $1",
     params: [data.customer_id]
   };
   const delete_customer_query = {
-    text:"DELETE FROM customer_table WHERE id = $1",
+    text: "DELETE FROM customer_table WHERE id = $1",
     params: [data.customer_id]
   };
   await chained_query([delete_invoice_query, delete_customer_query]);

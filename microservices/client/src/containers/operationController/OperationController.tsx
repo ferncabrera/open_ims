@@ -34,7 +34,9 @@ export const OperationController = () => {
 
   switch (entity.action) {
     case "create":
-      return <RenderNew />
+      return <RenderNew
+        entity={entity}
+      />
 
     case "update":
       return (

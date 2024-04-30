@@ -65,7 +65,7 @@ export const CrudForm = (props: ICrudForm) => {
               onClick={handleSubmitClick}
               disabled={disablePrimary}
             >
-              Save
+              {entity.action === 'update' ? 'Save' : 'Create'}
             </Button>
             <Button
               className='mx-1'

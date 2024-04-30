@@ -68,3 +68,18 @@ export const isAuthenticated = async (req: Request, res: Response) => {
         res.status(200).json({ authenticated: true, permission, firstName: first_name, email});
     }
 }
+
+export const get_user_id = async (req: Request, res: Response) => {
+    const userCookie = req.cookies.authToken;
+    if (!userCookie) {
+        throw new customError({message: 'No authorized user', code:30})
+    } else {
+        const secret: any = process.env.JWT_SECRET_KEY;
+        const tokenData: token = jwt.verify(userCookie, secret) as token;
+        const email = tokenData.email;
+
+        const response = await query("SELECT id FROM user_table WHERE email = $1", [email])
+        const user_id = response.rows[0].id
+        return user_id
+    }
+}
