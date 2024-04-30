@@ -114,6 +114,7 @@ export const get_customer = async (req: Request, res: Response) => {
   for (const element of address_query.rows) {
     if (element.address === "Shipping") {
       customer_object.shipping = {
+        customerAddressName: element.customer_address_name,
         address1: element.street_address_line1,
         address2: element.street_address_line2,
         city: element.city,
@@ -123,6 +124,7 @@ export const get_customer = async (req: Request, res: Response) => {
       }
     } else if (element.address === "Billing") {
       customer_object.billing = {
+        customerAddressName: element.customer_address_name,
         address1: element.street_address_line1,
         address2: element.street_address_line2,
         city: element.city,
@@ -170,7 +172,7 @@ export const update_customer = async (req: Request, res: Response) => {
 
   const create_or_update_address = async (type: string, address_data: any) => {
 
-    const { address1, address2, city, province, postalCode, country } = address_data;
+    const {customerAddressName, address1, address2, city, province, postalCode, country } = address_data;
 
     // Have to check if shipping or billing already exists. This decides on the user's edit whether we create, read, update, or delete
     const address_query: any = await query(
@@ -186,6 +188,7 @@ export const update_customer = async (req: Request, res: Response) => {
         text: `
           UPDATE customer_addresses SET
             customer_id = $2,
+            customer_address_name = $10,
             address = $3,
             street_address_line1 = $4,
             street_address_line2 = $5,
@@ -194,7 +197,7 @@ export const update_customer = async (req: Request, res: Response) => {
             postal = $8,
             country = $9
           WHERE id = $1`,
-        params: [id, data.id, type, address1, address2, city, province, postalCode, country]
+        params: [id, data.id, type, address1, address2, city, province, postalCode, country, customerAddressName]
       };
       queriesList.push(update_address_query);
       console.log('so we reach here?', update_address_query)
@@ -211,9 +214,10 @@ export const update_customer = async (req: Request, res: Response) => {
             city,
             province,
             postal,
-            country)
-          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)`,
-        params: [data.id, type, address1, address2, city, province, postalCode, country]
+            country,
+            customer_address_name)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9 )`,
+        params: [data.id, type, address1, address2, city, province, postalCode, country, customerAddressName]
       }
 
       queriesList.push(create_address_query);

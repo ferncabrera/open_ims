@@ -59,6 +59,7 @@ CREATE TABLE customer_addresses (
     id SERIAL PRIMARY KEY,
     customer_id INT NOT NULL,
     address address_type NOT NULL,
+    customer_address_name VARCHAR(50) NOT NULL,
     street_address_line1 VARCHAR(100) NOT NULL,
     street_address_line2 VARCHAR(100),
     city VARCHAR(35) NOT NULL,
@@ -72,6 +73,7 @@ CREATE TABLE vendor_addresses (
     id SERIAL PRIMARY KEY,
     vendor_id INT NOT NULL,
     address address_type NOT NULL,
+    vendor_address_name VARCHAR(50) NOT NULL,
     street_address_line1 VARCHAR(100) NOT NULL,
     street_address_line2 VARCHAR(100),
     city VARCHAR(35) NOT NULL,
@@ -480,237 +482,217 @@ BEGIN
 
 
   -- Insert addresses for customers
-  INSERT INTO customer_addresses (customer_id, address, street_address_line1, street_address_line2, city, province, postal, country)
+  INSERT INTO customer_addresses (customer_id, address, customer_address_name, street_address_line1, street_address_line2, city, province, postal, country)
   VALUES
-  (1, 'Shipping', '123 Main St', 'Apt 1', 'CustomerCityA', 'CustomerProvinceA', '12345', 'CustomerCountryA'),
-  (1, 'Billing', '456 Oak St', 'Suite 101', 'CustomerCityB', 'CustomerProvinceB', '67890', 'CustomerCountryB'),
+  (1, 'Shipping', 'Howard', '123 Main St', 'Apt 1', 'CustomerCityA', 'CustomerProvinceA', '12345', 'CustomerCountryA'),
+  (1, 'Billing', 'Harold', '456 Oak St', 'Suite 101', 'CustomerCityB', 'CustomerProvinceB', '67890', 'CustomerCountryB'),
 
-  (2, 'Shipping', '789 Elm St', 'Unit 5', 'CustomerCityC', 'CustomerProvinceC', '23456', 'CustomerCountryC'),
+  (2, 'Shipping', 'Fernando', '789 Elm St', 'Unit 5', 'CustomerCityC', 'CustomerProvinceC', '23456', 'CustomerCountryC'),
 
-  (3, 'Billing', '101 Pine St', 'Floor 3', 'CustomerCityD', 'CustomerProvinceD', '78901', 'CustomerCountryD'),
+  (3, 'Billing', 'Oliver', '101 Pine St', 'Floor 3', 'CustomerCityD', 'CustomerProvinceD', '78901', 'CustomerCountryD'),
 
-  (4, 'Shipping', '202 Maple St', 'Apt 7', 'CustomerCityE', 'CustomerProvinceE', '23456', 'CustomerCountryE'),
-  (4, 'Billing', '303 Cedar St', 'Suite 202', 'CustomerCityF', 'CustomerProvinceF', '56789', 'CustomerCountryF'),
+  (4, 'Shipping', 'Mufasa', '202 Maple St', 'Apt 7', 'CustomerCityE', 'CustomerProvinceE', '23456', 'CustomerCountryE'),
+  (4, 'Billing', 'George', '303 Cedar St', 'Suite 202', 'CustomerCityF', 'CustomerProvinceF', '56789', 'CustomerCountryF'),
 
-  (5, 'Shipping', '404 Birch St', 'Unit 11', 'CustomerCityG', 'CustomerProvinceG', '12345', 'CustomerCountryG'),
+  (5, 'Shipping', 'Henry', '404 Birch St', 'Unit 11', 'CustomerCityG', 'CustomerProvinceG', '12345', 'CustomerCountryG'),
 
-  (6, 'Billing', '505 Pine St', 'Floor 5', 'CustomerCityH', 'CustomerProvinceH', '67890', 'CustomerCountryH'),
+  (6, 'Billing', 'Jacob', '505 Pine St', 'Floor 5', 'CustomerCityH', 'CustomerProvinceH', '67890', 'CustomerCountryH'),
 
-  (7, 'Shipping', '606 Oak St', 'Apt 15', 'CustomerCityI', 'CustomerProvinceI', '23456', 'CustomerCountryI'),
+  (7, 'Shipping', 'Vlad', '606 Oak St', 'Apt 15', 'CustomerCityI', 'CustomerProvinceI', '23456', 'CustomerCountryI'),
 
-  (8, 'Billing', '707 Maple St', 'Suite 303', 'CustomerCityJ', 'CustomerProvinceJ', '78901', 'CustomerCountryJ'),
+  (8, 'Billing', 'Juan', '707 Maple St', 'Suite 303', 'CustomerCityJ', 'CustomerProvinceJ', '78901', 'CustomerCountryJ'),
 
-  (9, 'Shipping', '808 Cedar St', 'Unit 21', 'CustomerCityK', 'CustomerProvinceK', '12345', 'CustomerCountryK'),
+  (9, 'Shipping', 'Pablo', '808 Cedar St', 'Unit 21', 'CustomerCityK', 'CustomerProvinceK', '12345', 'CustomerCountryK'),
 
-  (10, 'Billing', '909 Birch St', 'Floor 7', 'CustomerCityL', 'CustomerProvinceL', '67890', 'CustomerCountryL'),
+  (10, 'Billing', 'Roger', '909 Birch St', 'Floor 7', 'CustomerCityL', 'CustomerProvinceL', '67890', 'CustomerCountryL'),
 
-  (11, 'Shipping', '111 Main St', 'Apt 11', 'CustomerCityM', 'CustomerProvinceM', '12345', 'CustomerCountryM'),
-  (11, 'Billing', '222 Oak St', 'Suite 222', 'CustomerCityN', 'CustomerProvinceN', '67890', 'CustomerCountryN'),
-  (11, 'Shipping', '333 Elm St', 'Unit 33', 'CustomerCityO', 'CustomerProvinceO', '23456', 'CustomerCountryO'),
+  (11, 'Shipping', 'Yuri', '111 Main St', 'Apt 11', 'CustomerCityM', 'CustomerProvinceM', '12345', 'CustomerCountryM'),
+  (11, 'Billing', 'Wilhelm', '222 Oak St', 'Suite 222', 'CustomerCityN', 'CustomerProvinceN', '67890', 'CustomerCountryN'),
+  (11, 'Shipping', 'Anastasia', '333 Elm St', 'Unit 33', 'CustomerCityO', 'CustomerProvinceO', '23456', 'CustomerCountryO'),
 
-  (12, 'Billing', '444 Pine St', 'Floor 44', 'CustomerCityP', 'CustomerProvinceP', '78901', 'CustomerCountryP'),
-  (12, 'Shipping', '555 Maple St', 'Apt 55', 'CustomerCityQ', 'CustomerProvinceQ', '23456', 'CustomerCountryQ'),
+  (12, 'Billing', 'Lucy', '444 Pine St', 'Floor 44', 'CustomerCityP', 'CustomerProvinceP', '78901', 'CustomerCountryP'),
+  (12, 'Shipping', 'Georgia', '555 Maple St', 'Apt 55', 'CustomerCityQ', 'CustomerProvinceQ', '23456', 'CustomerCountryQ'),
 
-  (13, 'Billing', '666 Cedar St', 'Suite 66', 'CustomerCityR', 'CustomerProvinceR', '56789', 'CustomerCountryR'),
-  (13, 'Shipping', '777 Birch St', 'Unit 77', 'CustomerCityS', 'CustomerProvinceS', '12345', 'CustomerCountryS'),
+  (13, 'Billing', 'Georgina', '666 Cedar St', 'Suite 66', 'CustomerCityR', 'CustomerProvinceR', '56789', 'CustomerCountryR'),
+  (13, 'Shipping', 'July', '777 Birch St', 'Unit 77', 'CustomerCityS', 'CustomerProvinceS', '12345', 'CustomerCountryS'),
 
-  (14, 'Shipping', '888 Oak St', 'Apt 88', 'CustomerCityT', 'CustomerProvinceT', '67890', 'CustomerCountryT'),
+  (14, 'Shipping', 'Meghan', '888 Oak St', 'Apt 88', 'CustomerCityT', 'CustomerProvinceT', '67890', 'CustomerCountryT'),
 
-  (15, 'Billing', '999 Elm St', 'Floor 99', 'CustomerCityU', 'CustomerProvinceU', '23456', 'CustomerCountryU'),
-  (15, 'Shipping', '1010 Pine St', 'Suite 1010', 'CustomerCityV', 'CustomerProvinceV', '78901', 'CustomerCountryV'),
+  (15, 'Billing', 'Vanessa', '999 Elm St', 'Floor 99', 'CustomerCityU', 'CustomerProvinceU', '23456', 'CustomerCountryU'),
+  (15, 'Shipping', 'Ted', '1010 Pine St', 'Suite 1010', 'CustomerCityV', 'CustomerProvinceV', '78901', 'CustomerCountryV'),
 
-  (16, 'Billing', '1111 Maple St', 'Unit 111', 'CustomerCityW', 'CustomerProvinceW', '12345', 'CustomerCountryW'),
-  (16, 'Shipping', '1212 Cedar St', 'Floor 12', 'CustomerCityX', 'CustomerProvinceX', '67890', 'CustomerCountryX'),
+  (16, 'Billing', 'Howard', '1111 Maple St', 'Unit 111', 'CustomerCityW', 'CustomerProvinceW', '12345', 'CustomerCountryW'),
+  (16, 'Shipping', 'Harold', '1212 Cedar St', 'Floor 12', 'CustomerCityX', 'CustomerProvinceX', '67890', 'CustomerCountryX'),
 
-  (17, 'Billing', '1313 Birch St', 'Apt 1313', 'CustomerCityY', 'CustomerProvinceY', '23456', 'CustomerCountryY'),
+  (17, 'Billing', 'Fernando', '1313 Birch St', 'Apt 1313', 'CustomerCityY', 'CustomerProvinceY', '23456', 'CustomerCountryY'),
 
-  (18, 'Shipping', '1414 Oak St', 'Suite 1414', 'CustomerCityZ', 'CustomerProvinceZ', '56789', 'CustomerCountryZ'),
-  (19, 'Shipping', '1515 Elm St', 'Unit 15', 'CustomerCityAA', 'CustomerProvinceAA', '12345', 'CustomerCountryAA'),
-  (19, 'Billing', '1616 Pine St', 'Floor 16', 'CustomerCityAB', 'CustomerProvinceAB', '67890', 'CustomerCountryAB'),
+  (18, 'Shipping', 'Oliver', '1414 Oak St', 'Suite 1414', 'CustomerCityZ', 'CustomerProvinceZ', '56789', 'CustomerCountryZ'),
+  (19, 'Shipping', 'Mufasa', '1515 Elm St', 'Unit 15', 'CustomerCityAA', 'CustomerProvinceAA', '12345', 'CustomerCountryAA'),
+  (19, 'Billing', 'George', '1616 Pine St', 'Floor 16', 'CustomerCityAB', 'CustomerProvinceAB', '67890', 'CustomerCountryAB'),
 
-  
-  (20, 'Shipping', '1717 Maple St', 'Apt 17', 'CustomerCityAC', 'CustomerProvinceAC', '23456', 'CustomerCountryAC'),
-  (20, 'Billing', '1818 Cedar St', 'Suite 1818', 'CustomerCityAD', 'CustomerProvinceAD', '78901', 'CustomerCountryAD'),
+  (20, 'Shipping', 'Henry', '1717 Maple St', 'Apt 17', 'CustomerCityAC', 'CustomerProvinceAC', '23456', 'CustomerCountryAC'),
+  (20, 'Billing', 'Jacob', '1818 Cedar St', 'Suite 1818', 'CustomerCityAD', 'CustomerProvinceAD', '78901', 'CustomerCountryAD'),
 
-  (21, 'Shipping', '1929 Oak St', 'Apt 21', 'CustomerCityAE', 'CustomerProvinceAE', '12345', 'CustomerCountryAE'),
-  (21, 'Billing', '2020 Elm St', 'Unit 20', 'CustomerCityAF', 'CustomerProvinceAF', '67890', 'CustomerCountryAF'),
+  (21, 'Shipping', 'Vlad', '1929 Oak St', 'Apt 21', 'CustomerCityAE', 'CustomerProvinceAE', '12345', 'CustomerCountryAE'),
+  (21, 'Billing', 'Juan', '2020 Elm St', 'Unit 20', 'CustomerCityAF', 'CustomerProvinceAF', '67890', 'CustomerCountryAF'),
 
-  (22, 'Shipping', '2121 Maple St', 'Floor 22', 'CustomerCityAG', 'CustomerProvinceAG', '23456', 'CustomerCountryAG'),
-  (22, 'Billing', '2222 Cedar St', 'Apt 22', 'CustomerCityAH', 'CustomerProvinceAH', '78901', 'CustomerCountryAH'),
+  (22, 'Shipping', 'Pablo', '2121 Maple St', 'Floor 22', 'CustomerCityAG', 'CustomerProvinceAG', '23456', 'CustomerCountryAG'),
+  (22, 'Billing', 'Roger', '2222 Cedar St', 'Apt 22', 'CustomerCityAH', 'CustomerProvinceAH', '78901', 'CustomerCountryAH'),
 
-  (23, 'Shipping', '2323 Oak St', 'Suite 23', 'CustomerCityAI', 'CustomerProvinceAI', '12345', 'CustomerCountryAI'),
-  (23, 'Billing', '2424 Elm St', 'Unit 24', 'CustomerCityAJ', 'CustomerProvinceAJ', '67890', 'CustomerCountryAJ'),
+  (23, 'Shipping', 'Yuri', '2323 Oak St', 'Suite 23', 'CustomerCityAI', 'CustomerProvinceAI', '12345', 'CustomerCountryAI'),
+  (23, 'Billing', 'Wilhelm', '2424 Elm St', 'Unit 24', 'CustomerCityAJ', 'CustomerProvinceAJ', '67890', 'CustomerCountryAJ'),
 
-  (24, 'Shipping', '2525 Maple St', 'Floor 25', 'CustomerCityAK', 'CustomerProvinceAK', '23456', 'CustomerCountryAK'),
-  (24, 'Billing', '2626 Cedar St', 'Apt 26', 'CustomerCityAL', 'CustomerProvinceAL', '78901', 'CustomerCountryAL'),
-  (25, 'Shipping', '2525 Oak St', 'Apt 25', 'CustomerCityAM', 'CustomerProvinceAM', '12345', 'CustomerCountryAM'),
-  (25, 'Billing', '2626 Elm St', 'Floor 26', 'CustomerCityAN', 'CustomerProvinceAN', '67890', 'CustomerCountryAN'),
+  (24, 'Shipping', 'Anastasia', '2525 Maple St', 'Floor 25', 'CustomerCityAK', 'CustomerProvinceAK', '23456', 'CustomerCountryAK'),
+  (24, 'Billing', 'Lucy', '2626 Cedar St', 'Apt 26', 'CustomerCityAL', 'CustomerProvinceAL', '78901', 'CustomerCountryAL'),
 
-  (26, 'Shipping', '2727 Maple St', 'Unit 27', 'CustomerCityAO', 'CustomerProvinceAO', '23456', 'CustomerCountryAO'),
-  (26, 'Billing', '2828 Cedar St', 'Suite 2828', 'CustomerCityAP', 'CustomerProvinceAP', '78901', 'CustomerCountryAP'),
+  (25, 'Shipping', 'Georgia', '2525 Oak St', 'Apt 25', 'CustomerCityAM', 'CustomerProvinceAM', '12345', 'CustomerCountryAM'),
+  (25, 'Billing', 'Georgina', '2626 Elm St', 'Floor 26', 'CustomerCityAN', 'CustomerProvinceAN', '67890', 'CustomerCountryAN'),
 
-  (27, 'Shipping', '2929 Oak St', 'Apt 29', 'CustomerCityAQ', 'CustomerProvinceAQ', '12345', 'CustomerCountryAQ'),
-  (27, 'Billing', '3030 Elm St', 'Floor 30', 'CustomerCityAR', 'CustomerProvinceAR', '67890', 'CustomerCountryAR'),
+  (26, 'Shipping', 'July', '2727 Maple St', 'Unit 27', 'CustomerCityAO', 'CustomerProvinceAO', '23456', 'CustomerCountryAO'),
+  (26, 'Billing', 'Meghan', '2828 Cedar St', 'Suite 2828', 'CustomerCityAP', 'CustomerProvinceAP', '78901', 'CustomerCountryAP'),
 
-  (28, 'Shipping', '3131 Maple St', 'Unit 31', 'CustomerCityAS', 'CustomerProvinceAS', '23456', 'CustomerCountryAS'),
+  (27, 'Shipping', 'Ted', '2929 Oak St', 'Apt 29', 'CustomerCityAQ', 'CustomerProvinceAQ', '12345', 'CustomerCountryAQ'),
+  (27, 'Billing', 'Howard', '3030 Elm St', 'Floor 30', 'CustomerCityAR', 'CustomerProvinceAR', '67890', 'CustomerCountryAR'),
 
-  (29, 'Shipping', '3333 Oak St', 'Suite 33', 'CustomerCityAU', 'CustomerProvinceAU', '12345', 'CustomerCountryAU'),
-  (29, 'Billing', '3434 Elm St', 'Unit 34', 'CustomerCityAV', 'CustomerProvinceAV', '67890', 'CustomerCountryAV'),
+  (28, 'Shipping', 'Harold', '3131 Maple St', 'Unit 31', 'CustomerCityAS', 'CustomerProvinceAS', '23456', 'CustomerCountryAS'),
 
-  (30, 'Shipping', '3535 Maple St', 'Floor 35', 'CustomerCityAW', 'CustomerProvinceAW', '23456', 'CustomerCountryAW'),
-  (30, 'Billing', '3636 Cedar St', 'Apt 36', 'CustomerCityAX', 'CustomerProvinceAX', '78901', 'CustomerCountryAX'),
-  (31, 'Shipping', '3636 Oak St', 'Apt 36', 'CustomerCityAY', 'CustomerProvinceAY', '12345', 'CustomerCountryAY'),
-  (31, 'Billing', '3737 Elm St', 'Floor 37', 'CustomerCityAZ', 'CustomerProvinceAZ', '67890', 'CustomerCountryAZ'),
+  (29, 'Shipping', 'Fernando', '3333 Oak St', 'Suite 33', 'CustomerCityAU', 'CustomerProvinceAU', '12345', 'CustomerCountryAU'),
+  (29, 'Billing', 'Oliver', '3434 Elm St', 'Unit 34', 'CustomerCityAV', 'CustomerProvinceAV', '67890', 'CustomerCountryAV'),
 
-  (32, 'Shipping', '3838 Maple St', 'Unit 38', 'CustomerCityBA', 'CustomerProvinceBA', '23456', 'CustomerCountryBA'),
-  (32, 'Billing', '3939 Cedar St', 'Suite 3939', 'CustomerCityBB', 'CustomerProvinceBB', '78901', 'CustomerCountryBB'),
+  (30, 'Shipping', 'Mufasa', '3535 Maple St', 'Floor 35', 'CustomerCityAW', 'CustomerProvinceAW', '23456', 'CustomerCountryAW'),
+  (30, 'Billing', 'George', '3636 Cedar St', 'Apt 36', 'CustomerCityAX', 'CustomerProvinceAX', '78901', 'CustomerCountryAX'),
+  (31, 'Shipping', 'Henry', '3636 Oak St', 'Apt 36', 'CustomerCityAY', 'CustomerProvinceAY', '12345', 'CustomerCountryAY'),
+  (31, 'Billing', 'Jacob', '3737 Elm St', 'Floor 37', 'CustomerCityAZ', 'CustomerProvinceAZ', '67890', 'CustomerCountryAZ'),
 
-  (33, 'Shipping', '4040 Oak St', 'Apt 40', 'CustomerCityBC', 'CustomerProvinceBC', '12345', 'CustomerCountryBC'),
-  (33, 'Billing', '4141 Elm St', 'Floor 41', 'CustomerCityBD', 'CustomerProvinceBD', '67890', 'CustomerCountryBD'),
+  (32, 'Shipping', 'Vlad', '3838 Maple St', 'Unit 38', 'CustomerCityBA', 'CustomerProvinceBA', '23456', 'CustomerCountryBA'),
+  (32, 'Billing', 'Juan', '3939 Cedar St', 'Suite 3939', 'CustomerCityBB', 'CustomerProvinceBB', '78901', 'CustomerCountryBB'),
 
-  (34, 'Shipping', '4242 Maple St', 'Unit 42', 'CustomerCityBE', 'CustomerProvinceBE', '23456', 'CustomerCountryBE'),
-  (34, 'Billing', '4343 Cedar St', 'Apt 43', 'CustomerCityBF', 'CustomerProvinceBF', '78901', 'CustomerCountryBF'),
+  (33, 'Shipping', 'Pablo', '4040 Oak St', 'Apt 40', 'CustomerCityBC', 'CustomerProvinceBC', '12345', 'CustomerCountryBC'),
+  (33, 'Billing', 'Roger', '4141 Elm St', 'Floor 41', 'CustomerCityBD', 'CustomerProvinceBD', '67890', 'CustomerCountryBD'),
 
-  (35, 'Shipping', '4444 Oak St', 'Suite 44', 'CustomerCityBG', 'CustomerProvinceBG', '12345', 'CustomerCountryBG'),
-  (35, 'Billing', '4545 Elm St', 'Unit 45', 'CustomerCityBH', 'CustomerProvinceBH', '67890', 'CustomerCountryBH'),
-  (36, 'Shipping', '4646 Maple St', 'Apt 46', 'CustomerCityBI', 'CustomerProvinceBI', '23456', 'CustomerCountryBI'),
+  (34, 'Shipping', 'Yuri', '4242 Maple St', 'Unit 42', 'CustomerCityBE', 'CustomerProvinceBE', '23456', 'CustomerCountryBE'),
+  (34, 'Billing', 'Wilhelm', '4343 Cedar St', 'Apt 43', 'CustomerCityBF', 'CustomerProvinceBF', '78901', 'CustomerCountryBF'),
 
-  (37, 'Shipping', '4848 Oak St', 'Unit 48', 'CustomerCityBK', 'CustomerProvinceBK', '12345', 'CustomerCountryBK'),
-  (37, 'Billing', '4949 Elm St', 'Suite 49', 'CustomerCityBL', 'CustomerProvinceBL', '67890', 'CustomerCountryBL'),
+  (35, 'Shipping', 'Anastasia', '4444 Oak St', 'Suite 44', 'CustomerCityBG', 'CustomerProvinceBG', '12345', 'CustomerCountryBG'),
+  (35, 'Billing', 'Lucy', '4545 Elm St', 'Unit 45', 'CustomerCityBH', 'CustomerProvinceBH', '67890', 'CustomerCountryBH'),
+  (36, 'Shipping', 'Georgia', '4646 Maple St', 'Apt 46', 'CustomerCityBI', 'CustomerProvinceBI', '23456', 'CustomerCountryBI'),
 
-  (38, 'Shipping', '5050 Maple St', 'Apt 50', 'CustomerCityBM', 'CustomerProvinceBM', '23456', 'CustomerCountryBM'),
-  (39, 'Billing', '5151 Cedar St', 'Floor 51', 'CustomerCityBN', 'CustomerProvinceBN', '78901', 'CustomerCountryBN'),
+  (37, 'Shipping', 'Georgina', '4848 Oak St', 'Unit 48', 'CustomerCityBK', 'CustomerProvinceBK', '12345', 'CustomerCountryBK'),
+  (37, 'Billing', 'July', '4949 Elm St', 'Suite 49', 'CustomerCityBL', 'CustomerProvinceBL', '67890', 'CustomerCountryBL'),
 
-  (39, 'Billing', '5353 Elm St', 'Suite 53', 'CustomerCityBP', 'CustomerProvinceBP', '67890', 'CustomerCountryBP'),
+  (38, 'Shipping', 'Meghan', '5050 Maple St', 'Apt 50', 'CustomerCityBM', 'CustomerProvinceBM', '23456', 'CustomerCountryBM'),
+  (39, 'Billing', 'Vanessa', '5151 Cedar St', 'Floor 51', 'CustomerCityBN', 'CustomerProvinceBN', '78901', 'CustomerCountryBN'),
 
-  (40, 'Shipping', '5454 Maple St', 'Apt 54', 'CustomerCityBQ', 'CustomerProvinceBQ', '23456', 'CustomerCountryBQ'),
-  (40, 'Shipping', '5555 Cedar St', 'Floor 55', 'CustomerCityBR', 'CustomerProvinceBR', '78901', 'CustomerCountryBR');
+  (39, 'Billing', 'Ted', '5353 Elm St', 'Suite 53', 'CustomerCityBP', 'CustomerProvinceBP', '67890', 'CustomerCountryBP'),
+
+  (40, 'Shipping', 'Howard', '5454 Maple St', 'Apt 54', 'CustomerCityBQ', 'CustomerProvinceBQ', '23456', 'CustomerCountryBQ'),
+  (40, 'Shipping', 'Harold', '5555 Cedar St', 'Floor 55', 'CustomerCityBR', 'CustomerProvinceBR', '78901', 'CustomerCountryBR');
 
   -- Insert addresses for customers
-  INSERT INTO vendor_addresses (vendor_id, address, street_address_line1, street_address_line2, city, province, postal, country)
+  INSERT INTO vendor_addresses (vendor_id, address, vendor_address_name, street_address_line1, street_address_line2, city, province, postal, country)
   VALUES
-  (1, 'Shipping', '123 Main St', 'Apt 1', 'VendorCityA', 'VendorProvinceA', '12345', 'VendorCountryA'),
-  (1, 'Billing', '456 Oak St', 'Suite 101', 'VendorCityB', 'VendorProvinceB', '67890', 'VendorCountryB'),
+  (1, 'Shipping', 'Howard', '123 Main St', 'Apt 1', 'CustomerCityA', 'CustomerProvinceA', '12345', 'CustomerCountryA'),
+  (1, 'Billing', 'Harold', '456 Oak St', 'Suite 101', 'CustomerCityB', 'CustomerProvinceB', '67890', 'CustomerCountryB'),
 
-  (2, 'Shipping', '789 Elm St', 'Unit 5', 'VendorCityC', 'VendorProvinceC', '23456', 'VendorCountryC'),
+  (2, 'Shipping', 'Fernando', '789 Elm St', 'Unit 5', 'CustomerCityC', 'CustomerProvinceC', '23456', 'CustomerCountryC'),
 
-  (3, 'Billing', '101 Pine St', 'Floor 3', 'VendorCityD', 'VendorProvinceD', '78901', 'VendorCountryD'),
+  (3, 'Billing', 'Oliver', '101 Pine St', 'Floor 3', 'CustomerCityD', 'CustomerProvinceD', '78901', 'CustomerCountryD'),
 
-  (4, 'Shipping', '202 Maple St', 'Apt 7', 'VendorCityE', 'VendorProvinceE', '23456', 'VendorCountryE'),
-  (4, 'Billing', '303 Cedar St', 'Suite 202', 'VendorCityF', 'VendorProvinceF', '56789', 'VendorCountryF'),
+  (4, 'Shipping', 'Mufasa', '202 Maple St', 'Apt 7', 'CustomerCityE', 'CustomerProvinceE', '23456', 'CustomerCountryE'),
+  (4, 'Billing', 'George', '303 Cedar St', 'Suite 202', 'CustomerCityF', 'CustomerProvinceF', '56789', 'CustomerCountryF'),
 
-  (5, 'Shipping', '404 Birch St', 'Unit 11', 'VendorCityG', 'VendorProvinceG', '12345', 'VendorCountryG'),
+  (5, 'Shipping', 'Henry', '404 Birch St', 'Unit 11', 'CustomerCityG', 'CustomerProvinceG', '12345', 'CustomerCountryG'),
 
-  (6, 'Billing', '505 Pine St', 'Floor 5', 'VendorCityH', 'VendorProvinceH', '67890', 'VendorCountryH'),
+  (6, 'Billing', 'Jacob', '505 Pine St', 'Floor 5', 'CustomerCityH', 'CustomerProvinceH', '67890', 'CustomerCountryH'),
 
-  (7, 'Shipping', '606 Oak St', 'Apt 15', 'VendorCityI', 'VendorProvinceI', '23456', 'VendorCountryI'),
+  (7, 'Shipping', 'Vlad', '606 Oak St', 'Apt 15', 'CustomerCityI', 'CustomerProvinceI', '23456', 'CustomerCountryI'),
 
-  (8, 'Billing', '707 Maple St', 'Suite 303', 'VendorCityJ', 'VendorProvinceJ', '78901', 'VendorCountryJ'),
+  (8, 'Billing', 'Juan', '707 Maple St', 'Suite 303', 'CustomerCityJ', 'CustomerProvinceJ', '78901', 'CustomerCountryJ'),
 
-  (9, 'Shipping', '808 Cedar St', 'Unit 21', 'VendorCityK', 'VendorProvinceK', '12345', 'VendorCountryK'),
+  (9, 'Shipping', 'Pablo', '808 Cedar St', 'Unit 21', 'CustomerCityK', 'CustomerProvinceK', '12345', 'CustomerCountryK'),
 
-  (10, 'Billing', '909 Birch St', 'Floor 7', 'VendorCityL', 'VendorProvinceL', '67890', 'VendorCountryL'),
+  (10, 'Billing', 'Roger', '909 Birch St', 'Floor 7', 'CustomerCityL', 'CustomerProvinceL', '67890', 'CustomerCountryL'),
 
-  (11, 'Shipping', '111 Main St', 'Apt 11', 'VendorCityM', 'VendorProvinceM', '12345', 'VendorCountryM'),
-  (11, 'Billing', '222 Oak St', 'Suite 222', 'VendorCityN', 'VendorProvinceN', '67890', 'VendorCountryN'),
-  (11, 'Shipping', '333 Elm St', 'Unit 33', 'VendorCityO', 'VendorProvinceO', '23456', 'VendorCountryO'),
+  (11, 'Shipping', 'Yuri', '111 Main St', 'Apt 11', 'CustomerCityM', 'CustomerProvinceM', '12345', 'CustomerCountryM'),
+  (11, 'Billing', 'Wilhelm', '222 Oak St', 'Suite 222', 'CustomerCityN', 'CustomerProvinceN', '67890', 'CustomerCountryN'),
+  (11, 'Shipping', 'Anastasia', '333 Elm St', 'Unit 33', 'CustomerCityO', 'CustomerProvinceO', '23456', 'CustomerCountryO'),
 
-  (12, 'Billing', '444 Pine St', 'Floor 44', 'VendorCityP', 'VendorProvinceP', '78901', 'VendorCountryP'),
-  (12, 'Shipping', '555 Maple St', 'Apt 55', 'VendorCityQ', 'VendorProvinceQ', '23456', 'VendorCountryQ'),
+  (12, 'Billing', 'Lucy', '444 Pine St', 'Floor 44', 'CustomerCityP', 'CustomerProvinceP', '78901', 'CustomerCountryP'),
+  (12, 'Shipping', 'Georgia', '555 Maple St', 'Apt 55', 'CustomerCityQ', 'CustomerProvinceQ', '23456', 'CustomerCountryQ'),
 
-  (13, 'Billing', '666 Cedar St', 'Suite 66', 'VendorCityR', 'VendorProvinceR', '56789', 'VendorCountryR'),
-  (13, 'Shipping', '777 Birch St', 'Unit 77', 'VendorCityS', 'VendorProvinceS', '12345', 'VendorCountryS'),
+  (13, 'Billing', 'Georgina', '666 Cedar St', 'Suite 66', 'CustomerCityR', 'CustomerProvinceR', '56789', 'CustomerCountryR'),
+  (13, 'Shipping', 'July', '777 Birch St', 'Unit 77', 'CustomerCityS', 'CustomerProvinceS', '12345', 'CustomerCountryS'),
 
-  (14, 'Shipping', '888 Oak St', 'Apt 88', 'VendorCityT', 'VendorProvinceT', '67890', 'VendorCountryT'),
+  (14, 'Shipping', 'Meghan', '888 Oak St', 'Apt 88', 'CustomerCityT', 'CustomerProvinceT', '67890', 'CustomerCountryT'),
 
-  (15, 'Billing', '999 Elm St', 'Floor 99', 'VendorCityU', 'VendorProvinceU', '23456', 'VendorCountryU'),
-  (15, 'Shipping', '1010 Pine St', 'Suite 1010', 'VendorCityV', 'VendorProvinceV', '78901', 'VendorCountryV'),
+  (15, 'Billing', 'Vanessa', '999 Elm St', 'Floor 99', 'CustomerCityU', 'CustomerProvinceU', '23456', 'CustomerCountryU'),
+  (15, 'Shipping', 'Ted', '1010 Pine St', 'Suite 1010', 'CustomerCityV', 'CustomerProvinceV', '78901', 'CustomerCountryV'),
 
-  (16, 'Billing', '1111 Maple St', 'Unit 111', 'VendorCityW', 'VendorProvinceW', '12345', 'VendorCountryW'),
-  (16, 'Shipping', '1212 Cedar St', 'Floor 12', 'VendorCityX', 'VendorProvinceX', '67890', 'VendorCountryX'),
+  (16, 'Billing', 'Howard', '1111 Maple St', 'Unit 111', 'CustomerCityW', 'CustomerProvinceW', '12345', 'CustomerCountryW'),
+  (16, 'Shipping', 'Harold', '1212 Cedar St', 'Floor 12', 'CustomerCityX', 'CustomerProvinceX', '67890', 'CustomerCountryX'),
 
-  (17, 'Billing', '1313 Birch St', 'Apt 1313', 'VendorCityY', 'VendorProvinceY', '23456', 'VendorCountryY'),
+  (17, 'Billing', 'Fernando', '1313 Birch St', 'Apt 1313', 'CustomerCityY', 'CustomerProvinceY', '23456', 'CustomerCountryY'),
 
-  (18, 'Shipping', '1414 Oak St', 'Suite 1414', 'VendorCityZ', 'VendorProvinceZ', '56789', 'VendorCountryZ'),
-  (19, 'Shipping', '1515 Elm St', 'Unit 15', 'VendorCityAA', 'VendorProvinceAA', '12345', 'VendorCountryAA'),
-  (19, 'Billing', '1616 Pine St', 'Floor 16', 'VendorCityAB', 'VendorProvinceAB', '67890', 'VendorCountryAB'),
+  (18, 'Shipping', 'Oliver', '1414 Oak St', 'Suite 1414', 'CustomerCityZ', 'CustomerProvinceZ', '56789', 'CustomerCountryZ'),
+  (19, 'Shipping', 'Mufasa', '1515 Elm St', 'Unit 15', 'CustomerCityAA', 'CustomerProvinceAA', '12345', 'CustomerCountryAA'),
+  (19, 'Billing', 'George', '1616 Pine St', 'Floor 16', 'CustomerCityAB', 'CustomerProvinceAB', '67890', 'CustomerCountryAB'),
 
-  -- Customer 20
-  (20, 'Shipping', '1717 Maple St', 'Apt 17', 'VendorCityAC', 'VendorProvinceAC', '23456', 'VendorCountryAC'),
-  (20, 'Billing', '1818 Cedar St', 'Suite 1818', 'VendorCityAD', 'VendorProvinceAD', '78901', 'VendorCountryAD'),
+  (20, 'Shipping', 'Henry', '1717 Maple St', 'Apt 17', 'CustomerCityAC', 'CustomerProvinceAC', '23456', 'CustomerCountryAC'),
+  (20, 'Billing', 'Jacob', '1818 Cedar St', 'Suite 1818', 'CustomerCityAD', 'CustomerProvinceAD', '78901', 'CustomerCountryAD'),
 
-  -- Customer 21
-  (21, 'Shipping', '1929 Oak St', 'Apt 21', 'VendorCityAE', 'VendorProvinceAE', '12345', 'VendorCountryAE'),
-  (21, 'Billing', '2020 Elm St', 'Unit 20', 'VendorCityAF', 'VendorProvinceAF', '67890', 'VendorCountryAF'),
+  (21, 'Shipping', 'Vlad', '1929 Oak St', 'Apt 21', 'CustomerCityAE', 'CustomerProvinceAE', '12345', 'CustomerCountryAE'),
+  (21, 'Billing', 'Juan', '2020 Elm St', 'Unit 20', 'CustomerCityAF', 'CustomerProvinceAF', '67890', 'CustomerCountryAF'),
 
-  -- Customer 22
-  (22, 'Shipping', '2121 Maple St', 'Floor 22', 'VendorCityAG', 'VendorProvinceAG', '23456', 'VendorCountryAG'),
-  (22, 'Billing', '2222 Cedar St', 'Apt 22', 'VendorCityAH', 'VendorProvinceAH', '78901', 'VendorCountryAH'),
+  (22, 'Shipping', 'Pablo', '2121 Maple St', 'Floor 22', 'CustomerCityAG', 'CustomerProvinceAG', '23456', 'CustomerCountryAG'),
+  (22, 'Billing', 'Roger', '2222 Cedar St', 'Apt 22', 'CustomerCityAH', 'CustomerProvinceAH', '78901', 'CustomerCountryAH'),
 
-  -- Customer 23
-  (23, 'Shipping', '2323 Oak St', 'Suite 23', 'VendorCityAI', 'VendorProvinceAI', '12345', 'VendorCountryAI'),
-  (23, 'Billing', '2424 Elm St', 'Unit 24', 'VendorCityAJ', 'VendorProvinceAJ', '67890', 'VendorCountryAJ'),
+  (23, 'Shipping', 'Yuri', '2323 Oak St', 'Suite 23', 'CustomerCityAI', 'CustomerProvinceAI', '12345', 'CustomerCountryAI'),
+  (23, 'Billing', 'Wilhelm', '2424 Elm St', 'Unit 24', 'CustomerCityAJ', 'CustomerProvinceAJ', '67890', 'CustomerCountryAJ'),
 
-  -- Customer 24
-  (24, 'Shipping', '2525 Maple St', 'Floor 25', 'VendorCityAK', 'VendorProvinceAK', '23456', 'VendorCountryAK'),
-  (24, 'Billing', '2626 Cedar St', 'Apt 26', 'VendorCityAL', 'VendorProvinceAL', '78901', 'VendorCountryAL'),
-  (25, 'Shipping', '2525 Oak St', 'Apt 25', 'VendorCityAM', 'VendorProvinceAM', '12345', 'VendorCountryAM'),
-  (25, 'Billing', '2626 Elm St', 'Floor 26', 'VendorCityAN', 'VendorProvinceAN', '67890', 'VendorCountryAN'),
+  (24, 'Shipping', 'Anastasia', '2525 Maple St', 'Floor 25', 'CustomerCityAK', 'CustomerProvinceAK', '23456', 'CustomerCountryAK'),
+  (24, 'Billing', 'Lucy', '2626 Cedar St', 'Apt 26', 'CustomerCityAL', 'CustomerProvinceAL', '78901', 'CustomerCountryAL'),
 
-  -- Customer 26
-  (26, 'Shipping', '2727 Maple St', 'Unit 27', 'VendorCityAO', 'VendorProvinceAO', '23456', 'VendorCountryAO'),
-  (26, 'Billing', '2828 Cedar St', 'Suite 2828', 'VendorCityAP', 'VendorProvinceAP', '78901', 'VendorCountryAP'),
+  (25, 'Shipping', 'Georgia', '2525 Oak St', 'Apt 25', 'CustomerCityAM', 'CustomerProvinceAM', '12345', 'CustomerCountryAM'),
+  (25, 'Billing', 'Georgina', '2626 Elm St', 'Floor 26', 'CustomerCityAN', 'CustomerProvinceAN', '67890', 'CustomerCountryAN'),
 
-  -- Customer 27
-  (27, 'Shipping', '2929 Oak St', 'Apt 29', 'VendorCityAQ', 'VendorProvinceAQ', '12345', 'VendorCountryAQ'),
-  (27, 'Billing', '3030 Elm St', 'Floor 30', 'VendorCityAR', 'VendorProvinceAR', '67890', 'VendorCountryAR'),
+  (26, 'Shipping', 'July', '2727 Maple St', 'Unit 27', 'CustomerCityAO', 'CustomerProvinceAO', '23456', 'CustomerCountryAO'),
+  (26, 'Billing', 'Meghan', '2828 Cedar St', 'Suite 2828', 'CustomerCityAP', 'CustomerProvinceAP', '78901', 'CustomerCountryAP'),
 
-  -- Customer 28
-  (28, 'Shipping', '3131 Maple St', 'Unit 31', 'VendorCityAS', 'VendorProvinceAS', '23456', 'VendorCountryAS'),
-  (28, 'Billing', '3232 Cedar St', 'Apt 32', 'VendorCityAT', 'VendorProvinceAT', '78901', 'VendorCountryAT'),
+  (27, 'Shipping', 'Ted', '2929 Oak St', 'Apt 29', 'CustomerCityAQ', 'CustomerProvinceAQ', '12345', 'CustomerCountryAQ'),
+  (27, 'Billing', 'Howard', '3030 Elm St', 'Floor 30', 'CustomerCityAR', 'CustomerProvinceAR', '67890', 'CustomerCountryAR'),
 
-  -- Customer 29
-  (29, 'Shipping', '3333 Oak St', 'Suite 33', 'VendorCityAU', 'VendorProvinceAU', '12345', 'VendorCountryAU'),
-  (29, 'Billing', '3434 Elm St', 'Unit 34', 'VendorCityAV', 'VendorProvinceAV', '67890', 'VendorCountryAV'),
+  (28, 'Shipping', 'Harold', '3131 Maple St', 'Unit 31', 'CustomerCityAS', 'CustomerProvinceAS', '23456', 'CustomerCountryAS'),
 
-  -- Customer 30
-  (30, 'Shipping', '3535 Maple St', 'Floor 35', 'VendorCityAW', 'VendorProvinceAW', '23456', 'VendorCountryAW'),
-  (30, 'Billing', '3636 Cedar St', 'Apt 36', 'VendorCityAX', 'VendorProvinceAX', '78901', 'VendorCountryAX'),
-  (31, 'Shipping', '3636 Oak St', 'Apt 36', 'VendorCityAY', 'VendorProvinceAY', '12345', 'VendorCountryAY'),
-  (31, 'Billing', '3737 Elm St', 'Floor 37', 'VendorCityAZ', 'VendorProvinceAZ', '67890', 'VendorCountryAZ'),
+  (29, 'Shipping', 'Fernando', '3333 Oak St', 'Suite 33', 'CustomerCityAU', 'CustomerProvinceAU', '12345', 'CustomerCountryAU'),
+  (29, 'Billing', 'Oliver', '3434 Elm St', 'Unit 34', 'CustomerCityAV', 'CustomerProvinceAV', '67890', 'CustomerCountryAV'),
 
-  -- Vendor 32
-  (32, 'Shipping', '3838 Maple St', 'Unit 38', 'VendorCityBA', 'VendorProvinceBA', '23456', 'VendorCountryBA'),
-  (32, 'Billing', '3939 Cedar St', 'Suite 3939', 'VendorCityBB', 'VendorProvinceBB', '78901', 'VendorCountryBB'),
+  (30, 'Shipping', 'Mufasa', '3535 Maple St', 'Floor 35', 'CustomerCityAW', 'CustomerProvinceAW', '23456', 'CustomerCountryAW'),
+  (30, 'Billing', 'George', '3636 Cedar St', 'Apt 36', 'CustomerCityAX', 'CustomerProvinceAX', '78901', 'CustomerCountryAX'),
+  (31, 'Shipping', 'Henry', '3636 Oak St', 'Apt 36', 'CustomerCityAY', 'CustomerProvinceAY', '12345', 'CustomerCountryAY'),
+  (31, 'Billing', 'Jacob', '3737 Elm St', 'Floor 37', 'CustomerCityAZ', 'CustomerProvinceAZ', '67890', 'CustomerCountryAZ'),
 
-  -- Vendor 33
-  (33, 'Shipping', '4040 Oak St', 'Apt 40', 'VendorCityBC', 'VendorProvinceBC', '12345', 'VendorCountryBC'),
-  (33, 'Billing', '4141 Elm St', 'Floor 41', 'VendorCityBD', 'VendorProvinceBD', '67890', 'VendorCountryBD'),
+  (32, 'Shipping', 'Vlad', '3838 Maple St', 'Unit 38', 'CustomerCityBA', 'CustomerProvinceBA', '23456', 'CustomerCountryBA'),
+  (32, 'Billing', 'Juan', '3939 Cedar St', 'Suite 3939', 'CustomerCityBB', 'CustomerProvinceBB', '78901', 'CustomerCountryBB'),
 
-  -- Vendor 34
-  (34, 'Shipping', '4242 Maple St', 'Unit 42', 'VendorCityBE', 'VendorProvinceBE', '23456', 'VendorCountryBE'),
-  (34, 'Billing', '4343 Cedar St', 'Apt 43', 'VendorCityBF', 'VendorProvinceBF', '78901', 'VendorCountryBF'),
+  (33, 'Shipping', 'Pablo', '4040 Oak St', 'Apt 40', 'CustomerCityBC', 'CustomerProvinceBC', '12345', 'CustomerCountryBC'),
+  (33, 'Billing', 'Roger', '4141 Elm St', 'Floor 41', 'CustomerCityBD', 'CustomerProvinceBD', '67890', 'CustomerCountryBD'),
 
-  -- Vendor 35
-  (35, 'Shipping', '4444 Oak St', 'Suite 44', 'VendorCityBG', 'VendorProvinceBG', '12345', 'VendorCountryBG'),
-  (35, 'Billing', '4545 Elm St', 'Unit 45', 'VendorCityBH', 'VendorProvinceBH', '67890', 'VendorCountryBH'),
-  (36, 'Shipping', '4646 Maple St', 'Apt 46', 'VendorCityBI', 'VendorProvinceBI', '23456', 'VendorCountryBI'),
-  (36, 'Billing', '4747 Cedar St', 'Floor 47', 'VendorCityBJ', 'VendorProvinceBJ', '78901', 'VendorCountryBJ'),
+  (34, 'Shipping', 'Yuri', '4242 Maple St', 'Unit 42', 'CustomerCityBE', 'CustomerProvinceBE', '23456', 'CustomerCountryBE'),
+  (34, 'Billing', 'Wilhelm', '4343 Cedar St', 'Apt 43', 'CustomerCityBF', 'CustomerProvinceBF', '78901', 'CustomerCountryBF'),
 
-  -- Vendor 37
-  (37, 'Shipping', '4848 Oak St', 'Unit 48', 'VendorCityBK', 'VendorProvinceBK', '12345', 'VendorCountryBK'),
-  (37, 'Billing', '4949 Elm St', 'Suite 49', 'VendorCityBL', 'VendorProvinceBL', '67890', 'VendorCountryBL'),
+  (35, 'Shipping', 'Anastasia', '4444 Oak St', 'Suite 44', 'CustomerCityBG', 'CustomerProvinceBG', '12345', 'CustomerCountryBG'),
+  (35, 'Billing', 'Lucy', '4545 Elm St', 'Unit 45', 'CustomerCityBH', 'CustomerProvinceBH', '67890', 'CustomerCountryBH'),
+  (36, 'Shipping', 'Georgia', '4646 Maple St', 'Apt 46', 'CustomerCityBI', 'CustomerProvinceBI', '23456', 'CustomerCountryBI'),
 
-  -- Vendor 38
-  (38, 'Shipping', '5050 Maple St', 'Apt 50', 'VendorCityBM', 'VendorProvinceBM', '23456', 'VendorCountryBM'),
-  (38, 'Billing', '5151 Cedar St', 'Floor 51', 'VendorCityBN', 'VendorProvinceBN', '78901', 'VendorCountryBN'),
+  (37, 'Shipping', 'Georgina', '4848 Oak St', 'Unit 48', 'CustomerCityBK', 'CustomerProvinceBK', '12345', 'CustomerCountryBK'),
+  (37, 'Billing', 'July', '4949 Elm St', 'Suite 49', 'CustomerCityBL', 'CustomerProvinceBL', '67890', 'CustomerCountryBL'),
 
-  -- Vendor 39
-  (39, 'Shipping', '5252 Oak St', 'Unit 52', 'VendorCityBO', 'VendorProvinceBO', '12345', 'VendorCountryBO'),
-  (39, 'Billing', '5353 Elm St', 'Suite 53', 'VendorCityBP', 'VendorProvinceBP', '67890', 'VendorCountryBP'),
+  (38, 'Shipping', 'Meghan', '5050 Maple St', 'Apt 50', 'CustomerCityBM', 'CustomerProvinceBM', '23456', 'CustomerCountryBM'),
+  (39, 'Billing', 'Vanessa', '5151 Cedar St', 'Floor 51', 'CustomerCityBN', 'CustomerProvinceBN', '78901', 'CustomerCountryBN'),
 
-  -- Vendor 40
-  (40, 'Shipping', '5454 Maple St', 'Apt 54', 'VendorCityBQ', 'VendorProvinceBQ', '23456', 'VendorCountryBQ'),
-  (40, 'Billing', '5555 Cedar St', 'Floor 55', 'VendorCityBR', 'VendorProvinceBR', '78901', 'VendorCountryBR');
+  (39, 'Billing', 'Ted', '5353 Elm St', 'Suite 53', 'CustomerCityBP', 'CustomerProvinceBP', '67890', 'CustomerCountryBP'),
+
+  (40, 'Shipping', 'Howard', '5454 Maple St', 'Apt 54', 'CustomerCityBQ', 'CustomerProvinceBQ', '23456', 'CustomerCountryBQ'),
+  (40, 'Shipping', 'Harold', '5555 Cedar St', 'Floor 55', 'CustomerCityBR', 'CustomerProvinceBR', '78901', 'CustomerCountryBR');
 
 END $$;
