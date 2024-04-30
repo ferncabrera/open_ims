@@ -61,7 +61,7 @@ const initialErrorState = {
 
 let trackErrorList = [];
 
-export const EditCustomer = (props: IEditCustomerProps) => {
+export const EditCreateCustomer = (props: IEditCustomerProps) => {
 
   const { customerId } = props;
 

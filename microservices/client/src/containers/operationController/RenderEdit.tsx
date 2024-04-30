@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import { EditCustomer } from '../customers/EditCustomer';
+import { EditCreateCustomer } from '../customers/EditCreateCustomer';
 
 interface IRenderEditProps {
   entity: IEntityState;
@@ -12,7 +12,7 @@ export const RenderEdit = (props : IRenderEditProps) => {
   switch (entity.category) {
     case "customers":
       return (
-      <EditCustomer
+      <EditCreateCustomer
         customerId = {entity.id}
       />
       )
