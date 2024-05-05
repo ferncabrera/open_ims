@@ -105,14 +105,14 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
   }
 
   const handleDelete = async (customerId) => {
-    try {
       const response: any = await sendDeleteRequest({endpoint: '/api/server/customer', data: {customer_id: customerId}});
-      setBanner({message: response.message, variant:'success'});
+      if (response.status === 200) {
+        setBanner({message: response.message, variant:'success'});
+      } else {
+        setBanner({message: 'Something went wrong with deleting customer', variant: 'danger'});
+        return
+      }
       
-    } catch (e) {
-      setBanner({message: 'Something went wrong with deleting customer', variant: 'danger'});
-      return
-    }
     navigate('/ccg/customers');
   }
 

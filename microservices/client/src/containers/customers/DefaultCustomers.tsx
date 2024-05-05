@@ -61,13 +61,14 @@ export const DefaultCustomers = () => {
   const deleteMultiple = async () => {
     const prevParams = [_.get(responseData, 'pagesize', 0), _.get(responseData, 'pageindex', 0), _.get(responseData, 'searchquery', '')]
     const [pageSize, pageIndex, searchQuery] = prevParams;
-    try {
-      await sendDeleteRequest({endpoint: '/api/server/customers', data: selectedIds});
+      const res1: any = await sendDeleteRequest({endpoint: '/api/server/customers', data: selectedIds});
       await getDataList(pageSize, pageIndex, searchQuery);
-      setBannerState({message: 'Selected Customer(s) deleted', variant: 'success'});
-    } catch (e) {
-      setBannerState({message: 'Failed to delete Customer(s)', variant: 'danger'});
-    }
+      if (res1.status === 200) {
+        setBannerState({message: 'Selected Customer(s) deleted', variant: 'success'});
+      } else {
+        setBannerState({message: 'Failed to delete Customer(s)', variant: 'danger'});
+        return
+      }
     setSelectedIds(null);
   }
 
