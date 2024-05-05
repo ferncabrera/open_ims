@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { getJSONResponse, sendPatchRequest } from '../../utilities/apiHelpers';
+import { getJSONResponse, sendPatchRequest, sendPostRequest } from '../../utilities/apiHelpers';
 import { CrudForm } from '../../components/forms/CrudForm';
 import { Form, Row, Col, Spinner } from 'react-bootstrap';
 import { hasEmptyKeys } from '../../utilities/helpers/functions';
@@ -61,7 +61,7 @@ const initialErrorState = {
 
 let trackErrorList = [];
 
-export const EditCustomer = (props: IEditCustomerProps) => {
+export const EditCreateCustomer = (props: IEditCustomerProps) => {
 
   const { customerId } = props;
 
@@ -107,11 +107,18 @@ export const EditCustomer = (props: IEditCustomerProps) => {
   );
 
   useEffect(() => {
-    setIsLoading(true);
-    setBreadcrumb({pathArr:[...breadcrumbs.pathArr, <span>Edit Customer</span> ]})
-    Promise.all([getCustomerData(), getAllAvailableVendors()])
-      .then(() => setIsLoading(false))
-      .catch((e) =>  setBannerTextState({message: 'Something went wrong retrieving data', variant:'danger'}));
+    if (!customerId) {
+      setBreadcrumb({ pathArr: [...breadcrumbs.pathArr, <span>New Customer</span>] })
+      Promise.all([getAllAvailableVendors()])
+        .then(() => setIsLoading(false))
+        .catch((e) => setBannerTextState({ message: 'Something went wrong retrieving data', variant: 'danger' }))
+    } else {
+      setIsLoading(true);
+      setBreadcrumb({ pathArr: [...breadcrumbs.pathArr, <span>Edit Customer</span>] })
+      Promise.all([getCustomerData(), getAllAvailableVendors()])
+        .then(() => setIsLoading(false))
+        .catch((e) => setBannerTextState({ message: 'Something went wrong retrieving data', variant: 'danger' }));
+    }
   }, []);
 
   useEffect(() => {
@@ -143,10 +150,16 @@ export const EditCustomer = (props: IEditCustomerProps) => {
   };
 
   const handleSave = async () => {
-    _.forIn({...customerData}, (value, key: string) => {
-      const data = { value, name: key, required: true }
+    const requiredArr = [false, false, true, true, true, true, true, false, true, true ]
+    let index = 0
+    _.forIn({ ...customerData }, (value, key: string) => {
+      let data = { value, name: key, required: requiredArr[index] }
+      if (data.name === 'netTerms') {
+        data = {value, name: key, required: false}
+      }
       const isValid = validate(data);
       trackErrorList.push(isValid)
+      index ++;
     });
     if (_.some(trackErrorList, (validEntity) => validEntity === false)) {
       trackErrorList = [];
@@ -161,14 +174,21 @@ export const EditCustomer = (props: IEditCustomerProps) => {
       if (hasEmptyKeys(data.shipping)) {
         delete data.shipping;
       }
-      await sendPatchRequest({ endpoint: '/api/server/customer', data });
-      setBannerTextState({message: 'Customer successfully updated!', variant:'success'})
-      navigate('/ccg/customers')
+      if (!customerId) {
+        const res = await sendPostRequest({endpoint: '/api/server/customer', data});
+        setBannerTextState({ message: 'Customer successfully created!', variant: 'success' })
+      } else {
+        const res = await sendPatchRequest({ endpoint: '/api/server/customer', data });
+        setBannerTextState({ message: 'Customer successfully updated!', variant: 'success' })
+      }
     } catch (e) {
-      setBannerTextState({message: 'Something went wrong trying to update customer', variant:'danger'})
+      setBannerTextState({ message: 'Something went wrong trying to update customer', variant: 'danger' })
+      return
     };
-
+    
     setIsLoadingSubmit(false);
+    navigate('/ccg/customers')
+    return
 
   }
 
@@ -201,7 +221,7 @@ export const EditCustomer = (props: IEditCustomerProps) => {
       }
       {!isLoading &&
         <CrudForm
-          header='Edit Customer'
+          header={customerId ? 'Edit Customer' : 'New Customer'}
           handleSubmit={handleSave}
           disablePrimary={isLoadingSubmit}
           disableSecondary={isLoadingSubmit}
@@ -229,14 +249,16 @@ export const EditCustomer = (props: IEditCustomerProps) => {
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className='mt-3 mb-3'>
-                <Form.Label className='fw-normal' column lg={2}>
-                  Customer ID:
-                </Form.Label>
-                <Col className='mrp-50' md={3}>
-                  <strong>{customerId}</strong>
-                </Col>
-              </Form.Group>
+              {customerId &&
+                <Form.Group as={Row} className='mt-3 mb-3'>
+                  <Form.Label className='fw-normal' column lg={2}>
+                    Customer ID:
+                  </Form.Label>
+                  <Col className='mrp-50' md={3}>
+                    <strong>{customerId}</strong>
+                  </Col>
+                </Form.Group>
+              }
 
               <Form.Group as={Row} className='mb-3'>
                 <Form.Label className='fw-normal' column lg={2}>

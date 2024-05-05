@@ -23,7 +23,8 @@ export const TableLink = (props: ITableLinkProps) => {
             category: props.category,
             path: props.redirectTo,
             id: props.id || null
-        })
+        });
+
     };
 
     return (
