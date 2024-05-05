@@ -20,11 +20,9 @@ export const OperationController = () => {
     if (!action || !category || !path) {
       const redirectUrl = getBaseUrl(currentUrl.pathname);
       return navigate(redirectUrl);
+    } else {
+      return navigate(path)
     }
-
-    return () => {
-      resetEntity();
-    };
   }, [entity]);
 
   const getBaseUrl = (url: string) => {

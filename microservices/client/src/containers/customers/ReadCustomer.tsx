@@ -7,7 +7,7 @@ import { hasEmptyKeys } from '../../utilities/helpers/functions';
 import { CCGTable } from '../../components/table/CCGTable';
 import { Columns } from "./ReadTableSchema";
 import { useRecoilState } from 'recoil';
-import { breadcrumbsState, bannerState } from '../../atoms/state';
+import { breadcrumbsState, bannerState, entityState } from '../../atoms/state';
 import { MdOutlineEdit, MdOutlinePictureAsPdf } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { useNavigate } from 'react-router';
@@ -79,8 +79,9 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
   const basicInfo = ['Customer ID', 'Company Name', 'Contact Name', 'Email', 'Phone', 'Vendor', 'Net Terms'];
 
   const navigate = useNavigate();
-  const [breadcrumbs, setBreadcrumb] = useRecoilState(breadcrumbsState)
-  const [banner, setBanner] = useRecoilState(bannerState)
+  const [breadcrumbs, setBreadcrumb] = useRecoilState(breadcrumbsState);
+  const [banner, setBanner] = useRecoilState(bannerState);
+  const [entity, setEntity] = useRecoilState<IEntityState>(entityState);
   const [customerData, setCustomerData] = useState<ICustomerData>(initialCustomerData);
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -114,7 +115,16 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
       }
       
     navigate('/ccg/customers');
-  }
+  };
+
+  const handleEdit = (customerId: number) => {
+    setEntity({
+      action: 'update',
+      category: 'customers',
+      path: `/ccg/customers/edit/${customerId}`,
+      id: Number(customerId)
+    });
+  };
 
   const RenderCustomerBasicInfo = () => {
 
@@ -204,7 +214,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
         <Col className='d-flex justify-content-end' xs={7} >
             <PillButton className='me-2' onClick={null} text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
             <PillButton className='me-2' onClick={() => handleDelete(customerData.id)} text='Delete' color='standard' icon={<FaRegTrashAlt />} />
-            <PillButton className='me-1' onClick={null} text='Edit Customer' color='blue' icon={<MdOutlineEdit/>} />
+            <PillButton className='me-1' onClick={() => handleEdit(customerData.id)} text='Edit Customer' color='blue' icon={<MdOutlineEdit/>} />
         </Col>
       </Row>
       <CrudForm
