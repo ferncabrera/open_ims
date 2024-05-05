@@ -42,7 +42,7 @@ export const Sidebar: React.FC<ISidebarProps> = (props) => {
                     <Nav.Link eventKey="salesOrders"><span><MdOutlineSell /></span>Sales Orders</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="vendors"><span><MdOutlineStorefront /></span>Vendors</Nav.Link>
+                    <Nav.Link href="/ccg/vendors"  eventKey="/ccg/vendors"><span><MdOutlineStorefront /></span>Vendors</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                     <Nav.Link eventKey="purchaseOrders"><span><MdOutlineLocalMall /></span>Purchase Orders</Nav.Link>

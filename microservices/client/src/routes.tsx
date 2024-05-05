@@ -5,6 +5,7 @@ import Error from "./containers/Error";
 import { ForgotPass } from "./containers/auth/ResetPass";
 import { MainContainer } from "./containers/main/MainContainer";
 import { DefaultCustomers } from "./containers/customers/DefaultCustomers";
+import { DefaultVendors } from "./containers/vendors/DefaultVendors";
 import { AdminDashboard } from "./containers/dashboard/AdminDashboard";
 import { OperationController } from "./containers/operationController/OperationController";
 
@@ -35,6 +36,10 @@ const Routes = [
             {
                 path:'/ccg/customers',
                 element: <DefaultCustomers/>
+            },
+            {
+                path: '/ccg/vendors',
+                element: <DefaultVendors/>
             },
             {
                 path: '/ccg/:category/:action/:id',
