@@ -150,42 +150,46 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
   };
 
   const handleSave = async () => {
-    const requiredArr = [false, false, true, true, true, true, true, false, true, true ]
+    const requiredArr = [false, false, true, true, true, true, true, false, true, true]
     let index = 0
     _.forIn({ ...customerData }, (value, key: string) => {
       let data = { value, name: key, required: requiredArr[index] }
       if (data.name === 'netTerms') {
-        data = {value, name: key, required: false}
+        data = { value, name: key, required: false }
       }
       const isValid = validate(data);
       trackErrorList.push(isValid)
-      index ++;
+      index++;
     });
     if (_.some(trackErrorList, (validEntity) => validEntity === false)) {
       trackErrorList = [];
       return false
     }
     setIsLoadingSubmit(true);
-    try {
-      const data = { ...customerData };
-      if (hasEmptyKeys(data.billing)) {
-        delete data.billing;
-      }
-      if (hasEmptyKeys(data.shipping)) {
-        delete data.shipping;
-      }
-      if (!customerId) {
-        const res = await sendPostRequest({endpoint: '/api/server/customer', data});
-        setBannerTextState({ message: 'Customer successfully created!', variant: 'success' })
+    const data = { ...customerData };
+    if (hasEmptyKeys(data.billing)) {
+      delete data.billing;
+    }
+    if (hasEmptyKeys(data.shipping)) {
+      delete data.shipping;
+    }
+    if (!customerId) {
+      const res: any = await sendPostRequest({ endpoint: '/api/server/customer', data });
+      if (res.status === 200) {
+        setBannerTextState({ message: res.message, variant: 'success' })
       } else {
-        const res = await sendPatchRequest({ endpoint: '/api/server/customer', data });
-        setBannerTextState({ message: 'Customer successfully updated!', variant: 'success' })
+        setBannerTextState({message: res.message, variant: 'danger'});
+        return
       }
-    } catch (e) {
-      setBannerTextState({ message: 'Something went wrong trying to update customer', variant: 'danger' })
-      return
-    };
-    
+    } else {
+      const res: any = await sendPatchRequest({ endpoint: '/api/server/customer', data });
+      if (res.status === 200) {
+        setBannerTextState({ message: res.message, variant: 'success' })
+      } else {
+        setBannerTextState({message: res.message, variant: 'danger'});
+        return
+      }
+    }
     setIsLoadingSubmit(false);
     navigate('/ccg/customers')
     return
