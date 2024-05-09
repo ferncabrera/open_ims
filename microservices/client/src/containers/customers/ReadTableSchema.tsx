@@ -9,8 +9,8 @@ export const Columns = [
         cell: (props) => {
             const date: Date = _.get(props, 'row.original.invoice_date');
             const formatDate = new Date(date)
-            const month = formatDate.getMonth();
-            const day = formatDate.getDay();
+            const month = String(formatDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based, so add 1
+            const day = String(formatDate.getDate()).padStart(2, "0");
             const year = formatDate.getFullYear();
             return (`${day}/${month}/${year}`)
         }
