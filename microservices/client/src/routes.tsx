@@ -6,6 +6,7 @@ import { ForgotPass } from "./containers/auth/ResetPass";
 import { MainContainer } from "./containers/main/MainContainer";
 import { DefaultCustomers } from "./containers/customers/DefaultCustomers";
 import { DefaultVendors } from "./containers/vendors/DefaultVendors";
+import { DefaultInvoices } from "./containers/invoices/DefaultInvoices";
 import { AdminDashboard } from "./containers/dashboard/AdminDashboard";
 import { OperationController } from "./containers/operationController/OperationController";
 
@@ -40,6 +41,10 @@ const Routes = [
             {
                 path: '/ccg/vendors',
                 element: <DefaultVendors/>
+            },
+            {
+                path: '/ccg/invoices',
+                element: <DefaultInvoices/>
             },
             {
                 path: '/ccg/:category/:action/:id',
