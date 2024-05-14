@@ -7,51 +7,56 @@ import { MainContainer } from "./containers/main/MainContainer";
 import { DefaultCustomers } from "./containers/customers/DefaultCustomers";
 import { DefaultVendors } from "./containers/vendors/DefaultVendors";
 import { DefaultInvoices } from "./containers/invoices/DefaultInvoices";
+import { DefaultPurchaseOrders } from "./containers/purchaseOrders/DefaultPurchaseOrders";
 import { AdminDashboard } from "./containers/dashboard/AdminDashboard";
 import { OperationController } from "./containers/operationController/OperationController";
 
 const Routes = [
-    {
-        path: '/',
-        element: <Authentication />,
-        errorElement: <Error />
-    },
-    {
-        path: '/register',
-        element: <Authentication isLogin={false} />,
-    },
-    {
-        path: '/forgot_pass/:token',
-        element: <ForgotPass />,
-    },
-    {
-        path: '/ccg',
-        element: <MainContainer/>, // this main container will handle our breadcrumbs https://reactrouter.com/en/main/hooks/use-matches
-        //? Note that all of the nested children components/containers/pages are embedded into the MainContainers <Col></Col>
-        //? so you may style all of your components/containers/pages using the Bootstrap 5 Grid system
-        children: [
-            {
-                path: '/ccg/dashboard',
-                element: <AdminDashboard/>
-            },
-            {
-                path:'/ccg/customers',
-                element: <DefaultCustomers/>
-            },
-            {
-                path: '/ccg/vendors',
-                element: <DefaultVendors/>
-            },
-            {
-                path: '/ccg/invoices',
-                element: <DefaultInvoices/>
-            },
-            {
-                path: '/ccg/:category/:action/:id',
-                element: <OperationController/>
-            }
-        ]
-    }
+  {
+    path: '/',
+    element: <Authentication />,
+    errorElement: <Error />
+  },
+  {
+    path: '/register',
+    element: <Authentication isLogin={false} />,
+  },
+  {
+    path: '/forgot_pass/:token',
+    element: <ForgotPass />,
+  },
+  {
+    path: '/ccg',
+    element: <MainContainer />, // this main container will handle our breadcrumbs https://reactrouter.com/en/main/hooks/use-matches
+    //? Note that all of the nested children components/containers/pages are embedded into the MainContainers <Col></Col>
+    //? so you may style all of your components/containers/pages using the Bootstrap 5 Grid system
+    children: [
+      {
+        path: '/ccg/dashboard',
+        element: <AdminDashboard />
+      },
+      {
+        path: '/ccg/customers',
+        element: <DefaultCustomers />
+      },
+      {
+        path: '/ccg/vendors',
+        element: <DefaultVendors />
+      },
+      {
+        path: '/ccg/invoices',
+        element: <DefaultInvoices />
+      },
+      {
+        path: '/ccg/purchase-orders',
+        element: <DefaultPurchaseOrders />
+      },
+      {
+        path: '/ccg/:category/:action/:id',
+        element: <OperationController />
+      }
+    ]
+  }
 ];
 
 export default Routes

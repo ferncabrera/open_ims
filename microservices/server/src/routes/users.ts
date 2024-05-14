@@ -17,8 +17,8 @@ router
 router
   .route("/api/server/update_password")
   .patch(catchAsync(update_password), errorHandler);
-  
+
 router.route("/api/server/is-authenticated")
   .get(catchAsync(isAuthenticated), errorHandler);
-  
-  export default router;
+
+export default router;
