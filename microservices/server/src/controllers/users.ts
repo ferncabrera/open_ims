@@ -12,6 +12,13 @@ interface token {
     iat: number;
 }
 
+interface IGetRequestHeaders {
+    id?: number;
+    pagesize: number;
+    pageindex: number;
+    searchquery: string;
+  }
+
 export const login = async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
@@ -82,4 +89,62 @@ export const get_user_id = async (req: Request, res: Response) => {
         const user_id = response.rows[0].id
         return user_id
     }
+};
+
+export const get_all_users = async ( req: Request, res: Response) => {
+    const { pagesize, pageindex, searchquery } = req.headers as unknown as IGetRequestHeaders;
+  const offset: number = Number(pageindex) * Number(pagesize);
+
+  let count_query;
+  let user_query;
+
+  if (!searchquery) {
+    user_query = await query("SELECT * FROM user_table LIMIT $1 OFFSET $2", [pagesize, offset]);
+    count_query = await query("SELECT COUNT(*) FROM user_table");
+  } else {
+    user_query = await query(`
+            WITH filtered_rows AS (
+                SELECT
+                  invoice_date,
+                  reference_number,
+                  amount_due,
+                  order_status
+                FROM
+                  user_table
+                WHERE
+                  reference_number::text ILIKE '%' || $1 || '%'
+                  OR amount_due::text ILIKE '%' || $1 || '%'
+                  OR order_status::text ILIKE '%' || $1 || '%'
+            ),
+            total_count AS (
+              SELECT COUNT(*) AS count FROM filtered_rows
+            )
+            SELECT
+              reference_number,
+              amount_due,
+              order_status,
+              invoice_date,
+            (SELECT count FROM total_count) AS count
+            FROM
+              filtered_rows
+            LIMIT $2 OFFSET $3
+
+        `, [searchquery, pagesize, offset]);
+    count_query = user_query
+  }
+
+  const users = user_query.rows
+
+
+  const totalCount: any = count_query.rows[0] ? count_query.rows[0].count : null;
+  const data = {
+    users,
+    pageindex,
+    pagesize,
+    offset,
+    totalCount,
+  }
+
+
+  res.status(200).json({ message: 'Users successfully retrieved', ...data });
 }

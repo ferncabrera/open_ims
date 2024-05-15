@@ -8,6 +8,7 @@ import { DefaultCustomers } from "./containers/customers/DefaultCustomers";
 import { DefaultVendors } from "./containers/vendors/DefaultVendors";
 import { DefaultInvoices } from "./containers/invoices/DefaultInvoices";
 import { DefaultPurchaseOrders } from "./containers/purchaseOrders/DefaultPurchaseOrders";
+import { DefaultUsers } from "./containers/users/DefaultUsers";
 import { AdminDashboard } from "./containers/dashboard/AdminDashboard";
 import { OperationController } from "./containers/operationController/OperationController";
 
@@ -50,6 +51,10 @@ const Routes = [
       {
         path: '/ccg/purchase-orders',
         element: <DefaultPurchaseOrders />
+      },
+      {
+        path: '/ccg/users',
+        element: <DefaultUsers />
       },
       {
         path: '/ccg/:category/:action/:id',

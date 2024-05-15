@@ -9,7 +9,8 @@ import {
     MdOutlineStorefront,
     MdOutlineLocalMall,
     MdOutlineCategory,
-    MdOutlineSupervisedUserCircle
+    MdOutlineSupervisedUserCircle,
+    MdOutlineBadge
 } from "react-icons/md"
 import { ProfileIcon } from './ProfileIcon';
 import _ from 'lodash';
@@ -51,7 +52,10 @@ export const Sidebar: React.FC<ISidebarProps> = (props) => {
                     <Nav.Link eventKey="products"><span><MdOutlineCategory /></span>Products</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="users"><span><MdOutlineSupervisedUserCircle /></span>Users</Nav.Link>
+                    <Nav.Link eventKey="/ccg/employees"><span><MdOutlineBadge /></span>Employees</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                    <Nav.Link href='/ccg/users' eventKey="/ccg/users"><span><MdOutlineSupervisedUserCircle /></span>Users</Nav.Link>
                 </Nav.Item>
 
                 <div className={styles.profileIcon}>
