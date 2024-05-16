@@ -9,7 +9,8 @@ import {
     MdOutlineStorefront,
     MdOutlineLocalMall,
     MdOutlineCategory,
-    MdOutlineSupervisedUserCircle
+    MdOutlineSupervisedUserCircle,
+    MdOutlineBadge
 } from "react-icons/md"
 import { ProfileIcon } from './ProfileIcon';
 import _ from 'lodash';
@@ -39,19 +40,22 @@ export const Sidebar: React.FC<ISidebarProps> = (props) => {
                     <Nav.Link href="/ccg/customers"  eventKey="/ccg/customers"><span><MdOutlineFace /></span>Customers</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="salesOrders"><span><MdOutlineSell /></span>Sales Orders</Nav.Link>
+                    <Nav.Link href="/ccg/invoices"  eventKey="/ccg/invoices"><span><MdOutlineSell /></span>Invoices</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="vendors"><span><MdOutlineStorefront /></span>Vendors</Nav.Link>
+                    <Nav.Link href="/ccg/vendors"  eventKey="/ccg/vendors"><span><MdOutlineStorefront /></span>Vendors</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="purchaseOrders"><span><MdOutlineLocalMall /></span>Purchase Orders</Nav.Link>
+                    <Nav.Link href='/ccg/purchase-orders' eventKey="/ccg/purchase-orders"><span><MdOutlineLocalMall /></span>Purchase Orders</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
                     <Nav.Link eventKey="products"><span><MdOutlineCategory /></span>Products</Nav.Link>
                 </Nav.Item>
                 <Nav.Item>
-                    <Nav.Link eventKey="users"><span><MdOutlineSupervisedUserCircle /></span>Users</Nav.Link>
+                    <Nav.Link href="/ccg/employees" eventKey="/ccg/employees"><span><MdOutlineBadge /></span>Employees</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                    <Nav.Link href='/ccg/users' eventKey="/ccg/users"><span><MdOutlineSupervisedUserCircle /></span>Users</Nav.Link>
                 </Nav.Item>
 
                 <div className={styles.profileIcon}>
