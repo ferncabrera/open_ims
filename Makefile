@@ -7,8 +7,12 @@ ${GREEN_BOLD}Master Makefile${END}
  Available commands:
 
 	- dev: Start the OPEN_MS application in DEV mode! (Happy coding :D)
-
-	- test: Command to run to execute tests on local development environment 
+	
+	- prod: Start the OPEN_MS application in PROD mode! (Happy debugging :D)
+		
+	- ms-image-clean: Remove all open-ims development images from your machine... (Starting the application after may take longer as images will need to build)
+	
+	- pgadmin: Open PGAdmin UI on browser (http://localhost:30007) user: admin@openims.com pass: admin
 
 
 	${ORANGE_BOLD}- TODO:${END}
@@ -18,13 +22,13 @@ ${GREEN_BOLD}Master Makefile${END}
 			- reload-secrets: Re-create secrets
 			- reload-all: Recreate secrets and configmap
 
+	- test: Command to run to execute tests on local development environment 
 	- logs: Display logs for all running service (Is this possible with Skaffold and not having to re-create the services?)
 
 endef
 
 export HELP
 
-export SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 export CYAN=\x1b[96m
 export CYAN_BOLD=\x1b[1;96m
 export PURPLE_BOLD=\x1b[1;95m
@@ -44,22 +48,24 @@ help:
 
 dev:
 	# explorer.exe "http://localhost" & 
-	sh start.sh dev
+	./start.sh dev
 .PHONY: dev
 
+pgadmin:
+	explorer.exe "http://localhost:30007" & 
+.PHONY: pgadmin
+
 prod:
-	explorer.exe "https://github.com/ferncabrera/open_ims?tab=readme-ov-file#running-the-production-instance-of-open_ims-on-your-local" &
-	sh start.sh prod
+	./start.sh prod
 .PHONY: prod
 
-# logs:
-# 	docker-compose logs --follow
-# .PHONY: logs
+ms-image-clean:
+	@echo "Cleaning any open-ims server and client images!"
+	docker rmi -f $$(docker images fcabrera01/open-ims-client-dev)
+	docker rmi -f $$(docker images fcabrera01/open-ims-server-dev)
+	@echo "Pruned whatever we could!"
+.PHONY: ms-image-clean
 
 clean:
 	skaffold delete ; skaffold delete -p prod-local ; skaffold delete -p dev
 .PHONY: clean
-
-# start:
-
-# .PHONY 

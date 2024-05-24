@@ -1,0 +1,7 @@
+resources:
+  - grafana-deployment.yaml
+  - grafana-cluster-ip-service.yaml
+  - grafana-pvc.yaml
+
+
+  

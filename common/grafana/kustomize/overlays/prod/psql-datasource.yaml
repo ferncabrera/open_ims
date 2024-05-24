@@ -1,0 +1,21 @@
+apiVersion: 1
+
+#!!!!!!! EXPOSING CREDENTIALS RIGHT NOW WHILE WE FIGURE OUT THE WAY TODO THIS
+
+datasources:
+  - name: Postgres
+    uid: psql_dev_1
+    type: postgres
+    url: prod-postgres-stateful-set-0.prod-postgres-headless-service:5432
+    user: ccgadmin
+    secureJsonData:
+      password: 'ccgadmin123'
+    jsonData:
+      database: ccg-production-db
+      sslmode: 'disable' # disable/require/verify-ca/verify-full
+      maxOpenConns: 100 # Grafana v5.4+
+      maxIdleConns: 100 # Grafana v5.4+ 
+      maxIdleConnsAuto: true # Grafana v9.5.1+
+      connMaxLifetime: 14400 # Grafana v5.4+
+      postgresVersion: 1620 # 903=9.3, 904=9.4, 905=9.5, 906=9.6, 1000=10
+      timescaledb: false
