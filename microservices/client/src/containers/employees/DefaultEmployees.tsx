@@ -12,7 +12,7 @@ import { useRecoilState } from 'recoil';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
-export const DefaultCustomers = () => {
+export const DefaultEmployees = () => {
 
   const [responseData, setResponseData] = useState<any>([]);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -24,7 +24,7 @@ export const DefaultCustomers = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setBreadcrumb({ pathArr: [<Link to='/ccg/customers'>Customers</Link>] })
+    setBreadcrumb({ pathArr: [<Link to='/ccg/employees'>Employees</Link>] })
     getDataList(10, 0).catch((e) => console.log(e))
   }, []);
 
@@ -45,7 +45,7 @@ export const DefaultCustomers = () => {
   }, [responseData])
 
   const getDataList = async (pageSize, pageIndex, searchQuery = '') => {
-    const response: any = await getJSONResponse({ endpoint: '/api/server/customers', params: { pageSize, pageIndex, searchQuery } });
+    const response: any = await getJSONResponse({ endpoint: '/api/server/employees', params: { pageSize, pageIndex, searchQuery } });
     setResponseData(response);
   };
 
@@ -62,12 +62,12 @@ export const DefaultCustomers = () => {
   const deleteMultiple = async () => {
     const prevParams = [_.get(responseData, 'pagesize', 0), _.get(responseData, 'pageindex', 0), _.get(responseData, 'searchquery', '')]
     const [pageSize, pageIndex, searchQuery] = prevParams;
-    const res1: any = await sendDeleteRequest({ endpoint: '/api/server/customers', data: selectedIds });
+    const res1: any = await sendDeleteRequest({ endpoint: '/api/server/employees', data: selectedIds });
     await getDataList(pageSize, pageIndex, searchQuery);
     if (res1.status === 200) {
-      setBannerState({ message: 'Selected Customer(s) deleted', variant: 'success' });
+      setBannerState({ message: 'Selected Employee(s) deleted', variant: 'success' });
     } else {
-      setBannerState({ message: 'Failed to delete Customer(s)', variant: 'danger' });
+      setBannerState({ message: 'Failed to delete Employee(s)', variant: 'danger' });
       return
     }
     setSelectedIds(null);
@@ -76,11 +76,11 @@ export const DefaultCustomers = () => {
   const createCustomer = () => {
     setEntity({
       action: "create",
-      category: "customers",
-      path: `/ccg/customers/create/new`,
+      category: "employees",
+      path: `/ccg/employees/create/new`,
       id: null
     });
-    navigate('/ccg/customers/create/new')
+    navigate('/ccg/employees/create/new')
   }
 
   return (
@@ -95,7 +95,7 @@ export const DefaultCustomers = () => {
       </Row>
       <CCGTable
         columns={Columns}
-        data={_.get(responseData, 'data', [])}
+        data={_.get(responseData, 'employees', [])}
         totalCount={_.get(responseData, 'total', 0)}
         fetchDataFunction={getDataList}
         pageSize={_.get(responseData, 'pagesize', 0)}
