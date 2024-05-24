@@ -14,6 +14,8 @@ import { useRecoilState } from 'recoil';
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
+const HOST: string | undefined = import.meta.env.VITE_HOST_IP;
+
 let USDollar = new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -155,7 +157,7 @@ export const AdminDashboard = () => {
 
             <Row className='h-100'>
 
-                <iframe src="http://localhost/grafana/d/bdmmm33qzyfwgc/test?orgId=1&from=1713924486069&to=1716516486069&kiosk&theme=light" width="100%" height="100%" frameBorder="0"></iframe>
+                <iframe src={`http://${HOST}/grafana/d/bdmmm33qzyfwgc/test?orgId=1&from=1713924486069&to=1716516486069&kiosk&theme=light`} width="100%" height="100%" frameBorder="0"></iframe>
  
             </Row>
         </div>
