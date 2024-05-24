@@ -43,10 +43,10 @@ spec:
             tcpSocket:
               port: 3002
             timeoutSeconds: 1
-          resources:
-            requests:
-              cpu: 250m
-              memory: 750Mi
+          # resources:
+          #   requests:
+          #     cpu: 250m
+          #     memory: 750Mi
           #? The mounts for dashboards and datasources should be in their own config at some point....
           volumeMounts:
             - mountPath: /var/lib/grafana
