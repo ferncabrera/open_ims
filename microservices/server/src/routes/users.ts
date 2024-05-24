@@ -1,5 +1,5 @@
 import express from "express";
-import { login, register, isAuthenticated } from "../controllers/users";
+import { login, register, isAuthenticated, get_all_users } from "../controllers/users";
 import catchAsync from "../utils/catchAsync";
 import errorHandler from "../middleware/errorHandler";
 import { update_password } from "../controllers/forgot_pass";
@@ -17,8 +17,11 @@ router
 router
   .route("/api/server/update_password")
   .patch(catchAsync(update_password), errorHandler);
-  
+
 router.route("/api/server/is-authenticated")
   .get(catchAsync(isAuthenticated), errorHandler);
-  
-  export default router;
+
+router.route("/api/server/users")
+  .get(catchAsync(get_all_users), errorHandler);
+
+export default router;

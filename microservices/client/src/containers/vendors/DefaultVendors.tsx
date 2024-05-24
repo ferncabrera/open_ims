@@ -5,14 +5,14 @@ import { PillButton } from '../../components/buttons/PillButton';
 import { MdOutlinePictureAsPdf } from 'react-icons/md';
 import { FaRegTrashAlt } from "react-icons/fa";
 import { Row, Col } from 'react-bootstrap';
-import { Columns } from "./TableSchema";
+import { Columns } from './TableSchema'
 import { getJSONResponse, sendDeleteRequest } from '../../utilities/apiHelpers';
 import { breadcrumbsState, bannerState, entityState } from '../../atoms/state';
 import { useRecoilState } from 'recoil';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
-export const DefaultCustomers = () => {
+export const DefaultVendors = () => {
 
   const [responseData, setResponseData] = useState<any>([]);
   const [selectedIds, setSelectedIds] = useState([]);
@@ -24,7 +24,7 @@ export const DefaultCustomers = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setBreadcrumb({ pathArr: [<Link to='/ccg/customers'>Customers</Link>] })
+    setBreadcrumb({ pathArr: [<Link to='/ccg/vendors'>Vendors</Link>] })
     getDataList(10, 0).catch((e) => console.log(e))
   }, []);
 
@@ -45,7 +45,7 @@ export const DefaultCustomers = () => {
   }, [responseData])
 
   const getDataList = async (pageSize, pageIndex, searchQuery = '') => {
-    const response: any = await getJSONResponse({ endpoint: '/api/server/customers', params: { pageSize, pageIndex, searchQuery } });
+    const response: any = await getJSONResponse({ endpoint: '/api/server/vendors', params: { pageSize, pageIndex, searchQuery } });
     setResponseData(response);
   };
 
@@ -62,12 +62,12 @@ export const DefaultCustomers = () => {
   const deleteMultiple = async () => {
     const prevParams = [_.get(responseData, 'pagesize', 0), _.get(responseData, 'pageindex', 0), _.get(responseData, 'searchquery', '')]
     const [pageSize, pageIndex, searchQuery] = prevParams;
-    const res1: any = await sendDeleteRequest({ endpoint: '/api/server/customers', data: selectedIds });
+    const res1: any = await sendDeleteRequest({ endpoint: '/api/server/vendors', data: selectedIds });
     await getDataList(pageSize, pageIndex, searchQuery);
     if (res1.status === 200) {
-      setBannerState({ message: 'Selected Customer(s) deleted', variant: 'success' });
+      setBannerState({ message: 'Selected Vendor(s) deleted', variant: 'success' });
     } else {
-      setBannerState({ message: 'Failed to delete Customer(s)', variant: 'danger' });
+      setBannerState({ message: 'Failed to delete Vendor(s)', variant: 'danger' });
       return
     }
     setSelectedIds(null);
@@ -76,11 +76,11 @@ export const DefaultCustomers = () => {
   const createCustomer = () => {
     setEntity({
       action: "create",
-      category: "customers",
-      path: `/ccg/customers/create/new`,
+      category: "vendors",
+      path: `/ccg/vendors/create/new`,
       id: null
     });
-    navigate('/ccg/customers/create/new')
+    navigate('/ccg/vendors/create/new')
   }
 
   return (

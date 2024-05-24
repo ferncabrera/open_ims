@@ -1,5 +1,6 @@
 import React from 'react'
 import { EditCreateCustomer } from '../customers/EditCreateCustomer';
+import Error from '../Error';
 
 interface IRenderNewProps {
   entity: IEntityState;
@@ -7,14 +8,17 @@ interface IRenderNewProps {
 
 export const RenderNew = (props: IRenderNewProps) => {
 
-  const {entity} = props;
+  const { entity } = props;
 
   switch (entity.category) {
     case "customers":
       return (
-      <EditCreateCustomer
-        customerId = {entity.id}
-      />
+        <EditCreateCustomer
+          customerId={entity.id}
+        />
       )
+
+    default:
+      return <Error />
   }
 }

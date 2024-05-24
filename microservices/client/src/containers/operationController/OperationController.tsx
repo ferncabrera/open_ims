@@ -6,6 +6,7 @@ import { useLocation, useNavigate } from 'react-router';
 import { RenderEdit } from './RenderEdit';
 import { RenderRead } from './RenderRead';
 import { RenderNew } from './RenderNew';
+import Error from '../Error';
 
 export const OperationController = () => {
 
@@ -47,5 +48,8 @@ export const OperationController = () => {
       return <RenderRead 
         entity={entity}
       />
+    
+    default:
+      return <Error/>
   }
 };

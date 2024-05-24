@@ -1,5 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import { EditCreateCustomer } from '../customers/EditCreateCustomer';
+import Error from '../Error';
 
 interface IRenderEditProps {
   entity: IEntityState;
@@ -16,5 +17,8 @@ export const RenderEdit = (props : IRenderEditProps) => {
         customerId = {entity.id}
       />
       )
+    
+    default:
+      return <Error/>
   }
 }
