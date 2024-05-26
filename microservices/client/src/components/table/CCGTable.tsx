@@ -7,6 +7,9 @@ import {
 } from '@tanstack/react-table';
 import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
 import { BasicSearchFilters } from './BasicSearchFilters';
+import { FilterButton } from '../buttons/filters/FilterButton';
+import { DateFilter } from '../buttons/filters/DateFilter';
+import { PillButton } from '../buttons/PillButton';
 import { MdArrowForward, MdArrowBack } from "react-icons/md";
 import _ from 'lodash';
 
@@ -17,8 +20,10 @@ interface ICCGTableProps {
   totalCount: number;
   fetchDataFunction: (pageSize, pageIndex, searchQuery?) => void;
   handleSelectedRows?: (selectedRows) => void;
-  pageSize: number,
-  pageIndex: number,
+  pageSize: number;
+  pageIndex: number;
+  filters?: {label: string, type: string}[];
+  searchPlaceholder: string;
 }
 
 export const CCGTable: React.FC<ICCGTableProps> = (props) => {
@@ -31,16 +36,21 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     pageSize,
     pageIndex,
     handleSelectedRows = null,
+    searchPlaceholder,
 
   } = props;
+
+  let i_key = 0;
 
   const columnSchema = useMemo(() => columns, []);
   // const tableData = useMemo(() => data, []);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
-  const [searchValue, setSearchValue] = useState('');
   const [rowSelection, setRowSelection] = useState({});
+  const [selectedFilters, setSelectedFilters] = useState([]);
+  const [filterOptions, setFilterOptions] = useState(props.filters);
+  const [filterValues, setFilterValues] = useState({});
 
 
   const table = useReactTable({
@@ -66,14 +76,45 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
 
   useEffect(() => {
     //Everytime a row is selected or de-selected, an array of row id's are sent to the parent
-    if(handleSelectedRows){
+    if (handleSelectedRows) {
       handleSelectedRows(rowSelection)
     }
   }, [rowSelection])
 
   const handleSearch = (searchQuery: string) => {
-    setSearchValue(searchQuery)
-    fetchDataFunction(10, 0, searchQuery)
+    setFilterValues(prevFilterValues => ({...prevFilterValues, searchQuery}))
+  }
+
+  const handleDateSelect = (dateSelection) => {
+    let dateIso = '';
+    if (dateSelection) {
+      dateIso = new Date(dateSelection).toISOString();
+    };
+    setFilterValues(prevFilterValues => ({...prevFilterValues, date: dateIso}))
+  }
+
+  const handleApplyFilters = () => {
+    fetchDataFunction(10, 0, filterValues)
+  }
+
+  const removeFilter = (filterType: string, label: string) => {
+    const updatedSelectedFilters = _.filter(selectedFilters, (filter) => filter.type !== filterType);
+    setSelectedFilters(updatedSelectedFilters);
+    setFilterValues(prevFilterValues => ({...prevFilterValues, [filterType]: '' }))
+    setFilterOptions((prevFilterOptions) => ([...prevFilterOptions, {type: filterType, label}]));
+  };
+
+  const handleFilterSelection = (filterType: {label: string, type: string}) => {
+    const newFilterOptions = _.filter(filterOptions, (filter) => filter.label !== filterType.label)
+    setFilterOptions(newFilterOptions)
+
+    switch (filterType.type) {
+      case 'date':
+        setSelectedFilters([...selectedFilters, { element: <DateFilter onSelect={handleDateSelect} onClose={() => removeFilter(filterType.type, filterType.label )} />, type: 'date' }]);
+        break
+    }
+
+    return null
   }
 
   return (
@@ -81,9 +122,36 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
       <div className='table-border-wrapper'>
         {/* Need to make an insertable component header here */}
         <div className='bg-white filter-header-section'>
-          <BasicSearchFilters
-            search={handleSearch}
-          />
+          <Row className='w-100'>
+            <Col className='d-flex flex-wrap'>
+              <BasicSearchFilters
+                search={handleSearch}
+                placeHolder={searchPlaceholder}
+              />
+              {
+                !_.isEmpty(selectedFilters) &&
+                _.map(selectedFilters, (filter) => {
+                  i_key++;
+                  return <div key={i_key} className='px-1 py-1'>{filter.element} </div>
+                })
+              }
+              {!_.isEmpty(filterOptions) &&
+                <div className='py-1 px-1'>
+                  <FilterButton onSelect={handleFilterSelection} className='h-auto w-auto btn-grey' options={filterOptions} />
+                </div>
+              }
+            </Col>
+            <Col className='d-flex justify-content-end' xs={4}>
+              <div className='py-1 px-1'>
+                <PillButton
+                  className='h-auto'
+                  text='Apply and Search'
+                  color='blue'
+                  onClick={handleApplyFilters}
+                />
+              </div>
+            </Col>
+          </Row>
         </div>
         <div className='px-4 py-3 bg-white filter-size-section'>
           <Row>
@@ -100,7 +168,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                 onChange={e => {
                   const pageSize = e.target.value;
                   setIsLoading(true);
-                  fetchDataFunction(pageSize, 0, searchValue);
+                  fetchDataFunction(pageSize, 0, filterValues);
                 }}
               >
                 {[10, 20, 30, 40, 50].map(pageSizeOption => (
@@ -166,7 +234,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                   e.preventDefault();
                   setIsLoading(true)
                   setCurrentPage(1);
-                  fetchDataFunction(pageSize, Number(pageIndex) - 1, searchValue)
+                  fetchDataFunction(pageSize, Number(pageIndex) - 1, filterValues)
                 }}
                 disabled={(Number(pageIndex) === 0) ? true : false}
               >
@@ -185,7 +253,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                     if (!isNaN(input) && (input >= 1) && ((input + (Number(pageIndex) + 1) >= 1) && (input <= Math.ceil(totalCount / pageSize)))) {
                       setIsLoading(true);
                       setCurrentPage(1);
-                      fetchDataFunction(pageSize, input - 1, searchValue);
+                      fetchDataFunction(pageSize, input - 1, filterValues);
                     } else {
                       setCurrentPage(null);
                     }
@@ -202,7 +270,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                   event.preventDefault();
                   setIsLoading(true);
                   setCurrentPage(1);
-                  fetchDataFunction(pageSize, Number(pageIndex) + 1, searchValue)
+                  fetchDataFunction(pageSize, Number(pageIndex) + 1, filterValues)
                 }}
                 disabled={(Number(pageIndex) + 1 >= Math.ceil(totalCount / pageSize)) ? true : false}
               >

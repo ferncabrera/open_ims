@@ -250,6 +250,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
             totalCount={_.get(tableData, 'totalCount', 0)}
             pageSize={_.get(tableData, 'pagesize', 0)}
             pageIndex={_.get(tableData, 'pageindex', 0)}
+            searchPlaceholder='Search'
           />
         </div>
       </CrudForm>

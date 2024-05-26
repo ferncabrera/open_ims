@@ -37,6 +37,17 @@
             }
         }
 
+        &.btn-grey {
+            background-color: $light-grey;
+            color: $dark-grey2;
+            border-color: $light-grey;
+            &:hover {
+                background-color: $light-grey;
+                border-color: $light-grey;
+                color: $dark-text;
+            }
+        }
+
         &.btn-auto {
             width: auto;
         }
@@ -68,4 +79,6 @@
             color: black;
         }
     }
+
+    
 }

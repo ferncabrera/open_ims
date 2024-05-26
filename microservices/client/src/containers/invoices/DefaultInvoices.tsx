@@ -43,7 +43,8 @@ export const DefaultInvoices = () => {
     }
   }, [responseData])
 
-  const getDataList = async (pageSize, pageIndex, searchQuery = '') => {
+  const getDataList = async (pageSize, pageIndex, searchParams = {}) => {
+    const searchQuery = JSON.stringify(searchParams)
     const response: any = await getJSONResponse({ endpoint: '/api/server/invoices', params: { pageSize, pageIndex, searchQuery } });
     setResponseData(response);
   };
@@ -62,7 +63,8 @@ export const DefaultInvoices = () => {
     const prevParams = [_.get(responseData, 'pagesize', 0), _.get(responseData, 'pageindex', 0), _.get(responseData, 'searchquery', '')]
     const [pageSize, pageIndex, searchQuery] = prevParams;
       const res1: any = await sendDeleteRequest({endpoint: '/api/server/invoices', data: selectedIds});
-      await getDataList(pageSize, pageIndex, searchQuery);
+      const searchParams = JSON.stringify(searchQuery);
+      await getDataList(pageSize, pageIndex, searchParams);
       if (res1.status === 200) {
         setBannerState({message: 'Selected Invoice(s) deleted', variant: 'success'});
       } else {
@@ -72,7 +74,7 @@ export const DefaultInvoices = () => {
     setSelectedIds(null);
   }
 
-  const createCustomer = () => {
+  const createInvoice = () => {
     setEntity({
       action: "create",
       category: "invoices",
@@ -89,7 +91,7 @@ export const DefaultInvoices = () => {
         <Col className='d-flex justify-content-end' xs={7} >
             <PillButton onClick={null} className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
             <PillButton onClick={deleteMultiple} disabled={disableDelete} className='me-2' text='Delete' color='standard' icon={<FaRegTrashAlt />} />
-            <PillButton onClick={createCustomer} className='me-1' text='+ Create Customer' color='blue' />
+            <PillButton onClick={createInvoice} className='me-1' text='+ Create Invoice' color='blue' />
         </Col>
       </Row>
       <CCGTable
@@ -100,6 +102,8 @@ export const DefaultInvoices = () => {
         pageSize={_.get(responseData, 'data.pagesize', 0)}
         pageIndex={_.get(responseData, 'data.pageindex', 0)}
         handleSelectedRows={handleSelectedRows}
+        searchPlaceholder='Search by Number, Status, or Amount'
+        filters={[{label: 'Date', type: 'date'}]}
       />
     </div>
   )

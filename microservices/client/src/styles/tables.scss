@@ -46,9 +46,9 @@
       }
 
       .filter-header-section {
-        div {
-            width: 300px;
-        }
+        display: flex;
+        flex-wrap: wrap;
+        padding: 20px;
       }
 
       .page-input {
