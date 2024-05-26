@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { query, chained_query } from "../db";
 import { get_user_id } from "./users";
 import customError from "../utils/customError";
+import _ from "lodash";
 
 interface IGetListRequestHeaders {
   pageindex: number;
@@ -21,11 +22,14 @@ export const get_customers = async (req: Request, res: Response) => {
   let customers_query;
   let count_query;
 
-  if (!searchquery) {
+  const filter = JSON.parse(searchquery);
+
+  if (_.isEmpty(filter)) {
     customers_query = await query("SELECT * FROM customer_table ORDER BY id LIMIT $1 OFFSET $2", [pagesize, offset]);
     count_query = await query("SELECT COUNT(*) FROM customer_table");
   } else {
-    const [firstName, lastName] = searchquery.split(" ");
+    const {searchQuery} = filter;
+    const [firstName, lastName] = searchQuery.split(" ");
 
     customers_query = await query(`
         WITH filtered_rows AS (
@@ -61,7 +65,7 @@ export const get_customers = async (req: Request, res: Response) => {
           FROM
             filtered_rows
           ORDER BY id LIMIT $2 OFFSET $3;
-        `, [searchquery, pagesize, offset, firstName, lastName]);
+        `, [searchQuery, pagesize, offset, firstName, lastName]);
     count_query = customers_query
   }
 

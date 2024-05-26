@@ -13,6 +13,7 @@ input {
         padding-left: 30px;
         border-radius: 10px !important;
         border-color: $light-grey !important;
+        field-sizing: content;
     }
 
     &:focus {

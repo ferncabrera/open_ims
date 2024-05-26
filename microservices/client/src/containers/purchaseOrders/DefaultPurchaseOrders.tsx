@@ -100,6 +100,7 @@ export const DefaultPurchaseOrders = () => {
         pageSize={_.get(responseData, 'pagesize', 0)}
         pageIndex={_.get(responseData, 'pageindex', 0)}
         handleSelectedRows={handleSelectedRows}
+        searchPlaceholder='Search'
       />
     </div>
   )

@@ -1,0 +1,40 @@
+@import "../../../styles/general/colors.scss";
+
+.date_wrapper {
+  border: solid;
+  border-width: 1px;
+  border-radius: 10px;
+  border-color: $light-grey;
+  // display: flex;
+  // align-items: center;
+}
+
+.input_group {
+  &:focus-within {
+    box-shadow: 0 0 0 0.25rem $secondary-blue !important;
+    border-width: 1px;
+    border-radius: 10px;
+  }
+}
+
+.input_date {
+  border: none;
+  background: none;
+  padding-right: .6em;
+
+  &:focus {
+    box-shadow: none !important;
+    background: none;
+  }
+}
+
+.close {
+  background: none;
+  border: none;
+  padding: 0;
+  padding-right: 0.5em;
+
+  &:hover {
+    cursor: pointer;
+  }
+}

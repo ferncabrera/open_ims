@@ -44,8 +44,9 @@ export const DefaultCustomers = () => {
     }
   }, [responseData])
 
-  const getDataList = async (pageSize, pageIndex, searchQuery = '') => {
-    const response: any = await getJSONResponse({ endpoint: '/api/server/customers', params: { pageSize, pageIndex, searchQuery } });
+  const getDataList = async (pageSize, pageIndex, searchQuery = {}) => {
+    const search = JSON.stringify(searchQuery);
+    const response: any = await getJSONResponse({ endpoint: '/api/server/customers', params: { pageSize, pageIndex, searchQuery: search } });
     setResponseData(response);
   };
 
@@ -101,6 +102,7 @@ export const DefaultCustomers = () => {
         pageSize={_.get(responseData, 'pagesize', 0)}
         pageIndex={_.get(responseData, 'pageindex', 0)}
         handleSelectedRows={handleSelectedRows}
+        searchPlaceholder='Search by parameter'
       />
     </div>
   )

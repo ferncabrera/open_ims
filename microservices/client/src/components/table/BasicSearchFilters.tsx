@@ -7,6 +7,7 @@ import _ from 'lodash';
 
 interface IBasicSearchFiltersProps {
   search: (value: string) => void;
+  placeHolder: string;
 }
 
 export const BasicSearchFilters: React.FC<IBasicSearchFiltersProps> = (props) => {
@@ -14,10 +15,11 @@ export const BasicSearchFilters: React.FC<IBasicSearchFiltersProps> = (props) =>
   const [filterQuery, setFilterQuery] = useState('')
 
   const {
-    search
+    search,
+    placeHolder,
   } = props
 
-  const debounceFn = useCallback(_.debounce(search, 800), []);
+  const debounceFn = useCallback(_.debounce(search, 0), []);
 
   const handleSearchChange = (e) => {
     setFilterQuery(e.target.value);
@@ -28,7 +30,7 @@ export const BasicSearchFilters: React.FC<IBasicSearchFiltersProps> = (props) =>
   
 
   return (
-    <div className='py-4 px-4'>
+    <div className='py-1 pe-4'>
 
       <InputGroup>
         <span
@@ -42,7 +44,7 @@ export const BasicSearchFilters: React.FC<IBasicSearchFiltersProps> = (props) =>
           name="tableSearch"
           onChange={handleSearchChange}
           value={filterQuery}
-          placeholder='Search by parameter'
+          placeholder={placeHolder}
         />
       </InputGroup>
     </div >

@@ -16,6 +16,8 @@ import _ from 'lodash';
 
 export const MainContainer = (props: any) => {
 
+    let i_key = 0;
+
     const navigate = useNavigate();
     const spinnerState = useRecoilValue(overlaySpinnerState);
     const breadcrumbs = useRecoilValue(breadcrumbsState);
@@ -68,7 +70,8 @@ export const MainContainer = (props: any) => {
                                         <Link to='/'><GoHome /></Link>
                                     </span>
                                     {_.map(breadcrumbs.pathArr, (element) => {
-                                        const formatBreadcrumb = <>/<span className='pill'>{element}</span></>
+                                        const formatBreadcrumb = <span key={i_key}>/<span className='pill'>{element}</span></span>
+                                        i_key ++;
                                         return formatBreadcrumb
                                     })}
                                 </div>
