@@ -3,7 +3,7 @@ FROM node:18.17.0-alpine3.18 as builder
 WORKDIR /home/node/app
 
 COPY ./package.json ./
-RUN NODE_ENV=development npm i
+RUN npm install
 COPY ./ ./
 RUN npm run build
 

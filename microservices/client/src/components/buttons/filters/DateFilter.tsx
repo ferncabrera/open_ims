@@ -6,7 +6,7 @@ import styles from "./DateFilter.module.scss";
 
 interface IDateFilter {
   onSelect: (date: string) => void;
-  onClose: (type: string, label:string) => void;
+  onClose: (type: string, label:any) => void;
 }
 
 export const DateFilter = (props: IDateFilter) => {
