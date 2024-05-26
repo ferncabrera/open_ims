@@ -99,7 +99,8 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
     setIsLoading(false);
   };
 
-  const getInvoiceData = async (pagesize, pageindex, searchQuery = '') => {
+  const getInvoiceData = async (pagesize, pageindex, searchParams = {}) => {
+    const searchQuery = JSON.stringify(searchParams);
     const response: IResponse = await getJSONResponse({ endpoint: '/api/server/invoice', params: { id: customerId, pagesize, pageindex, searchQuery } });
     setTableData(response.data);
     setTableLoading(false);
@@ -250,7 +251,8 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
             totalCount={_.get(tableData, 'totalCount', 0)}
             pageSize={_.get(tableData, 'pagesize', 0)}
             pageIndex={_.get(tableData, 'pageindex', 0)}
-            searchPlaceholder='Search'
+            searchPlaceholder='Search Order Number, Amount, or Status'
+            filters={[{type: 'date', label: 'Date'}]}
           />
         </div>
       </CrudForm>
