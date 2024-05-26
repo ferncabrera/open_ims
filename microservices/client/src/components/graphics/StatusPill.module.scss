@@ -1,0 +1,23 @@
+@import "../../styles/general/colors.scss";
+
+.format {
+  border-radius: 40px;
+  width: fit-content;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.green {
+  background-color: $light-green;
+  color: $dark-green;
+}
+
+.yellow {
+  background-color: $light-orange;
+  color: $dark-orange;
+}
+
+.red {
+  background-color: $invalid;
+  color: $dark-red;
+}
