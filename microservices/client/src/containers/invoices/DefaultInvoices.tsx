@@ -103,7 +103,7 @@ export const DefaultInvoices = () => {
         pageIndex={_.get(responseData, 'data.pageindex', 0)}
         handleSelectedRows={handleSelectedRows}
         searchPlaceholder='Search by Number, Status, or Amount'
-        filters={[{label: 'Date', type: 'date'}]}
+        filters={[{label: 'Date', type: 'date', id: 0}, {label: 'Company Name', type: 'input', id: 1}]}
       />
     </div>
   )
