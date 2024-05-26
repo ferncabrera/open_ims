@@ -48,10 +48,10 @@ echo -e $PURPLE_BOLD"Step 2:"$END" Run skaffold "$CYAN_BOLD$MODE$END" profile!\n
 
 if [ "$MODE" = "dev" ]
   then
-    skaffold dev
+    skaffold dev --no-prune=false --cache-artifacts=false
   else 
     trap 'echo -e "\ncleaning up now...\n" && skaffold delete -p $MODE && echo -e "\nall "$CYAN_BOLD$MODE$END" services deleted!"' SIGINT
-    skaffold run -p $MODE --tail 
+    skaffold run -p $MODE --tail --no-prune=false --cache-artifacts=false
 fi
 
 echo -e "\n"$BLUE$SCRIPT_NAME$END" completed"$GREEN_BOLD" SUCCESSFULLY"$END"\n"

@@ -1,4 +1,8 @@
 # Managing secrets and environment variables
+
+## How it works
+As part of the applications startup, a script is run that will use the configuration files in this directory to create a Kuberentes Secret & ConfigMap. Both of these objects are required to exist on the cluster where the app is run, otherwise the services will be missing key variables and fail to start/run correctly. 
+
 ## Environment variables
 Environment variables that are added to either the _./common/config/**dev**/.env_ or  the _./common/config/**prod**/.env_ files will be automatically available to all K8s services as their keyname (after restarting the app) _except for the client service!_
 

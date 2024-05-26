@@ -46,6 +46,13 @@ Now that you are ready, in the root of the project run:
 ./start.sh dev # To run the app in DEV mode (Default)
 ./start.sh prod # To run the app in PROD mode (Read more about runnning the application in PROD mode below)
 ```
+Optionally, you can use our new Makefile commands to do the same:
+```sh
+make dev # Same functionality as above \
+make prod # Same functionality as above \
+```
+*__New:__* Run ```make help``` to see the catalogue of new commands you can use as well!
+
 <strong>The terminal should now be streaming logs.</strong> If an error is encountered during startup, the script will attempt to clean up any created resources and then exit. 
 <br/>
 <br/>
