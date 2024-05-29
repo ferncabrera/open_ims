@@ -19,7 +19,7 @@ export const get_invoice = async (req: Request, res: Response) => {
   const offset: number = Number(pageindex) * Number(pagesize);
 
   const filters = JSON.parse(searchquery)
-  const { date, searchQuery } = filters;
+  const { date, input1, searchQuery } = filters;
 
   if (_.isEmpty(filters) || Object.values(filters).every(value => !value)) {
     invoice_query = await query("SELECT * FROM invoice_orders WHERE customer_id = $1 ORDER BY invoice_id LIMIT $2 OFFSET $3", [id, pagesize, offset]);
@@ -33,6 +33,10 @@ export const get_invoice = async (req: Request, res: Response) => {
     if (date) {
       filterConditions.push(`DATE(invoice_date) = $${queryParams.length + 1}`);
       queryParams.push(date);
+    }
+    if (input1) { // Vendor search
+      const vendor_id_query = await query("SELECT id FROM vendor_table WHERE company_name = $1", [input1]);
+      console.log('vendr', vendor_id_query)
     }
     if (searchQuery) {
       filterConditions.push(

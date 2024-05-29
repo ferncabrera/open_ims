@@ -94,18 +94,22 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     setFilterValues(prevFilterValues => ({ ...prevFilterValues, date: dateIso }))
   }
 
-  const handleInputFilter = () => {
-    return null
-  }
+  const handleInputFilter = (data, id) => {
+    setFilterValues(prevFilterValues => ({...prevFilterValues, ['input' + id]: data}))
+    return
+  };
 
   const handleApplyFilters = () => {
     fetchDataFunction(10, 0, filterValues)
-  }
+  };
 
   const removeFilter = (filterType: string, label: string, id: number) => {
-    const updatedSelectedFilters = _.filter(selectedFilters, (filter) => filter.id !== id);
-    setSelectedFilters(updatedSelectedFilters);
-    setFilterValues(prevFilterValues => ({ ...prevFilterValues, [filterType]: '' }))
+    setSelectedFilters(prevSelected => (_.filter(prevSelected, (filter) => filter.id !== id)));
+    if (filterType !== 'date') {
+      setFilterValues(prevFilterValues => ({ ...prevFilterValues, [filterType + id]: '' }));
+    } else {
+      setFilterValues(prevFilterValues => ({...prevFilterValues, [filterType]: ''}));
+    }
     setFilterOptions((prevFilterOptions) => ([...prevFilterOptions, { type: filterType, label, id }]));
   };
 
@@ -119,11 +123,11 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     switch (filterType.type) {
       case 'date':
         setSelectedFilters((prevSelectedFilters) =>
-          [...prevSelectedFilters, { element: <DateFilter onSelect={handleDateSelect} onClose={() => removeFilter(type, label, id)} />, type }]);
+          [...prevSelectedFilters, { element: <DateFilter onSelect={handleDateSelect} onClose={() => removeFilter(type, label, id)} />, type, id }]);
         break
       case 'input':
         setSelectedFilters((prevSelectedFilters) =>
-          [...prevSelectedFilters, { element: <InputFilter placeholder={label} onChange={handleInputFilter} onClose={(e) => removeFilter} inputId={1} />, type: filterType.type }])
+          [...prevSelectedFilters, { element: <InputFilter placeholder={label} onChange={handleInputFilter} onClose={() => removeFilter(type, label, id)} inputId={id} />, type, id }])
         break;
     }
 
@@ -290,7 +294,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                 Next <MdArrowForward />
               </Button>
             </Col>
-          </Row>
+          </Row>Showing
         </div>
       </div>
     </div >
