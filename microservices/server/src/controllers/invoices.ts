@@ -93,10 +93,12 @@ export const get_all_invoices = async (req: Request, res: Response) => {
       queryParams.push(date);
     }
     if (input1) { // customer search
-      const customer_id_query = await query("SELECT id FROM customer_table WHERE company_name = $1", [input1]);
+      const customer_id_query = await query("SELECT id FROM customer_table WHERE company_name ILIKE '%' || $1 || '%'", [input1]);
       const customer_id = customer_id_query.rows[0].id;
-      filterConditions.push(`(customer_id::text ILIKE '%' || $${queryParams.length +1}) || '%')`);
-      queryParams.push(customer_id);
+      if (customer_id) {
+        filterConditions.push(`customer_id = $${queryParams.length + 1}`);
+        queryParams.push(customer_id);
+      }
     }
     if (searchQuery) {
       filterConditions.push(
