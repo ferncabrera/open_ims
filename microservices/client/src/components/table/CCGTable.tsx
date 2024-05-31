@@ -294,7 +294,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                 Next <MdArrowForward />
               </Button>
             </Col>
-          </Row>Showing
+          </Row>
         </div>
       </div>
     </div >
