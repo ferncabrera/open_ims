@@ -2,6 +2,7 @@ import { createColumnHelper } from "@tanstack/react-table";
 import { Form } from "react-bootstrap";
 import { GoPencil } from "react-icons/go";
 import { TableLink } from "../../components/table/TableLink";
+import { StatusPill } from "../../components/graphics/StatusPill";
 import _ from "lodash";
 
 const columnHelper = createColumnHelper();
@@ -79,6 +80,23 @@ export const Columns = [
   columnHelper.accessor("delivery_status", {
     size: 30,
     header: 'Delivery Status',
+    cell: (props) => {
+      const status: string = _.get(props.row.original, 'delivery_status', '');
+
+      let color: 'red' | 'yellow' | 'green' = 'red';
+      if (status === 'Received') {
+        color = 'green'
+      } else {
+        color = 'red'
+      }
+
+      return (
+        <StatusPill
+          text={status}
+          color={color}
+        />
+      )
+    }
   },),
 
   columnHelper.accessor("edit", {
