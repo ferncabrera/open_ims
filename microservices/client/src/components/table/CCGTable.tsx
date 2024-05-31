@@ -9,6 +9,7 @@ import { Row, Col, Form, Button, Spinner } from 'react-bootstrap';
 import { BasicSearchFilters } from './BasicSearchFilters';
 import { FilterButton } from '../buttons/filters/FilterButton';
 import { DateFilter } from '../buttons/filters/DateFilter';
+import { InputFilter } from '../buttons/filters/InputFilter';
 import { PillButton } from '../buttons/PillButton';
 import { MdArrowForward, MdArrowBack } from "react-icons/md";
 import _ from 'lodash';
@@ -22,7 +23,7 @@ interface ICCGTableProps {
   handleSelectedRows?: (selectedRows) => void;
   pageSize: number;
   pageIndex: number;
-  filters?: {label: string, type: string}[];
+  filters?: { label: string, type: string, id: number }[];
   searchPlaceholder: string;
 }
 
@@ -82,7 +83,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
   }, [rowSelection])
 
   const handleSearch = (searchQuery: string) => {
-    setFilterValues(prevFilterValues => ({...prevFilterValues, searchQuery}))
+    setFilterValues(prevFilterValues => ({ ...prevFilterValues, searchQuery }))
   }
 
   const handleDateSelect = (dateSelection) => {
@@ -90,28 +91,44 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     if (dateSelection) {
       dateIso = new Date(dateSelection).toISOString();
     };
-    setFilterValues(prevFilterValues => ({...prevFilterValues, date: dateIso}))
+    setFilterValues(prevFilterValues => ({ ...prevFilterValues, date: dateIso }))
   }
+
+  const handleInputFilter = (data, id) => {
+    setFilterValues(prevFilterValues => ({...prevFilterValues, ['input' + id]: data}))
+    return
+  };
 
   const handleApplyFilters = () => {
     fetchDataFunction(10, 0, filterValues)
-  }
-
-  const removeFilter = (filterType: string, label: string) => {
-    const updatedSelectedFilters = _.filter(selectedFilters, (filter) => filter.type !== filterType);
-    setSelectedFilters(updatedSelectedFilters);
-    setFilterValues(prevFilterValues => ({...prevFilterValues, [filterType]: '' }))
-    setFilterOptions((prevFilterOptions) => ([...prevFilterOptions, {type: filterType, label}]));
   };
 
-  const handleFilterSelection = (filterType: {label: string, type: string}) => {
-    const newFilterOptions = _.filter(filterOptions, (filter) => filter.label !== filterType.label)
+  const removeFilter = (filterType: string, label: string, id: number) => {
+    setSelectedFilters(prevSelected => (_.filter(prevSelected, (filter) => filter.id !== id)));
+    if (filterType !== 'date') {
+      setFilterValues(prevFilterValues => ({ ...prevFilterValues, [filterType + id]: '' }));
+    } else {
+      setFilterValues(prevFilterValues => ({...prevFilterValues, [filterType]: ''}));
+    }
+    setFilterOptions((prevFilterOptions) => ([...prevFilterOptions, { type: filterType, label, id }]));
+  };
+
+  const handleFilterSelection = (filterType: { label: string, type: string, id: number, placeholder?: string }) => {
+
+    const { label, type, id, placeholder } = filterType;
+
+    const newFilterOptions = _.filter(filterOptions, (filter) => filter.id !== id)
     setFilterOptions(newFilterOptions)
 
     switch (filterType.type) {
       case 'date':
-        setSelectedFilters([...selectedFilters, { element: <DateFilter onSelect={handleDateSelect} onClose={() => removeFilter(filterType.type, filterType.label )} />, type: 'date' }]);
+        setSelectedFilters((prevSelectedFilters) =>
+          [...prevSelectedFilters, { element: <DateFilter onSelect={handleDateSelect} onClose={() => removeFilter(type, label, id)} />, type, id }]);
         break
+      case 'input':
+        setSelectedFilters((prevSelectedFilters) =>
+          [...prevSelectedFilters, { element: <InputFilter placeholder={label} onChange={handleInputFilter} onClose={() => removeFilter(type, label, id)} inputId={id} />, type, id }])
+        break;
     }
 
     return null
@@ -277,7 +294,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                 Next <MdArrowForward />
               </Button>
             </Col>
-          </Row>
+          </Row>Showing
         </div>
       </div>
     </div >

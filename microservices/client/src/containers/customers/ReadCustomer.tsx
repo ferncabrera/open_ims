@@ -252,7 +252,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
             pageSize={_.get(tableData, 'pagesize', 0)}
             pageIndex={_.get(tableData, 'pageindex', 0)}
             searchPlaceholder='Search Order Number, Amount, or Status'
-            filters={[{type: 'date', label: 'Date'}]}
+            filters={[{type: 'date', label: 'Date', id:0}]}
           />
         </div>
       </CrudForm>

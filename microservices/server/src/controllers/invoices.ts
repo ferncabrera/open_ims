@@ -19,7 +19,7 @@ export const get_invoice = async (req: Request, res: Response) => {
   const offset: number = Number(pageindex) * Number(pagesize);
 
   const filters = JSON.parse(searchquery)
-  const { date, searchQuery } = filters;
+  const { date, input1, searchQuery } = filters;
 
   if (_.isEmpty(filters) || Object.values(filters).every(value => !value)) {
     invoice_query = await query("SELECT * FROM invoice_orders WHERE customer_id = $1 ORDER BY invoice_id LIMIT $2 OFFSET $3", [id, pagesize, offset]);
@@ -77,7 +77,7 @@ export const get_all_invoices = async (req: Request, res: Response) => {
   let invoice_query;
 
   const filters = JSON.parse(searchquery)
-  const { date, searchQuery } = filters;
+  const { date, input1, searchQuery } = filters;
 
   if (_.isEmpty(filters) || Object.values(filters).every(value => !value)) { // No filters or all filters are falsey values
     invoice_query = await query("SELECT * FROM invoice_orders LIMIT $1 OFFSET $2", [pagesize, offset]);
@@ -91,6 +91,14 @@ export const get_all_invoices = async (req: Request, res: Response) => {
     if (date) {
       filterConditions.push(`DATE(invoice_date) = $${queryParams.length + 1}`);
       queryParams.push(date);
+    }
+    if (input1) { // customer search
+      const customer_id_query = await query("SELECT id FROM customer_table WHERE company_name ILIKE '%' || $1 || '%'", [input1]);
+      const customer_id = customer_id_query.rows[0].id;
+      if (customer_id) {
+        filterConditions.push(`customer_id = $${queryParams.length + 1}`);
+        queryParams.push(customer_id);
+      }
     }
     if (searchQuery) {
       filterConditions.push(
