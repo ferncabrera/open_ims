@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import { query } from "../db";
 import customError from "../utils/customError";
 import * as jwt from "jsonwebtoken";
-import cookieParser from "cookie-parser";
+import _ from "lodash";
 
 interface token {
     email: string;
@@ -98,38 +98,47 @@ export const get_all_users = async ( req: Request, res: Response) => {
   let count_query;
   let user_query;
 
-  if (!searchquery) {
+  const filter = JSON.parse(searchquery);
+
+  if (_.isEmpty(filter) || Object.values(filter).every(value => !value)) {
     user_query = await query("SELECT * FROM user_table LIMIT $1 OFFSET $2", [pagesize, offset]);
     count_query = await query("SELECT COUNT(*) FROM user_table");
   } else {
+    const {searchQuery} = filter;
+    const [first_name, last_name] = searchQuery.split(" ");
     user_query = await query(`
             WITH filtered_rows AS (
                 SELECT
-                  invoice_date,
-                  reference_number,
-                  amount_due,
-                  order_status
+                  first_name,
+                  last_name,
+                  permission,
+                  email,
+                  phone
                 FROM
                   user_table
                 WHERE
-                  reference_number::text ILIKE '%' || $1 || '%'
-                  OR amount_due::text ILIKE '%' || $1 || '%'
-                  OR order_status::text ILIKE '%' || $1 || '%'
+                  first_name::text ILIKE '%' || $1 || '%'
+                  OR last_name::text ILIKE '%' || $1 || '%'
+                  OR (first_name ILIKE '%' || $4 || '%' AND last_name ILIKE '%' || $5 || '%')
+                  OR permission::text ILIKE '%' || $1 || '%'
+                  OR email::text ILIKE '%' || $1 || '%'
+                  OR phone::text ILIKE '%' || $1 || '%'
             ),
             total_count AS (
               SELECT COUNT(*) AS count FROM filtered_rows
             )
             SELECT
-              reference_number,
-              amount_due,
-              order_status,
-              invoice_date,
+              first_name,
+              last_name,
+              permission,
+              email,
+              phone,
             (SELECT count FROM total_count) AS count
             FROM
               filtered_rows
             LIMIT $2 OFFSET $3
 
-        `, [searchquery, pagesize, offset]);
+        `, [searchQuery, pagesize, offset, first_name, last_name]);
     count_query = user_query
   }
 

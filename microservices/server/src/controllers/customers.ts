@@ -24,7 +24,7 @@ export const get_customers = async (req: Request, res: Response) => {
 
   const filter = JSON.parse(searchquery);
 
-  if (_.isEmpty(filter)) {
+  if (_.isEmpty(filter) || Object.values(filter).every(value => !value)) {
     customers_query = await query("SELECT * FROM customer_table ORDER BY id LIMIT $1 OFFSET $2", [pagesize, offset]);
     count_query = await query("SELECT COUNT(*) FROM customer_table");
   } else {
