@@ -43,8 +43,12 @@ export const DefaultPurchaseOrders = () => {
     }
   }, [responseData])
 
-  const getDataList = async (pageSize, pageIndex, searchQuery = '') => {
+  const getDataList = async (pageSize, pageIndex, searchFilter = {}) => {
+    const searchQuery = JSON.stringify(searchFilter);
     const response: any = await getJSONResponse({ endpoint: '/api/server/purchase-orders', params: { pageSize, pageIndex, searchQuery } });
+    if (response.status !== 200) {
+      setBannerState({message: response.message, variant: 'danger'})
+    }
     setResponseData(response);
   };
 
@@ -100,7 +104,8 @@ export const DefaultPurchaseOrders = () => {
         pageSize={_.get(responseData, 'pagesize', 0)}
         pageIndex={_.get(responseData, 'pageindex', 0)}
         handleSelectedRows={handleSelectedRows}
-        searchPlaceholder='Search'
+        searchPlaceholder='Search by Amount or Status'
+        filters={[{label:"Date", type:'date', id:0}, {label:"Vendor Name", type:"input", id:1}]}
       />
     </div>
   )

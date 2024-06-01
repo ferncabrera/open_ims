@@ -47,6 +47,9 @@ export const DefaultCustomers = () => {
   const getDataList = async (pageSize, pageIndex, searchQuery = {}) => {
     const search = JSON.stringify(searchQuery);
     const response: any = await getJSONResponse({ endpoint: '/api/server/customers', params: { pageSize, pageIndex, searchQuery: search } });
+    if (response.status !== 200) {
+      setBannerState({message: response.message, variant: 'danger'})
+    }
     setResponseData(response);
   };
 

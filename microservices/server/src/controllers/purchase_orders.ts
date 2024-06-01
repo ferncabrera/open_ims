@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { query, chained_query } from "../db";
+import _ from "lodash";
 
 interface IGetListRequestHeaders {
   pageindex: number;
@@ -15,50 +16,45 @@ export const get_all_purchase_orders = async (req: Request, res: Response) => {
   let purchase_orders_query;
   let count_query;
 
-  if (!searchquery) {
+  const filters = JSON.parse(searchquery);
+  const { date, input1, searchQuery } = filters;
+
+  if (_.isEmpty(filters) || Object.values(filters).every(value => !value)) {
     purchase_orders_query = await query("SELECT * FROM purchase_orders ORDER BY purchase_id LIMIT $1 OFFSET $2", [pagesize, offset]);
     count_query = await query("SELECT COUNT(*) FROM purchase_orders");
   } else {
-    const [firstName, lastName] = searchquery.split(" ");
 
-    //!!! This does not support search by vendor_id
+    const filterConditions = [];
+    const queryParams = [];
 
-    purchase_orders_query = await query(`
-        WITH filtered_rows AS (
-            SELECT
-              purchase_id,
-              amount,
-              first_name,
-              last_name,
-              company_name,
-              phone
-            FROM
-              purchase_orders
-            WHERE
-              id::text ILIKE '%' || $1 || '%'
-              OR email ILIKE '%' || $1 || '%'
-              OR first_name ILIKE '%' || $1 || '%'
-              OR last_name ILIKE '%' || $1 || '%'
-              OR (first_name ILIKE '%' || $4 || '%' AND last_name ILIKE '%' || $5 || '%')
-              OR company_name ILIKE '%' || $1 || '%'
-              OR phone ILIKE '%' || $1 || '%'
-          ),
-          total_count AS (
-            SELECT COUNT(*) AS count FROM filtered_rows
-          )
-          SELECT
-            id,
-            email,
-            first_name,
-            last_name,
-            company_name,
-            phone,
-            (SELECT count FROM total_count) AS count
-          FROM
-            filtered_rows
-          ORDER BY id LIMIT $2 OFFSET $3;
-        `, [searchquery, pagesize, offset, firstName, lastName]);
-    count_query = purchase_orders_query
+    if (searchQuery) {
+      filterConditions.push(
+        `(purchase_id::text ILIKE '%' || $${queryParams.length + 1} || '%' OR amount_due::text ILIKE '%' || $${queryParams.length + 1} 
+        || '%' OR delivery_status::text ILIKE '%' || $${queryParams.length + 1} || '%')`
+      );
+      queryParams.push(searchQuery);
+    }
+
+    if (date) {
+      filterConditions.push(`DATE(purchase_date) = $${queryParams.length + 1}`);
+      queryParams.push(date);
+    }
+    if (input1) { // customer search
+      const vendor_id_query = await query("SELECT id FROM vendor_table WHERE company_name ILIKE '%' || $1 || '%'", [input1]);
+      const vendor_id = vendor_id_query.rows[0].id;
+      if (vendor_id) {
+        filterConditions.push(`vendor_id = $${queryParams.length + 1}`);
+        queryParams.push(vendor_id);
+      }
+    }
+
+    const whereClause = filterConditions.length > 0 ? `WHERE ${filterConditions.join(' AND ')}` : '';
+    purchase_orders_query = await query(` SELECT * FROM purchase_orders ${whereClause} LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2} `
+      , queryParams.concat([pagesize, offset]));
+    
+    count_query = await query(` SELECT COUNT(*) AS count FROM purchase_orders ${whereClause}`, queryParams);
+
+
   }
 
   const totalCount: any = count_query.rows[0] ? count_query.rows[0].count : null;
