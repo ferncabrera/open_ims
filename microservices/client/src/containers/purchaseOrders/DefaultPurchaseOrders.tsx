@@ -38,8 +38,10 @@ export const DefaultPurchaseOrders = () => {
 
   useEffect(() => {
 
-    if (Math.ceil(Number(responseData.total)/Number(responseData.pagesize)) < ((Number(responseData.pageindex) + 1))) {
-      getDataList(responseData.pagesize, 0, responseData.searchquery).catch((e)=> console.log(e))
+    if (Math.ceil(Number(responseData.total) / Number(responseData.pagesize)) < ((Number(responseData.pageindex) + 1))
+      && (responseData.total !== null) && Number(responseData.pageindex > 0)) {
+      const searchQuery = JSON.parse(responseData.searchquery)
+      getDataList(responseData.pagesize, 0, searchQuery).catch((e) => console.log(e))
     }
   }, [responseData])
 

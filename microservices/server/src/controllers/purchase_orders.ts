@@ -30,7 +30,7 @@ export const get_all_purchase_orders = async (req: Request, res: Response) => {
     if (searchQuery) {
       filterConditions.push(
         `(purchase_id::text ILIKE '%' || $${queryParams.length + 1} || '%' OR amount_due::text ILIKE '%' || $${queryParams.length + 1} 
-        || '%' OR delivery_status::text ILIKE '%' || $${queryParams.length + 1} || '%')`
+        || '%' OR delivery_status::text = $${queryParams.length + 1})`
       );
       queryParams.push(searchQuery);
     }
