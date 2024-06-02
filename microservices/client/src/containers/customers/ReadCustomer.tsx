@@ -210,8 +210,11 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
   }
 
   return (
-    <>
-    <Row className=' justify-content-end'>
+    <div className='mx-3'>
+    <Row className=' mt-3 justify-content-end'>
+      <Col className='d-flex align-items-center'>
+        <h2>Customers</h2>
+      </Col>
         <Col className='d-flex justify-content-end' xs={7} >
             <PillButton className='me-2' onClick={null} text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
             <PillButton className='me-2' onClick={() => handleDelete(customerData.id)} text='Delete' color='standard' icon={<FaRegTrashAlt />} />
@@ -256,6 +259,6 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
           />
         </div>
       </CrudForm>
-    </>
+    </div>
   )
 }

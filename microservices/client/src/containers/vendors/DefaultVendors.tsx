@@ -89,8 +89,11 @@ export const DefaultVendors = () => {
 
   return (
 
-    <div className='mt-5 mb-5 mx-3'>
+    <div className='mt-3 mb-5 mx-3'>
       <Row className='mb-2 justify-content-end'>
+        <Col>
+          <h2>Vendors</h2>
+        </Col>
         <Col className='d-flex justify-content-end' xs={7} >
           <PillButton onClick={null} className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
           <PillButton onClick={deleteMultiple} disabled={disableDelete} className='me-2' text='Delete' color='standard' icon={<FaRegTrashAlt />} />
