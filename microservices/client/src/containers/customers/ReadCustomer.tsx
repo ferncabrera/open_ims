@@ -134,7 +134,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
     if (customerData.companyName) {
       const jsxFrame = (label, value) => {
         return (
-          <Row className='mb-2' key={label}>
+          <Row className='mb-3' key={label}>
             <Col sm={4}>{label}</Col>
             <Col> {value} </Col>
           </Row>
