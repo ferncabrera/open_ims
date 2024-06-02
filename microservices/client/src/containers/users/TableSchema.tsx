@@ -27,7 +27,7 @@ export const Columns = [
   },),
 
   columnHelper.accessor("name", {
-    header: 'name',
+    header: 'Name',
     cell: (props) => {
 
       const firstName: string = _.get(props.row.original, 'first_name', '');

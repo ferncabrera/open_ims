@@ -44,8 +44,12 @@ export const DefaultVendors = () => {
     }
   }, [responseData])
 
-  const getDataList = async (pageSize, pageIndex, searchQuery = '') => {
+  const getDataList = async (pageSize, pageIndex, searchFilter = {}) => {
+    const searchQuery = JSON.stringify(searchFilter);
     const response: any = await getJSONResponse({ endpoint: '/api/server/vendors', params: { pageSize, pageIndex, searchQuery } });
+    if (response.status !== 200) {
+      setBannerState({message: response.message, variant: 'danger'})
+    }
     setResponseData(response);
   };
 
@@ -101,7 +105,7 @@ export const DefaultVendors = () => {
         pageSize={_.get(responseData, 'pagesize', 0)}
         pageIndex={_.get(responseData, 'pageindex', 0)}
         handleSelectedRows={handleSelectedRows}
-        searchPlaceholder='Search'
+        searchPlaceholder='Search by Parameter'
       />
     </div>
   )

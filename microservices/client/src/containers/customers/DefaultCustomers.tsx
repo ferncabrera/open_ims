@@ -39,14 +39,18 @@ export const DefaultCustomers = () => {
   useEffect(() => {
 
     if (Math.ceil(Number(responseData.total) / Number(responseData.pagesize)) < ((Number(responseData.pageindex) + 1))
-      && responseData.total !== null) {
-      getDataList(responseData.pagesize, 0, responseData.searchquery).catch((e) => console.log(e))
+      && (responseData.total !== null) && Number(responseData.pageindex > 0)) {
+      const searchQuery = JSON.parse(responseData.searchquery)
+      getDataList(responseData.pagesize, 0, searchQuery).catch((e) => console.log(e))
     }
   }, [responseData])
 
   const getDataList = async (pageSize, pageIndex, searchQuery = {}) => {
     const search = JSON.stringify(searchQuery);
     const response: any = await getJSONResponse({ endpoint: '/api/server/customers', params: { pageSize, pageIndex, searchQuery: search } });
+    if (response.status !== 200) {
+      setBannerState({message: response.message, variant: 'danger'})
+    }
     setResponseData(response);
   };
 
@@ -61,10 +65,10 @@ export const DefaultCustomers = () => {
   }
 
   const deleteMultiple = async () => {
-    const prevParams = [_.get(responseData, 'pagesize', 0), _.get(responseData, 'pageindex', 0), _.get(responseData, 'searchquery', '')]
+    const prevParams = [_.get(responseData, 'pagesize', 0), _.get(responseData, 'pageindex', 0), _.get(responseData, 'searchquery', "{}")]
     const [pageSize, pageIndex, searchQuery] = prevParams;
     const res1: any = await sendDeleteRequest({ endpoint: '/api/server/customers', data: selectedIds });
-    await getDataList(pageSize, pageIndex, searchQuery);
+    await getDataList(pageSize, pageIndex, JSON.parse(searchQuery));
     if (res1.status === 200) {
       setBannerState({ message: 'Selected Customer(s) deleted', variant: 'success' });
     } else {

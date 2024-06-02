@@ -24,8 +24,8 @@ const errorHandler = (error: any, req: Request, res: Response, next: NextFunctio
             break;
         default:
             statusCode = 500;
-            errorMessage = "Something went wrong on the server.";
-            // errorMessage = error.message;
+            // errorMessage = "Something went wrong on the server.";
+            errorMessage = error.message;
             break;
     }
 

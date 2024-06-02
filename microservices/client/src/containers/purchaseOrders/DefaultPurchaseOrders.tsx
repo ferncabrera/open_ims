@@ -38,13 +38,19 @@ export const DefaultPurchaseOrders = () => {
 
   useEffect(() => {
 
-    if (Math.ceil(Number(responseData.total)/Number(responseData.pagesize)) < ((Number(responseData.pageindex) + 1))) {
-      getDataList(responseData.pagesize, 0, responseData.searchquery).catch((e)=> console.log(e))
+    if (Math.ceil(Number(responseData.total) / Number(responseData.pagesize)) < ((Number(responseData.pageindex) + 1))
+      && (responseData.total !== null) && Number(responseData.pageindex > 0)) {
+      const searchQuery = JSON.parse(responseData.searchquery)
+      getDataList(responseData.pagesize, 0, searchQuery).catch((e) => console.log(e))
     }
   }, [responseData])
 
-  const getDataList = async (pageSize, pageIndex, searchQuery = '') => {
+  const getDataList = async (pageSize, pageIndex, searchFilter = {}) => {
+    const searchQuery = JSON.stringify(searchFilter);
     const response: any = await getJSONResponse({ endpoint: '/api/server/purchase-orders', params: { pageSize, pageIndex, searchQuery } });
+    if (response.status !== 200) {
+      setBannerState({message: response.message, variant: 'danger'})
+    }
     setResponseData(response);
   };
 
@@ -72,7 +78,7 @@ export const DefaultPurchaseOrders = () => {
     setSelectedIds(null);
   }
 
-  const createCustomer = () => {
+  const createPurchaseOrder = () => {
     setEntity({
       action: "create",
       category: "purchaseOrders",
@@ -89,7 +95,7 @@ export const DefaultPurchaseOrders = () => {
         <Col className='d-flex justify-content-end' xs={7} >
             <PillButton onClick={null} className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
             <PillButton onClick={deleteMultiple} disabled={disableDelete} className='me-2' text='Delete' color='standard' icon={<FaRegTrashAlt />} />
-            <PillButton onClick={createCustomer} className='me-1' text='+ Create Customer' color='blue' />
+            <PillButton onClick={createPurchaseOrder} className='me-1' text='+ Create Purchase Order' color='blue' />
         </Col>
       </Row>
       <CCGTable
@@ -100,7 +106,8 @@ export const DefaultPurchaseOrders = () => {
         pageSize={_.get(responseData, 'pagesize', 0)}
         pageIndex={_.get(responseData, 'pageindex', 0)}
         handleSelectedRows={handleSelectedRows}
-        searchPlaceholder='Search'
+        searchPlaceholder='Search by Amount or Status'
+        filters={[{label:"Date", type:'date', id:0}, {label:"Vendor Name", type:"input", id:1}]}
       />
     </div>
   )

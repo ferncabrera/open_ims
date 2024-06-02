@@ -46,6 +46,9 @@ export const DefaultEmployees = () => {
 
   const getDataList = async (pageSize, pageIndex, searchQuery = '') => {
     const response: any = await getJSONResponse({ endpoint: '/api/server/employees', params: { pageSize, pageIndex, searchQuery } });
+    if (response.status !== 200) {
+      setBannerState({message: response.message, variant: 'danger'})
+    }
     setResponseData(response);
   };
 

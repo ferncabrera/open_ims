@@ -46,6 +46,9 @@ export const DefaultInvoices = () => {
   const getDataList = async (pageSize, pageIndex, searchParams = {}) => {
     const searchQuery = JSON.stringify(searchParams)
     const response: any = await getJSONResponse({ endpoint: '/api/server/invoices', params: { pageSize, pageIndex, searchQuery } });
+    if (response.status !== 200) {
+      setBannerState({message: response.message, variant: 'danger'})
+    }
     setResponseData(response);
   };
 

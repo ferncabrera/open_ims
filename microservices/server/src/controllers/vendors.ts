@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { query } from "../db";
+import _ from "lodash";
 
 interface IGetListRequestHeaders {
   pageindex: number;
@@ -21,11 +22,15 @@ export const get_vendors = async (req: Request, res: Response) => {
   let vendors_query;
   let count_query;
 
-  if (!searchquery) {
+  const search_filter = JSON.parse(searchquery)
+  const {searchQuery} = search_filter;
+
+
+  if (_.isEmpty(search_filter) || Object.values(search_filter).every(value => !value)) {
     vendors_query = await query("SELECT * FROM vendor_table ORDER BY id LIMIT $1 OFFSET $2", [pagesize, offset]);
     count_query = await query("SELECT COUNT(*) FROM vendor_table");
   } else {
-    const [firstName, lastName] = searchquery.split(" ");
+    const [firstName, lastName] = searchQuery.split(" ");
 
     vendors_query = await query(`
         WITH filtered_rows AS (
@@ -61,7 +66,7 @@ export const get_vendors = async (req: Request, res: Response) => {
           FROM
             filtered_rows
           ORDER BY id LIMIT $2 OFFSET $3;
-        `, [searchquery, pagesize, offset, firstName, lastName]);
+        `, [searchQuery, pagesize, offset, firstName, lastName]);
     count_query = vendors_query
   }
 
