@@ -11,7 +11,7 @@ interface IGetRequestHeaders {
 }
 
 export const get_invoice = async (req: Request, res: Response) => {
-  // retrieve invoices based on customer id.
+  // retrieve invoices based on customer id. - for table and filter purposes
   let count_query;
   let invoice_query;
 
@@ -67,6 +67,96 @@ export const get_invoice = async (req: Request, res: Response) => {
 
   res.status(200).json({ message: 'Invoice successfully retrieved', data });
 };
+
+
+
+
+
+export const get_single_invoice = async (req: Request, res: Response) => {
+  const { id } = req.headers;
+
+  const invoice_obj: any = {};
+
+  const invoice_query = await query(
+    "SELECT * from invoice_orders WHERE invoice_id = $1", [id]
+  );
+
+  
+
+  const invoice_data = invoice_query.rows[0];
+
+  const customer_query = await query(
+    "SELECT * FROM customer_table WHERE id = $1", [invoice_data.customer_id]
+  );
+
+  const customer_data = customer_query.rows[0];
+
+  if (invoice_data) {
+    invoice_obj.invoiceId = id;
+    invoice_obj.invoiceStatus = invoice_data.order_status;
+    invoice_obj.referenceNumber = invoice_data.reference_number;
+    invoice_obj.invoiceDate = invoice_data.invoice_date;
+    invoice_obj.customer = `${customer_data.first_name} ${customer_data.last_name}`
+    invoice_obj.salesRepresentative = invoice_data.sales_rep;
+    invoice_obj.paymentStatus = invoice_data.payment_status;
+    invoice_obj.invoiceAmount = invoice_data.amount_due;
+    invoice_obj.paymentDueDate = invoice_data.date_paid;
+    invoice_obj.datePaid = invoice_data.date_paid;
+    invoice_obj.deliveryStatus = invoice_data.delivery_status;
+
+  };
+
+  const address_query: any = await query(
+    "SELECT * FROM customer_addresses WHERE customer_id = $1"
+    , [invoice_data.customer_id]);
+
+  for (const element of address_query.rows) {
+    if (element.address === "Shipping") {
+      invoice_obj.shipping = {
+        customerAddressName: element.customer_address_name,
+        address1: element.street_address_line1,
+        address2: element.street_address_line2,
+        city: element.city,
+        province: element.province,
+        country: element.country,
+        postalCode: element.postal
+      }
+    } else if (element.address === "Billing") {
+      invoice_obj.billing = {
+        customerAddressName: element.customer_address_name,
+        address1: element.street_address_line1,
+        address2: element.street_address_line2,
+        city: element.city,
+        province: element.province,
+        country: element.country,
+        postalCode: element.postal
+      }
+    }
+  }
+
+
+  const default_addresses_object = {
+    address1: '',
+    address2: '',
+    city: '',
+    province: '',
+    country: '',
+    postalCode: '',
+  };
+
+  if (!invoice_obj.billing) {
+    invoice_obj.billing = default_addresses_object;
+  }
+  if (!invoice_obj.shipping) {
+    invoice_obj.shipping = default_addresses_object;
+  };
+
+  res.status(200).json({ message: "Retrieved invoice successfully!", data: invoice_obj });
+}
+
+
+
+
 
 export const get_all_invoices = async (req: Request, res: Response) => {
 

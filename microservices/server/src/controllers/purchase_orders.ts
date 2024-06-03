@@ -76,4 +76,10 @@ export const get_all_purchase_orders = async (req: Request, res: Response) => {
     total: totalCount,
     purchases
   });
-}
+};
+
+export const get_purchase_order = async (req: Request, res: Response) => {
+
+  const id = req.body;
+  res.send(id)
+};

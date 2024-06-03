@@ -45,8 +45,8 @@ export const CrudForm = (props: ICrudForm) => {
   return (
     <div className={styles.body}>
 
-      <div className='fs-4' style={{ fontWeight: 500 }}>
-        {header}
+      <div className='fs-3' style={{ fontWeight: 500 }}>
+        <strong>{header}</strong>
       </div>
 
       {props.children}

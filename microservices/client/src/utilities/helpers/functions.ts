@@ -34,3 +34,16 @@ export const hasEmptyKeys = (obj) => {
     `Checks if a particular object has values with empty keys, returns true of false`;
     return Object.values(obj).every(value => !value);
 }
+
+export const convertDateISO = (isoDate) => {
+    "Will convert to a DD Month YYYY format"
+    const formatDate = new Date(isoDate)
+
+    const monthList = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+    const monthIndex = formatDate.getMonth()
+
+    const month = monthList[monthIndex]
+    const day = String(formatDate.getDate() + 1).padStart(2, "0"); // Days are zero-based, so add 1
+    const year = formatDate.getFullYear();
+    return (`${day} ${month} ${year}`)
+}
