@@ -110,6 +110,7 @@ CREATE TABLE invoice_orders (
     payment_status order_payment,
     order_status order_status,
     date_paid DATE,
+    date_due DATE,
     created_by INT,
     FOREIGN KEY (created_by) REFERENCES employee_table (emp_id) ON UPDATE CASCADE ON DELETE NO ACTION,
     sales_rep INT,
@@ -438,7 +439,7 @@ BEGIN
   GROUP BY v.id, series;
 
   -- Invoices
-  INSERT INTO invoice_orders (customer_id, invoice_date, product_quantity_rate_list, amount_due, delivery_status, payment_status, order_status, date_paid, created_by, sales_rep, reference_number)
+  INSERT INTO invoice_orders (customer_id, invoice_date, product_quantity_rate_list, amount_due, delivery_status, payment_status, order_status, date_paid, date_due, created_by, sales_rep, reference_number)
   SELECT
       c.id,
       CURRENT_DATE - (random() * 1100)::integer AS invoice_date,
@@ -464,6 +465,7 @@ BEGIN
       CASE WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 2 = 0 THEN 'Paid'::order_payment ELSE 'Not paid'::order_payment END AS payment_status,
       CASE WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 3 != 0 THEN 'Confirmed'::order_status ELSE 'Draft'::order_status END AS order_status,
       CURRENT_DATE + (random() * 100)::integer AS date_paid,
+      CURRENT_DATE + (random() * 100)::integer AS date_due,
       FLOOR(random() * 6) + 1 AS created_by,
       FLOOR(random() * 6) + 1 AS sales_rep,
       to_char(FLOOR(random() * 999999999), 'FM000000000') AS reference_number
