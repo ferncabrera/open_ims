@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { EditCreateCustomer } from '../customers/EditCreateCustomer';
 import { EditCreateInvoice } from '../invoices/EditCreateInvoice';
+import { EditCreateVendor } from '../vendors/EditCreateVendor';
 import Error from '../Error';
 
 interface IRenderEditProps {
@@ -22,6 +23,11 @@ export const RenderEdit = (props: IRenderEditProps) => {
       return (
         <EditCreateInvoice invoiceId={entity.id} />
       );
+    
+    case "vendors":
+      return (
+        <EditCreateVendor vendorId={entity.id} />
+      )
 
     default:
       return <Error />

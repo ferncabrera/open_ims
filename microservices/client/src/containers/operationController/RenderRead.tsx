@@ -1,6 +1,7 @@
 import React from 'react'
 import { ReadCustomer } from '../customers/ReadCustomer';
 import { ReadInvoice } from '../invoices/ReadInvoice';
+import { ReadVendor } from '../vendors/ReadVendor';
 import Error from '../Error';
 
 interface IRenderReadProps {
@@ -20,6 +21,11 @@ export const RenderRead = (props: IRenderReadProps) => {
         return (
           <ReadInvoice invoiceId={entity.id} />
         )
+    
+    case "vendors":
+      return (
+        <ReadVendor vendorId={entity.id} />
+      )
 
     default:
       return <Error />

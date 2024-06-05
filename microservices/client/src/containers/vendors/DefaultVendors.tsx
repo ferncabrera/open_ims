@@ -77,7 +77,7 @@ export const DefaultVendors = () => {
     setSelectedIds(null);
   }
 
-  const createCustomer = () => {
+  const createVendor = () => {
     setEntity({
       action: "create",
       category: "vendors",
@@ -97,7 +97,7 @@ export const DefaultVendors = () => {
         <Col className='d-flex justify-content-end' xs={7} >
           <PillButton onClick={null} className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
           <PillButton onClick={deleteMultiple} disabled={disableDelete} className='me-2' text='Delete' color='standard' icon={<FaRegTrashAlt />} />
-          <PillButton onClick={createCustomer} className='me-1' text='+ Create Customer' color='blue' />
+          <PillButton onClick={createVendor} className='me-1' text='+ Create Vendor' color='blue' />
         </Col>
       </Row>
       <CCGTable
