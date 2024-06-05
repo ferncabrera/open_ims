@@ -100,7 +100,7 @@ export const get_single_invoice = async (req: Request, res: Response) => {
     invoice_obj.salesRepresentative = invoice_data.sales_rep;
     invoice_obj.paymentStatus = invoice_data.payment_status;
     invoice_obj.invoiceAmount = invoice_data.amount_due;
-    invoice_obj.paymentDueDate = invoice_data.date_paid;
+    invoice_obj.paymentDueDate = invoice_data.date_due;
     invoice_obj.datePaid = invoice_data.date_paid;
     invoice_obj.deliveryStatus = invoice_data.delivery_status;
 

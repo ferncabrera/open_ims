@@ -107,7 +107,7 @@ export const Columns = [
     header: '',
     maxSize: 30,
     cell: (props) => {
-      const id: string = _.get(props.row.original, 'id', '')
+      const id: string = _.get(props.row.original, 'invoice_id', '')
       return (
 
         <TableLink
