@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { query } from "../db";
+import { query, chained_query } from "../db";
 import _ from "lodash";
 
 interface IGetListRequestHeaders {
@@ -23,7 +23,7 @@ export const get_vendors = async (req: Request, res: Response) => {
   let count_query;
 
   const search_filter = JSON.parse(searchquery)
-  const {searchQuery} = search_filter;
+  const { searchQuery } = search_filter;
 
 
   if (_.isEmpty(search_filter) || Object.values(search_filter).every(value => !value)) {
@@ -96,3 +96,57 @@ export const get_available_vendors = async (req: Request, res: Response) => {
 
   res.status(200).json({ message: "Successfully retrieved all available vendors", data: available })
 }
+
+export const get_vendor = async (req: Request, res: Response) => {
+  const { id } = req.headers;
+
+  const vendor_query = await query("SELECT * FROM vendor_table WHERE id = $1", [id]);
+
+  const vendor_address_query = await query("SELECT * FROM vendor_addresses WHERE vendor_id = $1", [id]);
+
+  const vendor_addresses = vendor_address_query.rows;
+
+  const vendor_obj: any = {};
+
+
+  for (const element of vendor_addresses) {
+    if (element.address === "Shipping") {
+      vendor_obj.shipping = {
+        customerAddressName: element.customer_address_name,
+        address1: element.street_address_line1,
+        address2: element.street_address_line2,
+        city: element.city,
+        province: element.province,
+        country: element.country,
+        postalCode: element.postal
+      }
+    } else if (element.address === "Billing") {
+      vendor_obj.billing = {
+        customerAddressName: element.customer_address_name,
+        address1: element.street_address_line1,
+        address2: element.street_address_line2,
+        city: element.city,
+        province: element.province,
+        country: element.country,
+        postalCode: element.postal
+      }
+    }
+  };
+
+  const vendor_data = vendor_query.rows[0];
+
+  if (vendor_data) {
+    vendor_obj.companyName = vendor_data.company_name
+    vendor_obj.email = vendor_data.email
+    vendor_obj.firstName = vendor_data.first_name
+    vendor_obj.lastName = vendor_data.last_name
+    vendor_obj.phone = vendor_data.phone
+  };
+
+
+
+  const get_purchase_order_query = await query("SELECT * FROM purchase_orders WHERE vendor_id = $1", [id]);
+  const purchase_orders = get_purchase_order_query.rows;
+
+  res.status(200).json({ message: 'Vendor successfully retrieved', data: vendor_obj });
+};

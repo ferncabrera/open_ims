@@ -35,7 +35,7 @@ export const hasEmptyKeys = (obj) => {
     return Object.values(obj).every(value => !value);
 }
 
-export const convertDateISO = (isoDate) => {
+export const convertDateISO = (isoDate, format: 0 | 1) => {
     "Will convert to a DD Month YYYY format"
     const formatDate = new Date(isoDate)
 
@@ -43,7 +43,12 @@ export const convertDateISO = (isoDate) => {
     const monthIndex = formatDate.getMonth()
 
     const month = monthList[monthIndex]
-    const day = String(formatDate.getDate() + 1).padStart(2, "0"); // Days are zero-based, so add 1
+    const day = String(formatDate.getDate()).padStart(2, "0");
     const year = formatDate.getFullYear();
-    return (`${day} ${month} ${year}`)
+
+    if (format) {
+        return (`${month} ${day}, ${year}`)
+    } else {
+        return (`${day} ${month}, ${year}`)
+    }
 }

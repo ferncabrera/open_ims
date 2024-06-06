@@ -150,15 +150,15 @@ export const ReadInvoice = (props: IReadInvoiceProps) => {
             { label: 'Invoice Status', val: invoiceData.invoiceStatus },
             { label: 'Invoice#', val: invoiceData.invoiceId },
             { label: 'Reference#', val: invoiceData.referenceNumber },
-            { label: 'Invoice Date', val: convertDateISO(invoiceData.invoiceDate) },
+            { label: 'Invoice Date', val: convertDateISO(invoiceData.invoiceDate, 0) },
             { label: 'Customer', val: invoiceData.customer },
             { label: 'Sales Representative', val: invoiceData.salesRepresentative }
         ];
         const paymentSection = [
             { label: 'Payment Status', val: invoiceData.paymentStatus },
             { label: 'Invoice Amount', val: `$${invoiceData.invoiceAmount}` },
-            { label: 'Payment Due', val: convertDateISO(invoiceData.paymentDueDate) },
-            { label: 'Date Paid', val: convertDateISO(invoiceData.datePaid) }
+            { label: 'Payment Due', val: convertDateISO(invoiceData.paymentDueDate, 0) },
+            { label: 'Date Paid', val: convertDateISO(invoiceData.datePaid, 0) }
         ];
 
         const JSXInfoFieldArray = [];

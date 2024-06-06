@@ -34,7 +34,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     columns,
     data,
     totalCount,
-    fetchDataFunction,
+    fetchDataFunction, // params are (pageSize, pageIndex, searchQuery) IN THAT ORDER
     pageSize,
     pageIndex,
     handleSelectedRows = null,
@@ -102,6 +102,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
   };
 
   const handleApplyFilters = () => {
+    `params (pageSize, pageIndex, searchQuery)`
     fetchDataFunction(10, 0, filterValues)
   };
 

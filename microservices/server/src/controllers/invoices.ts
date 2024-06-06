@@ -225,7 +225,7 @@ export const get_all_invoices = async (req: Request, res: Response) => {
     pagesize,
     offset,
     totalCount,
-  }
+  };
 
 
   res.status(200).json({ message: 'Invoices successfully retrieved', data });
