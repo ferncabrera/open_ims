@@ -51,4 +51,4 @@ export const convertDateISO = (isoDate, format: 0 | 1) => {
     } else {
         return (`${day} ${month}, ${year}`)
     }
-}
+};

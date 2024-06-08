@@ -235,7 +235,21 @@ export const create_customer = async (req: Request, res: Response) => {
 
   res.status(200).json({ message: "Successfully created customer" });
 
-}
+};
+
+export const get_available_customers = async (req: Request, res: Response) => {
+  const customers_list_query = await query("SELECT * FROM customer_table");
+  const unavailable_list_query =  await query("SELECT * FROM vendor_and_customer");
+
+  const customers = customers_list_query.rows;
+  const unavailable = unavailable_list_query.rows;
+
+  const available = customers.filter((object) => {
+    return !unavailable.some((unavailable_object) => unavailable_object.customer_id === object.id)
+  });
+
+  res.status(200).json({message: 'Successfully retrieved available customers', data: available});
+};
 
 export const update_customer = async (req: Request, res: Response) => {
 

@@ -1,5 +1,8 @@
 import { IValidate } from "./types/validationTypes";
 //global validation function
+
+import _ from "lodash";
+
 export const fieldValidation = (data: IValidate) => {
     const {name, value, required} = data;
 
@@ -29,4 +32,21 @@ export const fieldValidation = (data: IValidate) => {
     return {isValid: true, message: "", fieldName: name}
 }
 
-// export const validateFormOnSubmit = (data)
+export const validateFormOnSubmit = (requiredArr: string[], data ) : [any, boolean] => {
+
+    const trackErrorList = [];
+    const errorObject: any = {};
+
+    _.forEach(requiredArr, (key) => {
+        data[key];
+        const formGroup = {name: key, value: data[key], required: true }
+        const isValid = fieldValidation(formGroup);
+        errorObject[key] = {valid: isValid.isValid, message: isValid.message};
+        trackErrorList.push(isValid);
+    });
+
+    const isSubmissionInValid = _.some(trackErrorList, (validEntity) => validEntity.isValid === false);
+
+    return [errorObject, isSubmissionInValid];
+
+};

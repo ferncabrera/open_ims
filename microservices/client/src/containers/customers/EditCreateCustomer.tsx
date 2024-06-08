@@ -194,7 +194,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
     navigate('/ccg/customers')
     return
 
-  }
+  };
 
   const handleCheck = (isChecked) => {
     if (isChecked) {
@@ -254,7 +254,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
               </Form.Group>
 
               {customerId &&
-                <Form.Group as={Row} className='mt-3 mb-3'>
+                <Form.Group as={Row} className='mt-3 mb-2'>
                   <Form.Label className='fw-normal' column lg={2}>
                     Customer ID:
                   </Form.Label>
@@ -264,7 +264,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                 </Form.Group>
               }
 
-              <Form.Group as={Row} className='mb-3'>
+              <Form.Group as={Row} className='mb-2'>
                 <Form.Label className='fw-normal' column lg={2}>
                   Company Name:
                 </Form.Label>
@@ -281,13 +281,17 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                       validate({ value, name, required })
                     }}
                   />
+                  <div className='d-flex'>
                   {error.companyName?.valid === false &&
                     <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.companyName.message}</Form.Control.Feedback>
                   }
+                  {/* THis is so that space is taken up */}
+                  <span className='invisible'>filler</span>
+                </div>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className='mb-3'>
+              <Form.Group as={Row} className='mb-2'>
                 <Form.Label className='fw-normal' column lg={2}>
                   First Name:
                 </Form.Label>
@@ -304,13 +308,17 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                       validate({ value, name, required })
                     }}
                   />
+                  <div className='d-flex'>
                   {error.firstName?.valid === false &&
                     <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.firstName.message}</Form.Control.Feedback>
                   }
+                  {/* THis is so that space is taken up */}
+                  <span className='invisible'>filler</span>
+                </div>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className='mb-3'>
+              <Form.Group as={Row} className='mb-2'>
                 <Form.Label className='fw-normal' column lg={2}>
                   Last Name:
                 </Form.Label>
@@ -327,13 +335,17 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                       validate({ value, name, required })
                     }}
                   />
+                  <div className='d-flex'>
                   {error.lastName?.valid === false &&
                     <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.lastName.message}</Form.Control.Feedback>
                   }
+                  {/* THis is so that space is taken up */}
+                  <span className='invisible'>filler</span>
+                </div>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className='mb-3'>
+              <Form.Group as={Row} className='mb-2'>
                 <Form.Label className='fw-normal' column lg={2}>
                   Email:
                 </Form.Label>
@@ -350,13 +362,17 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                       validate({ value, name, required })
                     }}
                   />
+                  <div className='d-flex'>
                   {error.email?.valid === false &&
                     <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.email.message}</Form.Control.Feedback>
                   }
+                  {/* THis is so that space is taken up */}
+                  <span className='invisible'>filler</span>
+                </div>
                 </Col>
               </Form.Group>
 
-              <Form.Group as={Row} className='mb-3'>
+              <Form.Group as={Row} className='mb-2'>
                 <Form.Label className='fw-normal' column lg={2}>
                   Phone:
                 </Form.Label>
@@ -367,15 +383,19 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     value={customerData.phone}
                     onChange={(e) => setCustomerData({ ...customerData, phone: e.target.value })}
                     required
-                    isInvalid={error.email?.valid === false}
+                    isInvalid={error.phone?.valid === false}
                     onBlur={(e) => {
                       const { value, name, required } = e.target;
                       validate({ value, name, required })
                     }}
                   />
+                  <div className='d-flex'>
                   {error.phone?.valid === false &&
                     <Form.Control.Feedback data-testid="email-error" type='invalid'>{error.phone.message}</Form.Control.Feedback>
                   }
+                  {/* THis is so that space is taken up */}
+                  <span className='invisible'>filler</span>
+                </div>
                 </Col>
               </Form.Group>
 

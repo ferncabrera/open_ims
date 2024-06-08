@@ -1,5 +1,7 @@
 import { Request, Response } from "express";
+import { get_user_id } from "./users";
 import { query, chained_query } from "../db";
+import customError from "../utils/customError";
 import _ from "lodash";
 
 interface IGetListRequestHeaders {
@@ -101,8 +103,15 @@ export const get_vendor = async (req: Request, res: Response) => {
   const { id } = req.headers;
 
   const vendor_query = await query("SELECT * FROM vendor_table WHERE id = $1", [id]);
-
   const vendor_address_query = await query("SELECT * FROM vendor_addresses WHERE vendor_id = $1", [id]);
+  const vendor_and_customer_query = await query("SELECT customer_id FROM vendor_and_customer WHERE vendor_id = $1", [id]);
+
+  let linked_customer = null;
+  if (vendor_and_customer_query.rows[0]) {
+    const customer_id = vendor_and_customer_query.rows[0].customer_id;
+    const customer_query = await query("SELECT company_name FROM customer_table WHERE id = $1", [customer_id])
+    linked_customer = customer_query.rows[0].company_name;
+  }
 
   const vendor_addresses = vendor_address_query.rows;
 
@@ -136,6 +145,7 @@ export const get_vendor = async (req: Request, res: Response) => {
   const vendor_data = vendor_query.rows[0];
 
   if (vendor_data) {
+    vendor_obj.connectCustomer = linked_customer
     vendor_obj.companyName = vendor_data.company_name
     vendor_obj.email = vendor_data.email
     vendor_obj.firstName = vendor_data.first_name
@@ -149,4 +159,80 @@ export const get_vendor = async (req: Request, res: Response) => {
   const purchase_orders = get_purchase_order_query.rows;
 
   res.status(200).json({ message: 'Vendor successfully retrieved', data: vendor_obj });
+};
+
+export const create_vendor = async (req: Request, res: Response) => {
+  const data = req.body;
+
+
+  const connected_customer = data.connectCustomer ? data.connectCustomer : '';
+  const queries_list = [] as { text: string; params: any[] }[];
+
+  const {firstName, lastName, companyName, email, phone, netTerms } = data;
+  const net_terms = netTerms ? netTerms : 0;
+
+  if (!(firstName && lastName && companyName && email && phone)) {
+    throw new customError({ message: "Missing required fields!", code: 20 });
+  }
+
+  const user_id = await get_user_id(req, res);
+  
+  const result = await query(`INSERT INTO vendor_table (first_name,last_name,company_name,email,phone,net_terms, created_by) 
+  VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`, [firstName, lastName, companyName, email, phone, net_terms, user_id]);
+  
+  const new_id = result.rows[0].id;
+  
+  // res.status(300).json({message:'debugging', data})
+
+
+  try {
+
+    if (connected_customer) {
+      const customer_query = await query("SELECT * FROM customer_table WHERE company_name = $1", [connected_customer]);
+      const new_customer_id = customer_query.rows[0].id;
+
+      const create_vendor_customer_query: IChainedQueryProps = {
+        text: 'INSERT INTO vendor_and_customer (vendor_id, customer_id) VALUES ($1, $2)',
+        params: [new_id, new_customer_id]
+      }
+      queries_list.push(create_vendor_customer_query)
+    };
+
+
+    const create_address = (type: string, address_data: any) => {
+
+      const { customerAddressName, address1, address2, city, province, postalCode, country } = address_data;
+      const address_query: IChainedQueryProps = {
+        text: `
+        INSERT INTO vendor_addresses
+        (customer_id,
+          address, 
+          street_address_line1, 
+          street_address_line2,
+          city,
+          province,
+          postal,
+          country,
+          customer_address_name)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
+        params: [new_id, type, address1, address2, city, province, postalCode, country, customerAddressName]
+      };
+
+      queries_list.push(address_query)
+    }
+
+    if (data.shipping) {
+      create_address('Shipping', data.shipping)
+    };
+    if (data.billing) {
+      create_address('Billing', data.billing)
+    };
+
+    await chained_query(queries_list)
+  } catch (err) {
+    await query('DELETE FROM vendor_table WHERE id = $1', [new_id])
+    throw new customError({ message: 'Failed database operation', code: 20 })
+  }
+  res.status(200).json({ message: "Successfully created vendor" });
+
 };

@@ -85,6 +85,7 @@ export const ReadVendor = (props: IReadVendorProps) => {
         if (response.status !== 200) {
             return setBanner({ message: response.message, variant: 'danger' });
         };
+        setBreadcrumbs({pathArr:[...breadcrumbs.pathArr, <span>{response.data.companyName}</span> ]})
         setVendorData(response.data);
     }
 
@@ -143,7 +144,7 @@ export const ReadVendor = (props: IReadVendorProps) => {
                     <Col sm={4}>{`${addressType} Address:`}</Col>
                     <Col className='no-space'>
                         {/* <Row> */}
-                        <p className=''>{addressData.customerAddressName}</p>
+                        <p className=''>{addressData.vendorAddressName}</p>
                         <p className='' >{addressData.address1}</p>
                         <p className='' >{addressData.address2}</p>
                         <p className='' >{addressData.city}</p>
@@ -188,7 +189,7 @@ export const ReadVendor = (props: IReadVendorProps) => {
                             <div>
                                 {vendorData.shipping ? renderAddressData('Shipping') : null}
                             </div>
-                            <div>
+                            <div className='mt-4'>
                                 {vendorData.billing ? renderAddressData('Billing') : null}
                             </div>
 
