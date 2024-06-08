@@ -187,7 +187,6 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
               </Form.Label>
               <Col className='mrp-50' md={2}>
                 <Form.Select
-                  placeholder='Link to existing Customer'
                   value={vendorData.connectCustomer}
                   onChange={(e) => setVendorData((prev) => ({ ...prev, connectCustomer: e.target.value }))}
                 >
