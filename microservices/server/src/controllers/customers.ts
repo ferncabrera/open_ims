@@ -251,6 +251,7 @@ export const get_available_customers = async (req: Request, res: Response) => {
   res.status(200).json({message: 'Successfully retrieved available customers', data: available});
 };
 
+
 export const update_customer = async (req: Request, res: Response) => {
 
   const data = req.body

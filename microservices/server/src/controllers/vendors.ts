@@ -121,7 +121,7 @@ export const get_vendor = async (req: Request, res: Response) => {
   for (const element of vendor_addresses) {
     if (element.address === "Shipping") {
       vendor_obj.shipping = {
-        customerAddressName: element.customer_address_name,
+        vendorAddressName: element.vendor_address_name,
         address1: element.street_address_line1,
         address2: element.street_address_line2,
         city: element.city,
@@ -131,7 +131,7 @@ export const get_vendor = async (req: Request, res: Response) => {
       }
     } else if (element.address === "Billing") {
       vendor_obj.billing = {
-        customerAddressName: element.customer_address_name,
+        vendorAddressName: element.vendor_address_name,
         address1: element.street_address_line1,
         address2: element.street_address_line2,
         city: element.city,
@@ -168,7 +168,7 @@ export const create_vendor = async (req: Request, res: Response) => {
   const connected_customer = data.connectCustomer ? data.connectCustomer : '';
   const queries_list = [] as { text: string; params: any[] }[];
 
-  const {firstName, lastName, companyName, email, phone, netTerms } = data;
+  const { firstName, lastName, companyName, email, phone, netTerms } = data;
   const net_terms = netTerms ? netTerms : 0;
 
   if (!(firstName && lastName && companyName && email && phone)) {
@@ -176,13 +176,12 @@ export const create_vendor = async (req: Request, res: Response) => {
   }
 
   const user_id = await get_user_id(req, res);
-  
+
   const result = await query(`INSERT INTO vendor_table (first_name,last_name,company_name,email,phone,net_terms, created_by) 
   VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id`, [firstName, lastName, companyName, email, phone, net_terms, user_id]);
-  
+
   const new_id = result.rows[0].id;
-  
-  // res.status(300).json({message:'debugging', data})
+
 
 
   try {
@@ -201,11 +200,11 @@ export const create_vendor = async (req: Request, res: Response) => {
 
     const create_address = (type: string, address_data: any) => {
 
-      const { customerAddressName, address1, address2, city, province, postalCode, country } = address_data;
+      const { vendorAddressName, address1, address2, city, province, postalCode, country } = address_data;
       const address_query: IChainedQueryProps = {
         text: `
         INSERT INTO vendor_addresses
-        (customer_id,
+        (vendor_id,
           address, 
           street_address_line1, 
           street_address_line2,
@@ -213,9 +212,9 @@ export const create_vendor = async (req: Request, res: Response) => {
           province,
           postal,
           country,
-          customer_address_name)
+          vendor_address_name)
           VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
-        params: [new_id, type, address1, address2, city, province, postalCode, country, customerAddressName]
+        params: [new_id, type, address1, address2, city, province, postalCode, country, vendorAddressName]
       };
 
       queries_list.push(address_query)
@@ -228,11 +227,146 @@ export const create_vendor = async (req: Request, res: Response) => {
       create_address('Billing', data.billing)
     };
 
+
+
     await chained_query(queries_list)
-  } catch (err) {
+  } catch (err: any) {
     await query('DELETE FROM vendor_table WHERE id = $1', [new_id])
-    throw new customError({ message: 'Failed database operation', code: 20 })
+    // res.status(300).json({message:'debugging', data})
+    throw new customError({ message: 'Some other message', code: 20 })
+
   }
+
   res.status(200).json({ message: "Successfully created vendor" });
 
 };
+
+export const update_vendor = async (req: Request, res: Response) => {
+  const data = req.body
+
+  const connected_customer = data.connectCustomer ? data.connectCustomer : '';
+  const queries_list = [] as { text: string; params: any[] }[];
+
+  const { vendorId, firstName, lastName, companyName, email, phone, netTerms } = data;
+  const net_terms = netTerms ? netTerms : 0;
+
+  if (!(vendorId && firstName && lastName && companyName && email && phone)) {
+    throw new customError({ message: "Missing required fields!", code: 20 });
+  }
+
+  const create_or_update_address = async (type: string, address_data: any) => {
+
+    const { vendorAddressName, address1, address2, city, province, postalCode, country } = address_data;
+
+    // Have to check if shipping or billing already exists. This decides on the user's edit whether we create, read, update, or delete
+    const address_query: any = await query(
+      "SELECT * FROM vendor_addresses WHERE vendor_id = $1 AND address = $2"
+      , [data.id, type]);
+
+    const address = address_query.rows[0];
+    if (address && address.address) {
+      // update
+      const { id } = address;
+
+      const update_address_query: IChainedQueryProps = {
+        text: `
+          UPDATE vendor_addresses SET
+            vendor_id = $2,
+            vendor_address_name = $10,
+            address = $3,
+            street_address_line1 = $4,
+            street_address_line2 = $5,
+            city = $6,
+            province = $7,
+            postal = $8,
+            country = $9
+          WHERE id = $1`,
+        params: [id, data.vendorId, type, address1, address2, city, province, postalCode, country, vendorAddressName]
+      };
+      queries_list.push(update_address_query);
+
+    } else if (!address || !address.address) {
+      // create
+      const create_address_query: IChainedQueryProps = {
+        text: `
+          INSERT INTO vendor_addresses 
+          (vendor_id,
+            address, 
+            street_address_line1, 
+            street_address_line2,
+            city,
+            province,
+            postal,
+            country,
+            vendor_address_name)
+          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9 )`,
+        params: [data.vendorId, type, address1, address2, city, province, postalCode, country, vendorAddressName]
+      }
+
+      queries_list.push(create_address_query);
+    }
+  };
+
+  if (data.shipping) {
+    await create_or_update_address('Shipping', data.shipping);
+  } else if (!data.shipping) {
+    // delete
+    const delete_shipping_query: IChainedQueryProps = {
+      text: `DELETE FROM vendor_addresses WHERE vendor_id = $1 AND address = $2`,
+      params: [vendorId, 'Shipping']
+    };
+    queries_list.push(delete_shipping_query);
+  };
+  if (data.billing) {
+    await create_or_update_address('Billing', data.billing);
+
+  } else if (!data.billing) {
+    //delete
+    const delete_billing_query: IChainedQueryProps = {
+      text: `DELETE FROM vendor_addresses WHERE vendor_id = $1 AND address = $2`,
+      params: [vendorId, 'Billing']
+    };
+    queries_list.push(delete_billing_query);
+  };
+
+  //update (this is just basically delete old one and create new one)
+  const delete_vendor_customer_query: IChainedQueryProps = {
+    text: `DELETE FROM vendor_and_customer WHERE vendor_id = $1`,
+    params: [vendorId]
+  };
+
+  queries_list.push(delete_vendor_customer_query);
+
+  if (connected_customer) { // only create new one if we have a passed in customer
+
+    const customer_query = await query("SELECT * FROM customer_table WHERE company_name = $1", [connected_customer]);
+    const new_customer_id = customer_query.rows[0].id;
+
+    const create_vendor_customer_query: IChainedQueryProps = {
+      text: 'INSERT INTO vendor_and_customer (vendor_id, customer_id) VALUES ($1, $2)',
+      params: [vendorId, new_customer_id]
+    }
+    queries_list.push(create_vendor_customer_query)
+  };
+
+  const vendor_query = {
+    text:
+      `UPDATE vendor_table SET
+        first_name = $2,
+        last_name = $3,
+        company_name = $4,
+        email = $5,
+        phone = $6,
+        net_terms = $7
+      WHERE id = $1`,
+    params: [vendorId, firstName, lastName, companyName, email, phone, net_terms]
+  };
+
+  queries_list.push(vendor_query)
+
+
+  await chained_query(queries_list)
+
+
+  res.status(200).json({ message: "Successfully updated vendor" });
+}
