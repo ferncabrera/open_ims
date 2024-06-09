@@ -233,7 +233,7 @@ export const create_vendor = async (req: Request, res: Response) => {
   } catch (err: any) {
     await query('DELETE FROM vendor_table WHERE id = $1', [new_id])
     // res.status(300).json({message:'debugging', data})
-    throw new customError({ message: 'Some other message', code: 20 })
+    throw new customError({ message: 'Failed Database Operation', code: 20 })
 
   }
 
