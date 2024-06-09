@@ -1,14 +1,19 @@
 import React, { useEffect, useState } from 'react';
+
 import { CrudForm } from '../../components/forms/CrudForm';
 import { Row, Col } from 'react-bootstrap';
 import { PillButton } from '../../components/buttons/PillButton';
 import { CCGTable } from '../../components/table/CCGTable';
-import {Columns} from "./VendorPurchaseTableSchema";
+import { Columns } from "./VendorPurchaseTableSchema";
+
 import { MdOutlinePictureAsPdf, MdOutlineEdit } from 'react-icons/md';
 import { FaRegTrashAlt } from 'react-icons/fa';
-import { getJSONResponse } from '../../utilities/apiHelpers';
+
+import { getJSONResponse, sendDeleteRequest } from '../../utilities/apiHelpers';
+import { useNavigate } from 'react-router';
 import { useRecoilState } from 'recoil';
 import { breadcrumbsState, bannerState, entityState } from '../../atoms/state';
+
 import _ from 'lodash';
 
 interface IReadVendorProps {
@@ -69,6 +74,8 @@ export const ReadVendor = (props: IReadVendorProps) => {
 
     const { vendorId } = props;
 
+    const navigate = useNavigate();
+
     const [vendorData, setVendorData] = useState<IVendorData>(initialVendorData);
     const [purchaseOrderData, setPurchaseOrderData] = useState({});
     const [breadcrumbs, setBreadcrumbs] = useRecoilState(breadcrumbsState);
@@ -85,12 +92,12 @@ export const ReadVendor = (props: IReadVendorProps) => {
         if (response.status !== 200) {
             return setBanner({ message: response.message, variant: 'danger' });
         };
-        setBreadcrumbs({pathArr:[...breadcrumbs.pathArr, <span>{response.data.companyName}</span> ]})
+        setBreadcrumbs({ pathArr: [...breadcrumbs.pathArr, <span>{response.data.companyName}</span>] })
         setVendorData(response.data);
     }
 
     const getVendorPurchaseOrders = async (pageSize, pageIndex, searchParams) => {
-        const modifiedSearchParams = {...searchParams, purchase_vendor_id: vendorId}
+        const modifiedSearchParams = { ...searchParams, purchase_vendor_id: vendorId }
         const searchQuery = JSON.stringify(modifiedSearchParams);
 
         const response: IResponse = await getJSONResponse({ endpoint: '/api/server/purchase-orders', params: { pageIndex, pageSize, searchQuery } });
@@ -100,7 +107,18 @@ export const ReadVendor = (props: IReadVendorProps) => {
         setPurchaseOrderData(response);
     }
 
-    const handleDelete = (id) => null;
+    const handleDelete = async (id) => {
+        const response: any = await sendDeleteRequest({ endpoint: '/api/server/vendor', data: { vendor_id: id } });
+        if (response.status === 200) {
+            setBanner({ message: response.message, variant: 'success' });
+        } else {
+            setBanner({ message: 'Something went wrong with deleting vendor', variant: 'danger' });
+            return
+        }
+
+        navigate('/ccg/vendors');
+    };
+
     const handleEdit = (id) => {
         setEntity({
             action: 'update',
@@ -200,13 +218,13 @@ export const ReadVendor = (props: IReadVendorProps) => {
                     <CCGTable
                         tableHeader={`${vendorData.companyName} Previous Purchase Orders`}
                         columns={Columns}
-                        data={ _.get(purchaseOrderData, 'purchases', [])}
+                        data={_.get(purchaseOrderData, 'purchases', [])}
                         fetchDataFunction={getVendorPurchaseOrders} //Function must accept params of (pageSize, pageIndex, searchQuery) in that order!!
-                        totalCount={ _.get(purchaseOrderData, 'total', 0)}
-                        pageIndex={ _.get(purchaseOrderData, 'pageindex', 0)}
-                        pageSize={_.get(purchaseOrderData, 'pagesize', 10) }
+                        totalCount={_.get(purchaseOrderData, 'total', 0)}
+                        pageIndex={_.get(purchaseOrderData, 'pageindex', 0)}
+                        pageSize={_.get(purchaseOrderData, 'pagesize', 10)}
                         searchPlaceholder='Search by Number, Amount, or Status'
-                        filters={[{label:'Date', type: 'date', id:0}]}
+                        filters={[{ label: 'Date', type: 'date', id: 0 }]}
                     />
                 </div>
             </CrudForm>

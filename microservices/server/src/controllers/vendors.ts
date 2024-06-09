@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { get_user_id } from "./users";
 import { query, chained_query } from "../db";
 import customError from "../utils/customError";
-import _ from "lodash";
+import _, { chain } from "lodash";
 
 interface IGetListRequestHeaders {
   pageindex: number;
@@ -32,6 +32,7 @@ export const get_vendors = async (req: Request, res: Response) => {
     vendors_query = await query("SELECT * FROM vendor_table ORDER BY id LIMIT $1 OFFSET $2", [pagesize, offset]);
     count_query = await query("SELECT COUNT(*) FROM vendor_table");
   } else {
+    console.log('searchQuery', searchQuery)
     const [firstName, lastName] = searchQuery.split(" ");
 
     vendors_query = await query(`
@@ -369,4 +370,59 @@ export const update_vendor = async (req: Request, res: Response) => {
 
 
   res.status(200).json({ message: "Successfully updated vendor" });
+};
+
+
+
+export const delete_vendor = async (req: Request, res: Response) => {
+  const data = req.body;
+  const delete_purchase_order_query = {
+    text: "DELETE FROM purchase_orders WHERE vendor_id = $1",
+    params: [data.vendor_id]
+  };
+
+  const delete_unique_products_query = {
+    text: "DELETE FROM unique_products_table WHERE vendor_id = $1",
+    params: [data.vendor_id]
+  };
+
+  const delete_vendor_query = {
+    text: "DELETE FROM vendor_table WHERE id = $1",
+    params: [data.vendor_id]
+  };
+
+  await chained_query([delete_purchase_order_query, delete_unique_products_query, delete_vendor_query]);
+  res.status(200).json({ message: "Deleted vendor" })
+
+};
+
+export const delete_multiple_vendors = async (req: Request, res: Response) => {
+  const delete_ids = req.body;
+
+  const queries_list = [];
+
+
+  for (const id of delete_ids) {
+
+    const delete_purchase_order_query = {
+      text: "DELETE FROM purchase_orders WHERE vendor_id = $1",
+      params: [id]
+    };
+
+    const delete_unique_products_query = {
+      text: "DELETE FROM unique_products_table WHERE vendor_id = $1",
+      params: [id]
+    };
+
+    const delete_vendor_query = {
+      text: "DELETE FROM vendor_table WHERE id = $1",
+      params: [id]
+    };
+
+    queries_list.push(delete_purchase_order_query, delete_unique_products_query, delete_vendor_query)
+  }
+
+  await chained_query(queries_list);
+  res.status(200).json({message: 'Vendor(s) successfully deleted'});
+
 }
