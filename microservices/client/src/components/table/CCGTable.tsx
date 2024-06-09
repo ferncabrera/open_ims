@@ -25,6 +25,7 @@ interface ICCGTableProps {
   pageIndex: number;
   filters?: { label: string, type: string, id: number }[];
   searchPlaceholder: string;
+  tableHeader?: string;
 }
 
 export const CCGTable: React.FC<ICCGTableProps> = (props) => {
@@ -33,11 +34,12 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     columns,
     data,
     totalCount,
-    fetchDataFunction,
+    fetchDataFunction, // params are (pageSize, pageIndex, searchQuery) IN THAT ORDER
     pageSize,
     pageIndex,
     handleSelectedRows = null,
     searchPlaceholder,
+    tableHeader = null,
 
   } = props;
 
@@ -100,6 +102,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
   };
 
   const handleApplyFilters = () => {
+    `params (pageSize, pageIndex, searchQuery)`
     fetchDataFunction(10, 0, filterValues)
   };
 
@@ -139,6 +142,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
       <div className='table-border-wrapper'>
         {/* Need to make an insertable component header here */}
         <div className='bg-white filter-header-section'>
+          <h5 className='mb-3'><strong>{tableHeader}</strong></h5>
           <Row className='w-100'>
             <Col className='d-flex flex-wrap'>
               <BasicSearchFilters

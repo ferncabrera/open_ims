@@ -39,10 +39,11 @@ export const DefaultVendors = () => {
   useEffect(() => {
 
     if (Math.ceil(Number(responseData.total) / Number(responseData.pagesize)) < ((Number(responseData.pageindex) + 1))
-      && responseData.total !== null) {
-      getDataList(responseData.pagesize, 0, responseData.searchquery).catch((e) => console.log(e))
+      && (responseData.total !== null) && Number(responseData.pageindex > 0)) {
+      const searchQuery = JSON.parse(responseData.searchquery)
+      getDataList(responseData.pagesize, 0, searchQuery).catch((e) => console.log(e))
     }
-  }, [responseData])
+  }, [responseData]);
 
   const getDataList = async (pageSize, pageIndex, searchFilter = {}) => {
     const searchQuery = JSON.stringify(searchFilter);
@@ -64,10 +65,10 @@ export const DefaultVendors = () => {
   }
 
   const deleteMultiple = async () => {
-    const prevParams = [_.get(responseData, 'pagesize', 0), _.get(responseData, 'pageindex', 0), _.get(responseData, 'searchquery', '')]
+    const prevParams = [_.get(responseData, 'pagesize', 0), _.get(responseData, 'pageindex', 0), _.get(responseData, 'searchquery', "{}")]
     const [pageSize, pageIndex, searchQuery] = prevParams;
     const res1: any = await sendDeleteRequest({ endpoint: '/api/server/vendors', data: selectedIds });
-    await getDataList(pageSize, pageIndex, searchQuery);
+    await getDataList(pageSize, pageIndex, JSON.parse(searchQuery));
     if (res1.status === 200) {
       setBannerState({ message: 'Selected Vendor(s) deleted', variant: 'success' });
     } else {
@@ -77,7 +78,7 @@ export const DefaultVendors = () => {
     setSelectedIds(null);
   }
 
-  const createCustomer = () => {
+  const createVendor = () => {
     setEntity({
       action: "create",
       category: "vendors",
@@ -97,7 +98,7 @@ export const DefaultVendors = () => {
         <Col className='d-flex justify-content-end' xs={7} >
           <PillButton onClick={null} className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
           <PillButton onClick={deleteMultiple} disabled={disableDelete} className='me-2' text='Delete' color='standard' icon={<FaRegTrashAlt />} />
-          <PillButton onClick={createCustomer} className='me-1' text='+ Create Customer' color='blue' />
+          <PillButton onClick={createVendor} className='me-1' text='+ Create Vendor' color='blue' />
         </Col>
       </Row>
       <CCGTable

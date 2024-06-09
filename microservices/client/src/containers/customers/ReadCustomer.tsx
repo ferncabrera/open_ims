@@ -94,7 +94,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
 
   const getCustomerData = async () => {
     const response: IResponse = await getJSONResponse({ endpoint: '/api/server/customer', params: { id: customerId } });
-    setCustomerData(response.data);
+    setCustomerData({...response.data});
     setBreadcrumb({pathArr:[...breadcrumbs.pathArr, <span>{response.data.companyName}</span> ]})
     setIsLoading(false);
   };

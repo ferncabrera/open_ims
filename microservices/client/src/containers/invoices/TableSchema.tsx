@@ -3,6 +3,7 @@ import { Form } from "react-bootstrap";
 import { GoPencil } from "react-icons/go";
 import { TableLink } from "../../components/table/TableLink";
 import { StatusPill } from "../../components/graphics/StatusPill";
+import { convertDateISO } from "../../utilities/helpers/functions";
 import _ from "lodash";
 
 const columnHelper = createColumnHelper();
@@ -32,19 +33,10 @@ export const Columns = [
     cell: (props) => {
 
       const ISODate: string = _.get(props.row.original, 'invoice_date', null);
-      let dateString = '-';
-      if (ISODate) {
-        const date = new Date(ISODate);
-
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0"); // Months are zero-based, so add 1
-        const day = String(date.getDate() + 1).padStart(2, "0"); // I think dates are zero-based as well. So add 1
-
-        dateString = `${day}/${month}/${year}`
-      }
+      
       return (
         <div className="d-flex">
-          {dateString}
+          {convertDateISO(ISODate, 1)}
         </div>
       )
     }
@@ -107,7 +99,7 @@ export const Columns = [
     header: '',
     maxSize: 30,
     cell: (props) => {
-      const id: string = _.get(props.row.original, 'id', '')
+      const id: string = _.get(props.row.original, 'invoice_id', '')
       return (
 
         <TableLink

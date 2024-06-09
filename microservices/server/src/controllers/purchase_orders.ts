@@ -17,7 +17,7 @@ export const get_all_purchase_orders = async (req: Request, res: Response) => {
   let count_query;
 
   const filters = JSON.parse(searchquery);
-  const { date, input1, searchQuery } = filters;
+  const { date, input1, purchase_vendor_id, searchQuery } = filters;
 
   if (_.isEmpty(filters) || Object.values(filters).every(value => !value)) {
     purchase_orders_query = await query("SELECT * FROM purchase_orders ORDER BY purchase_id LIMIT $1 OFFSET $2", [pagesize, offset]);
@@ -48,6 +48,11 @@ export const get_all_purchase_orders = async (req: Request, res: Response) => {
       }
     }
 
+    if (purchase_vendor_id) { /// Find a purchase order providing a vendor id
+      filterConditions.push(`vendor_id = $${queryParams.length + 1}`);
+      queryParams.push(purchase_vendor_id)
+    };
+
     const whereClause = filterConditions.length > 0 ? `WHERE ${filterConditions.join(' AND ')}` : '';
     purchase_orders_query = await query(` SELECT * FROM purchase_orders ${whereClause} LIMIT $${queryParams.length + 1} OFFSET $${queryParams.length + 2} `
       , queryParams.concat([pagesize, offset]));
@@ -76,4 +81,17 @@ export const get_all_purchase_orders = async (req: Request, res: Response) => {
     total: totalCount,
     purchases
   });
-}
+};
+
+export const get_vendor_purchase_orders = async (req: Request, res: Response) => {
+
+  const { pageindex, pagesize, searchquery } = req.headers as unknown as IGetListRequestHeaders;
+  const offset: number = Number(pageindex) * Number(pagesize);
+
+  const filters = JSON.parse(searchquery);
+  const { date, searchQuery } = filters;
+
+
+  const id = req.body;
+  res.send(id)
+};
