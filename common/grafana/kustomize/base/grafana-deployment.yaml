@@ -58,9 +58,9 @@ spec:
             - mountPath: /etc/grafana/provisioning/dashboards
               name: ge-config
       volumes:
-        - name: grafana-pv
-          persistentVolumeClaim:
-            claimName: grafana-pvc
         - name: ge-config
           configMap:
             name: ge-config
+        - name: grafana-pv
+          persistentVolumeClaim:
+            claimName: grafana-pvc
