@@ -60,6 +60,7 @@ spec:
       volumes:
         - name: ge-config
           configMap:
+            name: ge-config
         - name: grafana-pv
           persistentVolumeClaim:
             claimName: grafana-pvc
