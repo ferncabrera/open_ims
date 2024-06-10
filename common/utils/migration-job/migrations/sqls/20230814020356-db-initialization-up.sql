@@ -150,7 +150,7 @@ CREATE TABLE unique_products_table (
     quantity_on_hand INT NOT NULL,
     FOREIGN KEY (vendor_id) REFERENCES vendor_table (id) ON UPDATE CASCADE ON DELETE NO ACTION,
     FOREIGN KEY (item_number) REFERENCES products_table (item_number) ON UPDATE CASCADE ON DELETE NO ACTION,
-    PRIMARY KEY (item_number, vendor_id, lot)
+    CONSTRAINT unique_product_id PRIMARY KEY (item_number, vendor_id, lot)
 );
 -- created_by INT,
 -- FOREIGN KEY (created_by) REFERENCES employee_table (emp_id) ON UPDATE CASCADE ON DELETE NO ACTION,
@@ -461,7 +461,11 @@ BEGIN
           ) item
       ) AS product_quantity_rate_list,
       SUM((item.quantity * item.rate)::numeric) AS amount_due,
-      CASE WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 2 = 0 THEN 'Shipped'::sales_order_delivery ELSE 'Not shipped'::sales_order_delivery END AS delivery_status,
+    CASE 
+        WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 3 = 0 THEN 'Shipped'::sales_order_delivery 
+        WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 3 = 1 THEN 'Not shipped'::sales_order_delivery 
+        ELSE 'Delivered'::sales_order_delivery 
+    END AS delivery_status,
       CASE WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 2 = 0 THEN 'Paid'::order_payment ELSE 'Not paid'::order_payment END AS payment_status,
       CASE WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 3 != 0 THEN 'Confirmed'::order_status ELSE 'Draft'::order_status END AS order_status,
       CURRENT_DATE + (random() * 100)::integer AS date_paid,

@@ -14,3 +14,5 @@ EXPOSE 5000
 
 COPY --from=builder /home/node/app/dist /usr/share/nginx/html
 COPY /nginx/default.conf /etc/nginx/conf.d/default.conf
+
+# TODO Get rid of this staging environment, instead when trying to run prod-local/staging just use the "dev" VITE_MODE profile variables since they will be the same.....

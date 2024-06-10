@@ -7,10 +7,11 @@ import { IoCalendarOutline, IoClose } from "react-icons/io5";
 import { GrPowerReset } from "react-icons/gr";
 import styles from "./CCGDateRangePicker.module.scss";
 import { DateRange } from '../../utilities/types/types';
+import { standardizeDateRangeTime } from '../../utilities/helpers/functions';
 
 interface ICCGDateRangePickerProps {
     dateRange: DateRange,
-    setDateRange: (value: any) => void;
+    setDateRange: (value: DateRange) => void;
     maxDetail?: any | undefined
     additionalClasses?: any // This can be passed a custom styles.youCustomClass object! 
 };
@@ -20,13 +21,16 @@ export const CCGDateRangePicker: React.FC<ICCGDateRangePickerProps> = ({dateRang
     // const [dateRange, setDateRange] = useState<DateRange>([new Date(), new Date()]);
     const [isCalendarOpened, setIsCalendarOpened] = useState<Boolean>(false);
 
+    console.log("dateRange to fix :((( => ", dateRange);
+
     return (
         <>
             <DateRangePicker
                 calendarClassName={`${styles.calendarStyling} mt-1`}
+                // locale='UTC'
                 className={`${styles.dateRangePickerStyling} ${additionalClasses}`}
-                onChange={setDateRange}
-                value={dateRange}
+                onChange={(dr) => {console.log("returned daterange => ", dr);setDateRange(dr)}}
+                value={standardizeDateRangeTime(dateRange)}
                 tileClassName={`${styles.tileStyling}`}
                 // maxDetail={maxDetail}
                 rangeDivider="to"

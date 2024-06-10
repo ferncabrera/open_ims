@@ -1,4 +1,5 @@
 import { getJSONResponse } from "../apiHelpers";
+import { DateRange } from "../types/types";
 
 export const isUserAuth = async () => {
     const res = await getJSONResponse({ endpoint: '/api/server/is-authenticated' });
@@ -50,5 +51,17 @@ export const convertDateISO = (isoDate, format: 0 | 1) => {
         return (`${month} ${day}, ${year}`)
     } else {
         return (`${day} ${month}, ${year}`)
+    }
+};
+
+export const standardizeDateRangeTime = (dr: DateRange) : DateRange => {
+    if (!dr)
+        return dr;    
+    else{
+        console.log("Ret from new func --> ", [new Date(dr[0].setUTCHours(0, 0, 0, 0)), new Date(dr[1].setUTCHours(23, 59, 59, 999))]);
+        console.log("Ret from new func --> ", [new Date(dr[0].setUTCHours(0, 0, 0, 0)).toDateString(), new Date(dr[1].setUTCHours(23, 59, 59, 999)).toDateString()]);
+        console.log("Ret from new func --> ", [(dr[0].setUTCHours(0, 0, 0, 0)), (dr[1].setUTCHours(23, 59, 59, 999))]);
+        // console.log("Ret from new func --> ", [(dr[0].setUTCHours(0, 0, 0, 0).toDateString), (dr[1].setUTCHours(23, 59, 59, 999).toDateString())]);
+        return([new Date(dr[0].setUTCHours(0, 0, 0, 0)), new Date(dr[1].setUTCHours(23, 59, 59, 999))]);
     }
 };
