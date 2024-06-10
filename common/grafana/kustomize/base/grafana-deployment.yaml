@@ -55,8 +55,10 @@ spec:
               name: ge-config
             - mountPath: /etc/grafana/provisioning/datasources
               name: ge-config
+              readOnly: false
             - mountPath: /etc/grafana/provisioning/dashboards
               name: ge-config
+              readOnly: false
       volumes:
         - name: ge-config
           configMap:
