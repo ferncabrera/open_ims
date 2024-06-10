@@ -17,8 +17,21 @@
     },
     "editable": true,
     "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
-    "links": [],
+    "graphTooltip": 1,
+    "links": [
+      {
+        "asDropdown": false,
+        "icon": "external link",
+        "includeVars": false,
+        "keepTime": false,
+        "tags": [],
+        "targetBlank": false,
+        "title": "New link",
+        "tooltip": "",
+        "type": "dashboards",
+        "url": ""
+      }
+    ],
     "panels": [
       {
         "datasource": {
@@ -26,34 +39,10 @@
           "uid": "psql_dev_1"
         },
         "description": "",
-        "gridPos": {
-          "h": 4,
-          "w": 24,
-          "x": 0,
-          "y": 0
-        },
-        "id": 3,
-        "options": {
-          "code": {
-            "language": "plaintext",
-            "showLineNumbers": false,
-            "showMiniMap": false
-          },
-          "content": "## How to have complete edit access within the iFrame\n\nBasically hit ```esc``` and then in the top right you should see a button that says sign in.\n\nSign in with credentials admin/admin and then you should be signed in!\nFeel free to resize panels, create new ones, make custom queries, whatever you want!!!!",
-          "mode": "markdown"
-        },
-        "pluginVersion": "10.4.2",
-        "type": "text"
-      },
-      {
-        "datasource": {
-          "type": "grafana-postgresql-datasource",
-          "uid": "psql_dev_1"
-        },
         "fieldConfig": {
           "defaults": {
             "color": {
-              "mode": "palette-classic"
+              "mode": "thresholds"
             },
             "custom": {
               "axisBorderShow": false,
@@ -63,8 +52,8 @@
               "axisLabel": "",
               "axisPlacement": "auto",
               "barAlignment": 0,
-              "drawStyle": "line",
-              "fillOpacity": 25,
+              "drawStyle": "bars",
+              "fillOpacity": 50,
               "gradientMode": "none",
               "hideFrom": {
                 "legend": false,
@@ -72,20 +61,16 @@
                 "viz": false
               },
               "insertNulls": false,
-              "lineInterpolation": "smooth",
+              "lineInterpolation": "stepBefore",
               "lineStyle": {
-                "dash": [
-                  0,
-                  10
-                ],
-                "fill": "dot"
+                "fill": "solid"
               },
-              "lineWidth": 1,
+              "lineWidth": 2,
               "pointSize": 10,
               "scaleDistribution": {
                 "type": "linear"
               },
-              "showPoints": "always",
+              "showPoints": "auto",
               "spanNulls": false,
               "stacking": {
                 "group": "A",
@@ -96,51 +81,177 @@
               }
             },
             "decimals": 2,
-            "mappings": [
-              {
-                "options": {
-                  "0": {
-                    "index": 0,
-                    "text": "No sales!"
-                  }
-                },
-                "type": "value"
-              }
-            ],
-            "min": -1,
+            "mappings": [],
+            "noValue": "0$",
             "thresholds": {
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "green",
+                  "color": "red",
                   "value": null
+                },
+                {
+                  "color": "green",
+                  "value": 0
                 }
               ]
             },
             "unit": "currencyUSD"
           },
-          "overrides": []
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": ".*earn.*"
+              },
+              "properties": [
+                {
+                  "id": "custom.stacking",
+                  "value": {
+                    "group": "E",
+                    "mode": "normal"
+                  }
+                },
+                {
+                  "id": "custom.barAlignment",
+                  "value": -1
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#b4bbffb3",
+                    "mode": "shades"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": ".*expense.*"
+              },
+              "properties": [
+                {
+                  "id": "custom.barAlignment",
+                  "value": 1
+                },
+                {
+                  "id": "custom.stacking",
+                  "value": {
+                    "group": "A",
+                    "mode": "normal"
+                  }
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "#6268ff",
+                    "mode": "shades"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": ".*profit.*"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "mode": "thresholds",
+                    "seriesBy": "last"
+                  }
+                },
+                {
+                  "id": "custom.gradientMode",
+                  "value": "scheme"
+                },
+                {
+                  "id": "custom.lineStyle",
+                  "value": {
+                    "fill": "solid"
+                  }
+                },
+                {
+                  "id": "custom.drawStyle",
+                  "value": "line"
+                },
+                {
+                  "id": "custom.lineInterpolation",
+                  "value": "smooth"
+                },
+                {
+                  "id": "custom.fillOpacity",
+                  "value": 25
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byRegexp",
+                "options": ".*sum.*"
+              },
+              "properties": [
+                {
+                  "id": "custom.fillOpacity",
+                  "value": 0
+                },
+                {
+                  "id": "custom.lineStyle",
+                  "value": {
+                    "fill": "solid"
+                  }
+                },
+                {
+                  "id": "custom.showPoints",
+                  "value": "never"
+                },
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "transparent",
+                    "mode": "fixed"
+                  }
+                },
+                {
+                  "id": "custom.hideFrom",
+                  "value": {
+                    "legend": true,
+                    "tooltip": true,
+                    "viz": true
+                  }
+                }
+              ]
+            }
+          ]
         },
         "gridPos": {
-          "h": 14,
+          "h": 15,
           "w": 16,
           "x": 0,
-          "y": 4
+          "y": 0
         },
-        "id": 1,
+        "id": 4,
+        "interval": "1M",
         "options": {
           "legend": {
             "calcs": [
               "max",
               "min",
-              "mean"
+              "mean",
+              "sum"
             ],
             "displayMode": "table",
             "placement": "bottom",
-            "showLegend": true
+            "showLegend": true,
+            "sortBy": "Name",
+            "sortDesc": true
           },
           "tooltip": {
-            "mode": "single",
+            "hoverProximity": 25,
+            "mode": "multi",
             "sort": "none"
           }
         },
@@ -151,9 +262,39 @@
               "uid": "psql_dev_1"
             },
             "editorMode": "code",
-            "format": "time_series",
+            "format": "table",
+            "hide": false,
             "rawQuery": true,
-            "rawSql": "SELECT\r\n    $__timeGroupAlias(\"invoice_date\",'1d', 0),\r\n    SUM(amount_due) AS projected_earnings\r\nFROM\r\n    invoice_orders\r\nWHERE \r\n    $__timeFilter(\"invoice_date\")\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "rawSql": "WITH group_by_time AS (\r\n  SELECT\r\n    date_trunc('[[granularity]]', \"invoice_date\") AS time,\r\n    amount_due,\r\n    payment_status\r\n  FROM\r\n    invoice_orders\r\n)\r\nSELECT\r\n  \"time\" AT TIME ZONE 'UTC' AS time,\r\n  SUM(amount_due) AS \"earnings\"\r\nFROM\r\n    group_by_time\r\nWHERE \r\n    $__timeFilter(\"time\") AND payment_status = 'Paid'\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "B",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "WITH group_by_time AS (\r\n  SELECT\r\n    date_trunc('[[granularity]]', \"invoice_date\") AS time,\r\n    amount_due,\r\n    payment_status\r\n  FROM\r\n    invoice_orders\r\n)\r\nSELECT\r\n  \"time\" AT TIME ZONE 'UTC' AS time,\r\n  SUM(amount_due) AS \"projected earnings\"\r\nFROM\r\n    group_by_time\r\nWHERE \r\n    $__timeFilter(\"time\") AND payment_status = 'Not paid'\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
             "refId": "A",
             "sql": {
               "columns": [
@@ -172,9 +313,350 @@
               ],
               "limit": 50
             }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "WITH group_by_time AS (\r\n  SELECT\r\n    date_trunc('[[granularity]]', \"purchase_date\") AS time,\r\n    amount_due,\r\n    payment_status\r\n  FROM\r\n    purchase_orders\r\n)\r\nSELECT\r\n  \"time\" AT TIME ZONE 'UTC' AS time,\r\n  SUM(amount_due) AS expenses\r\nFROM\r\n    group_by_time\r\nWHERE \r\n    $__timeFilter(\"time\") AND payment_status = 'Paid'\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "C",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "WITH group_by_time AS (\r\n  SELECT\r\n    date_trunc('[[granularity]]', \"purchase_date\") AS time,\r\n    amount_due,\r\n    payment_status\r\n  FROM\r\n    purchase_orders\r\n)\r\nSELECT\r\n  \"time\" AT TIME ZONE 'UTC' AS time,\r\n  SUM(amount_due) AS \"projected expenses\"\r\nFROM\r\n    group_by_time\r\nWHERE \r\n    $__timeFilter(\"time\") AND payment_status = 'Not paid'\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "F",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": true,
+            "rawQuery": true,
+            "rawSql": "WITH group_by_time AS (\r\n  SELECT\r\n    date_trunc('[[granularity]]', \"purchase_date\") AS time,\r\n    amount_due,\r\n    payment_status\r\n  FROM\r\n    purchase_orders\r\n)\r\nSELECT\r\n  \"time\" AT TIME ZONE 'UTC' AS time,\r\n  SUM(amount_due) AS \"Expenses sum\"\r\nFROM\r\n    group_by_time\r\nWHERE \r\n    $__timeFilter(\"time\")\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "D",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": true,
+            "rawQuery": true,
+            "rawSql": "WITH group_by_time AS (\r\n  SELECT\r\n    date_trunc('[[granularity]]', \"invoice_date\") AS time,\r\n    amount_due,\r\n    payment_status\r\n  FROM\r\n    invoice_orders\r\n)\r\nSELECT\r\n  \"time\" AT TIME ZONE 'UTC' AS time,\r\n  SUM(amount_due) AS \"Earnings sum\"\r\nFROM\r\n    group_by_time\r\nWHERE \r\n    $__timeFilter(\"time\")\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "E",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": true,
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n    COALESCE(e.time, p.time) AS time,\r\n    (COALESCE(e.\"Earnings sum\", 0) + COALESCE(p.\"Expenses sum\", 0)) AS \"profit\"\r\nFROM\r\n    (SELECT\r\n        $__timeGroup(\"invoice_date\", '[[group_by_interval]]') AS time,\r\n        SUM(amount_due) AS \"Earnings sum\"\r\n    FROM\r\n        invoice_orders\r\n    WHERE \r\n        $__timeFilter(\"invoice_date\")\r\n    GROUP BY\r\n        $__timeGroup(\"invoice_date\", '[[group_by_interval]]')\r\n    ) e\r\nFULL OUTER JOIN\r\n    (SELECT\r\n        $__timeGroup(\"purchase_date\", '[[group_by_interval]]') AS time,\r\n        SUM(amount_due)*-1 AS \"Expenses sum\"\r\n    FROM\r\n        purchase_orders\r\n    WHERE \r\n        $__timeFilter(\"purchase_date\")\r\n    GROUP BY\r\n        $__timeGroup(\"purchase_date\", '[[group_by_interval]]')\r\n    ) p ON e.time = p.time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "G",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "conditions": [
+              {
+                "evaluator": {
+                  "params": [
+                    0,
+                    0
+                  ],
+                  "type": "gt"
+                },
+                "operator": {
+                  "type": "and"
+                },
+                "query": {
+                  "params": []
+                },
+                "reducer": {
+                  "params": [],
+                  "type": "avg"
+                },
+                "type": "query"
+              }
+            ],
+            "datasource": {
+              "name": "Expression",
+              "type": "__expr__",
+              "uid": "__expr__"
+            },
+            "downsampler": "sum",
+            "expression": "$E - $D",
+            "hide": true,
+            "refId": "profit",
+            "type": "math",
+            "upsampler": "fillna",
+            "window": "1M"
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "WITH purchase_group_by_time AS (\r\n  SELECT\r\n    date_trunc('[[granularity]]', \"purchase_date\") AS time,\r\n    amount_due,\r\n    payment_status\r\n  FROM\r\n    purchase_orders\r\n),\r\ninvoice_group_by_time AS (\r\n  SELECT\r\n    date_trunc('[[granularity]]', \"invoice_date\") AS time,\r\n    amount_due,\r\n    payment_status\r\n  FROM\r\n    invoice_orders\r\n),\r\nexpenses AS (\r\n  SELECT\r\n    \"time\" AT TIME ZONE 'UTC' AS time,\r\n    SUM(amount_due) AS \"expenses\"\r\n  FROM\r\n    purchase_group_by_time\r\n  WHERE \r\n    $__timeFilter(\"time\")\r\n  GROUP BY\r\n    time\r\n),\r\nearnings AS (\r\n  SELECT\r\n    \"time\" AT TIME ZONE 'UTC' AS time,\r\n    SUM(amount_due) AS \"earnings\"\r\n  FROM\r\n    invoice_group_by_time\r\n  WHERE \r\n    $__timeFilter(\"time\")\r\n  GROUP BY\r\n    time\r\n)\r\nSELECT\r\n  COALESCE(expenses.time, earnings.time) AS time,\r\n  COALESCE(earnings.\"earnings\", 0) - COALESCE(expenses.\"expenses\", 0) AS \"profit\"\r\nFROM\r\n  expenses\r\nFULL OUTER JOIN\r\n  earnings\r\nON\r\n  expenses.time = earnings.time\r\nORDER BY\r\n  time;\r\n",
+            "refId": "H",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                },
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
           }
         ],
-        "title": "Projected earnings across all invoices, by day",
+        "title": "profit breakdown",
+        "transformations": [
+          {
+            "disabled": true,
+            "filter": {
+              "id": "byRefId",
+              "options": "B"
+            },
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": 0
+                    }
+                  },
+                  "fieldName": "earnings"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            },
+            "topic": "series"
+          },
+          {
+            "disabled": true,
+            "filter": {
+              "id": "byRefId",
+              "options": "A"
+            },
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": 0
+                    }
+                  },
+                  "fieldName": "projected earnings"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            },
+            "topic": "series"
+          },
+          {
+            "disabled": true,
+            "filter": {
+              "id": "byRefId",
+              "options": "C"
+            },
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": 0
+                    }
+                  },
+                  "fieldName": "expenses"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            },
+            "topic": "series"
+          },
+          {
+            "disabled": true,
+            "filter": {
+              "id": "byRefId",
+              "options": "F"
+            },
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": 0
+                    }
+                  },
+                  "fieldName": "projected expenses"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            },
+            "topic": "series"
+          },
+          {
+            "disabled": true,
+            "filter": {
+              "id": "byRefId",
+              "options": "profit"
+            },
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": 0
+                    }
+                  },
+                  "fieldName": "profit"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            },
+            "topic": "series"
+          },
+          {
+            "disabled": true,
+            "id": "merge",
+            "options": {}
+          }
+        ],
         "type": "timeseries"
       },
       {
@@ -185,6 +667,7 @@
         "fieldConfig": {
           "defaults": {
             "color": {
+              "fixedColor": "#6268ff",
               "mode": "thresholds"
             },
             "mappings": [],
@@ -192,8 +675,12 @@
               "mode": "absolute",
               "steps": [
                 {
-                  "color": "green",
+                  "color": "red",
                   "value": null
+                },
+                {
+                  "color": "green",
+                  "value": 0
                 }
               ]
             },
@@ -205,12 +692,12 @@
           "h": 5,
           "w": 8,
           "x": 16,
-          "y": 4
+          "y": 0
         },
-        "id": 2,
+        "id": 7,
         "options": {
           "colorMode": "background_solid",
-          "graphMode": "none",
+          "graphMode": "area",
           "justifyMode": "auto",
           "orientation": "auto",
           "reduceOptions": {
@@ -233,8 +720,775 @@
             },
             "editorMode": "code",
             "format": "time_series",
+            "hide": true,
             "rawQuery": true,
-            "rawSql": "SELECT\r\n    $__timeGroupAlias(\"invoice_date\",'1d', 0),\r\n    SUM(amount_due) AS projected_earnings\r\nFROM\r\n    invoice_orders\r\nWHERE \r\n    $__timeFilter(\"invoice_date\")\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "rawSql": "SELECT\r\n  $__timeGroup(\"purchase_date\", '1d', 0) + \r\n  (\r\n    extract(\r\n      epoch\r\n      from\r\n        CURRENT_TIMESTAMP AT TIME ZONE 'UTC'\r\n    ) - extract(\r\n      epoch\r\n      from\r\n        CURRENT_TIMESTAMP AT TIME ZONE '$__timezone'\r\n    )\r\n  ) \r\n  as time,\r\n  SUM(amount_due) AS total_expenses\r\nFROM\r\n    purchase_orders \r\nWHERE \r\n    $__timeFilter(\"purchase_date\")\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "B",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "time_series",
+            "hide": true,
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n  $__timeGroup(\"invoice_date\", '1d', 0) + \r\n  (\r\n    extract(\r\n      epoch\r\n      from\r\n        CURRENT_TIMESTAMP AT TIME ZONE 'UTC'\r\n    ) - extract(\r\n      epoch\r\n      from\r\n        CURRENT_TIMESTAMP AT TIME ZONE '$__timezone'\r\n    )\r\n  ) \r\n  as time,\r\n  SUM(amount_due) AS total_earnings\r\nFROM\r\n    invoice_orders\r\nWHERE \r\n    $__timeFilter(\"invoice_date\")\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "name": "Expression",
+              "type": "__expr__",
+              "uid": "__expr__"
+            },
+            "expression": "$A - $B",
+            "hide": true,
+            "refId": "C",
+            "type": "math"
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "WITH total_expenses AS (\r\n  SELECT\r\n    SUM(amount_due) AS expenses\r\n  FROM\r\n    purchase_orders\r\n  WHERE\r\n    $__timeFilter(purchase_date)\r\n),\r\ntotal_earnings AS (\r\n  SELECT\r\n    SUM(amount_due) AS earnings\r\n  FROM\r\n    invoice_orders\r\n  WHERE\r\n    $__timeFilter(invoice_date)\r\n)\r\nSELECT\r\n  NOW() AS time,  -- Grafana requires a time column, use current timestamp since \r\n  (COALESCE(total_earnings.earnings, 0) - COALESCE(total_expenses.expenses, 0)) AS profit_this_period\r\nFROM\r\n  total_expenses,\r\n  total_earnings;\r\n",
+            "refId": "D",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": true,
+            "rawQuery": true,
+            "rawSql": "-- This is an accurate query for retrieving the comparison between the current time period and the previous one.\r\n\r\nWITH time_range AS (\r\n  SELECT\r\n    $__timeFrom()::date AS current_start,\r\n    $__timeTo()::date AS current_end,\r\n    ($__timeFrom()::date - ($__timeTo()::date - $__timeFrom()::date) - INTERVAL '1 day') AS previous_start,\r\n    ($__timeFrom()::date - INTERVAL '1 day') AS previous_end\r\n),\r\ntotal_expenses AS (\r\n  SELECT\r\n    SUM(amount_due) AS expenses\r\n  FROM\r\n    purchase_orders,\r\n    time_range\r\n  WHERE\r\n    purchase_date BETWEEN time_range.previous_start AND time_range.previous_end\r\n),\r\ntotal_earnings AS (\r\n  SELECT\r\n    SUM(amount_due) AS earnings\r\n  FROM\r\n    invoice_orders,\r\n    time_range\r\n  WHERE\r\n    invoice_date BETWEEN time_range.previous_start AND time_range.previous_end\r\n)\r\nSELECT\r\n  NOW() AS time,  -- Grafana requires a time column, use current timestamp\r\n  (COALESCE(total_earnings.earnings, 0) - COALESCE(total_expenses.expenses, 0)) AS profit\r\nFROM\r\n  total_expenses,\r\n  total_earnings;\r\n",
+            "refId": "E",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "profits from ${custom_var_date_range}",
+        "transformations": [
+          {
+            "disabled": true,
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": 0
+                    }
+                  },
+                  "fieldName": "total_expenses"
+                },
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": 0
+                    }
+                  },
+                  "fieldName": "total_earnings"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            }
+          },
+          {
+            "disabled": true,
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": 0
+                    }
+                  },
+                  "fieldName": "total_earnings"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            }
+          },
+          {
+            "disabled": true,
+            "id": "filterFieldsByName",
+            "options": {
+              "byVariable": false,
+              "include": {
+                "names": [
+                  "C"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "psql_dev_1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "#b4bbffb3",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "currencyUSD"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 8,
+          "x": 16,
+          "y": 5
+        },
+        "id": 5,
+        "options": {
+          "colorMode": "background_solid",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.4.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "WITH total_earnings AS (\r\n  SELECT\r\n    SUM(amount_due) AS earnings\r\n  FROM\r\n    invoice_orders\r\n  WHERE\r\n    $__timeFilter(invoice_date)\r\n)\r\nSELECT\r\n  NOW() AS time,  -- Grafana requires a time column, use current timestamp\r\n  COALESCE(total_earnings.earnings, 0) AS total_earnings\r\nFROM\r\n  total_earnings;\r\n",
+            "refId": "B",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "earnings from ${custom_var_date_range}",
+        "transformations": [
+          {
+            "disabled": true,
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": 0
+                    }
+                  },
+                  "fieldName": "projected_earnings"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            }
+          },
+          {
+            "disabled": true,
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "projected_earnings"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "psql_dev_1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "#6268ff",
+              "mode": "fixed"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "red",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "currencyUSD"
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 5,
+          "w": 8,
+          "x": 16,
+          "y": 10
+        },
+        "id": 6,
+        "options": {
+          "colorMode": "background_solid",
+          "graphMode": "area",
+          "justifyMode": "auto",
+          "orientation": "auto",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "value",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.4.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "WITH total_expenses AS (\r\n  SELECT\r\n    SUM(amount_due) AS expenses\r\n  FROM\r\n    purchase_orders\r\n  WHERE\r\n    $__timeFilter(purchase_date)\r\n)\r\nSELECT\r\n  NOW() AS time,  -- Grafana requires a time column, use current timestamp\r\n  COALESCE(total_expenses.expenses, 0) AS total_expenses\r\nFROM\r\n  total_expenses;\r\n",
+            "refId": "B",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "expenses from ${custom_var_date_range}",
+        "transformations": [
+          {
+            "disabled": true,
+            "id": "filterByValue",
+            "options": {
+              "filters": [
+                {
+                  "config": {
+                    "id": "equal",
+                    "options": {
+                      "value": 0
+                    }
+                  },
+                  "fieldName": "total_expenses"
+                }
+              ],
+              "match": "any",
+              "type": "exclude"
+            }
+          },
+          {
+            "disabled": true,
+            "id": "filterFieldsByName",
+            "options": {
+              "include": {
+                "names": [
+                  "total_expenses"
+                ]
+              }
+            }
+          }
+        ],
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "psql_dev_1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "percentage",
+              "steps": [
+                {
+                  "color": "super-light-green",
+                  "value": null
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "to fulfill"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "super-light-red",
+                    "mode": "shades"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "in transit"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "super-light-yellow",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 12,
+          "x": 0,
+          "y": 15
+        },
+        "id": 8,
+        "options": {
+          "colorMode": "value",
+          "graphMode": "none",
+          "justifyMode": "auto",
+          "orientation": "horizontal",
+          "reduceOptions": {
+            "calcs": [
+              "sum"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "showPercentChange": false,
+          "textMode": "auto",
+          "wideLayout": true
+        },
+        "pluginVersion": "10.4.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": true,
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n  $__timeGroup(\"invoice_date\", '1d') + \r\n  (\r\n    extract(\r\n      epoch\r\n      from\r\n        CURRENT_TIMESTAMP AT TIME ZONE 'UTC'\r\n    ) - extract(\r\n      epoch\r\n      from\r\n        CURRENT_TIMESTAMP AT TIME ZONE '$__timezone'\r\n    )\r\n  ) \r\n  as time,\r\n  COUNT(*) AS \"orders to fufill\"\r\nFROM\r\n    invoice_orders\r\nWHERE \r\n    $__timeFilter(\"invoice_date\") and delivery_status = 'Not shipped'\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": true,
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n  $__timeGroup(\"invoice_date\", '1d') + \r\n  (\r\n    extract(\r\n      epoch\r\n      from\r\n        CURRENT_TIMESTAMP AT TIME ZONE 'UTC'\r\n    ) - extract(\r\n      epoch\r\n      from\r\n        CURRENT_TIMESTAMP AT TIME ZONE '$__timezone'\r\n    )\r\n  ) \r\n  as time,\r\n  COUNT(*) AS \"in transit\"\r\nFROM\r\n    invoice_orders\r\nWHERE \r\n    $__timeFilter(\"invoice_date\") and delivery_status = 'Shipped'\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "B",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": true,
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n  $__timeGroup(\"invoice_date\", '1d', 0) + \r\n  (\r\n    extract(\r\n      epoch\r\n      from\r\n        CURRENT_TIMESTAMP AT TIME ZONE 'UTC'\r\n    ) - extract(\r\n      epoch\r\n      from\r\n        CURRENT_TIMESTAMP AT TIME ZONE '$__timezone'\r\n    )\r\n  ) \r\n  as time,\r\n  COUNT(*) AS delivered\r\nFROM\r\n    invoice_orders\r\nWHERE \r\n    $__timeFilter(\"invoice_date\") and delivery_status = 'Delivered'\r\nGROUP BY\r\n    time\r\nORDER BY\r\n    time;\r\n",
+            "refId": "C",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n  COUNT(*) AS \"to fulfill\"\r\nFROM\r\n  invoice_orders\r\nWHERE \r\n  $__timeFilter(\"invoice_date\") AND delivery_status = 'Not shipped';\r\n",
+            "refId": "F",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n  COUNT(*) AS \"in transit\"\r\nFROM\r\n  invoice_orders\r\nWHERE \r\n  $__timeFilter(\"invoice_date\") AND delivery_status = 'Shipped';\r\n",
+            "refId": "E",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n  COUNT(*) AS delivered\r\nFROM\r\n  invoice_orders\r\nWHERE \r\n  $__timeFilter(\"invoice_date\") AND delivery_status = 'Delivered';\r\n",
+            "refId": "D",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "order overview from ${custom_var_date_range}",
+        "type": "stat"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "psql_dev_1"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "green",
+              "mode": "fixed"
+            },
+            "custom": {
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              }
+            },
+            "fieldMinMax": false,
+            "mappings": []
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "out of stock"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "red",
+                    "mode": "shades"
+                  }
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "low stock"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "yellow",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 7,
+          "w": 12,
+          "x": 12,
+          "y": 15
+        },
+        "id": 9,
+        "options": {
+          "displayLabels": [
+            "value"
+          ],
+          "legend": {
+            "displayMode": "table",
+            "placement": "right",
+            "showLegend": true,
+            "values": [
+              "value"
+            ]
+          },
+          "pieType": "pie",
+          "reduceOptions": {
+            "calcs": [
+              "lastNotNull"
+            ],
+            "fields": "",
+            "values": false
+          },
+          "tooltip": {
+            "mode": "single",
+            "sort": "none"
+          }
+        },
+        "pluginVersion": "10.4.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "-- Should probably let users set a custom threshold as what is considered \"low stock\"\r\n-- defaulting to 100 across all products for now, but we should probably add a new field to the products_table so that the user can assign a custom low stock per item\r\n\r\nSELECT\r\n    SUM(CASE WHEN total_quantity > 100 THEN 1 ELSE 0 END) AS \"in stock\",\r\n    SUM(CASE WHEN total_quantity < 100 AND total_quantity > 0 THEN 1 ELSE 0 END) AS \"low stock\",\r\n    SUM(CASE WHEN total_quantity = 0 THEN 1 ELSE 0 END) AS \"out of stock\"\r\nFROM (\r\n    SELECT\r\n        item_number,\r\n        SUM(quantity_on_hand) AS total_quantity\r\n    FROM\r\n        unique_products_table\r\n    GROUP BY\r\n        item_number\r\n) AS subquery;\r\n",
             "refId": "A",
             "sql": {
               "columns": [
@@ -255,23 +1509,295 @@
             }
           }
         ],
-        "title": "Earning since ${__from:date:YYYY-MM-DD}",
-        "type": "stat"
+        "title": "product overview from ${custom_var_date_range}",
+        "type": "piechart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "psql_dev_1"
+        },
+        "description": "",
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "fixedColor": "text",
+              "mode": "fixed"
+            },
+            "custom": {
+              "align": "center",
+              "cellOptions": {
+                "type": "color-text"
+              },
+              "filterable": false,
+              "inspect": false
+            },
+            "links": [],
+            "mappings": [
+              {
+                "options": {
+                  "Delivered": {
+                    "color": "green",
+                    "index": 2
+                  },
+                  "Not paid": {
+                    "color": "red",
+                    "index": 3
+                  },
+                  "Not shipped": {
+                    "color": "red",
+                    "index": 0
+                  },
+                  "Paid": {
+                    "color": "green",
+                    "index": 4
+                  },
+                  "Shipped": {
+                    "color": "yellow",
+                    "index": 1
+                  }
+                },
+                "type": "value"
+              }
+            ],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": null
+                }
+              ]
+            },
+            "unit": "string"
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "invoice #"
+              },
+              "properties": [
+                {
+                  "id": "links"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "total amount"
+              },
+              "properties": [
+                {
+                  "id": "unit",
+                  "value": "currencyUSD"
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "invoice #"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": true,
+                      "title": "view order",
+                      "url": "http://localhost/ccg/invoices/read/${__data.fields.invoice_id}"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "customer"
+              },
+              "properties": [
+                {
+                  "id": "links",
+                  "value": [
+                    {
+                      "targetBlank": true,
+                      "title": "view customer",
+                      "url": "http://localhost/ccg/customers/read/${__data.fields.customer_id}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 10,
+          "w": 24,
+          "x": 0,
+          "y": 22
+        },
+        "id": 10,
+        "options": {
+          "cellHeight": "md",
+          "footer": {
+            "countRows": false,
+            "enablePagination": false,
+            "fields": "",
+            "reducer": [],
+            "show": false
+          },
+          "showHeader": true,
+          "sortBy": [
+            {
+              "desc": true,
+              "displayName": "invoice #"
+            }
+          ]
+        },
+        "pluginVersion": "10.4.2",
+        "targets": [
+          {
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "psql_dev_1"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT \r\n    io.invoice_id AS invoice_id,\r\n    io.reference_number AS \"invoice #\",\r\n    ct.id AS customer_id,\r\n    ct.company_name AS customer,\r\n    io.amount_due AS \"total amount\",\r\n    io.delivery_status AS \"delivery status\",\r\n    io.payment_status AS \"payment status\",\r\n    io.invoice_date AS \"invoice date\"\r\nFROM \r\n    invoice_orders io\r\nJOIN \r\n    customer_table ct ON io.customer_id = ct.id\r\nORDER BY \r\n    io.invoice_date DESC\r\nLIMIT 10;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "recent orders summary",
+        "transformations": [
+          {
+            "id": "formatTime",
+            "options": {
+              "outputFormat": "YYYY-MM-DD",
+              "timeField": "invoice date",
+              "timezone": "utc",
+              "useTimezone": true
+            }
+          },
+          {
+            "id": "organize",
+            "options": {
+              "excludeByName": {
+                "customer_id": false,
+                "id": true,
+                "invoice_id": false
+              },
+              "includeByName": {},
+              "indexByName": {},
+              "renameByName": {
+                "invoice_id": ""
+              }
+            }
+          }
+        ],
+        "type": "table"
       }
     ],
     "schemaVersion": 39,
     "tags": [],
     "templating": {
-      "list": []
+      "list": [
+        {
+          "current": {
+            "selected": true,
+            "text": "day",
+            "value": "day"
+          },
+          "hide": 0,
+          "includeAll": false,
+          "label": "Granularity",
+          "multi": false,
+          "name": "granularity",
+          "options": [
+            {
+              "selected": true,
+              "text": "day",
+              "value": "day"
+            },
+            {
+              "selected": false,
+              "text": "week",
+              "value": "week"
+            },
+            {
+              "selected": false,
+              "text": "month",
+              "value": "month"
+            },
+            {
+              "selected": false,
+              "text": "year",
+              "value": "year"
+            },
+            {
+              "selected": false,
+              "text": "quarter",
+              "value": "quarter"
+            },
+            {
+              "selected": false,
+              "text": "decade",
+              "value": "decade"
+            }
+          ],
+          "query": "day,week,month,year,quarter,decade",
+          "queryValue": "",
+          "skipUrlSync": false,
+          "type": "custom"
+        },
+        {
+          "current": {
+            "selected": false,
+            "text": "2024-06-01 - 2024-06-30",
+            "value": "2024-06-01 - 2024-06-30"
+          },
+          "description": "This variables value is meant to come from the URL link. Pass it as \"var-custom_var_date_range=yourCustomDateRange\" in the URL displaying this Grafana Dashboard",
+          "hide": 0,
+          "includeAll": false,
+          "label": "Custom Date Range",
+          "multi": false,
+          "name": "custom_var_date_range",
+          "options": [],
+          "query": "",
+          "queryValue": "",
+          "skipUrlSync": false,
+          "type": "custom"
+        }
+      ]
     },
     "time": {
-      "from": "2024-04-24T02:08:06.069Z",
-      "to": "2024-05-24T02:08:06.069Z"
+      "from": "2024-06-01T00:00:00.000Z",
+      "to": "2024-06-30T23:59:59.999Z"
     },
     "timepicker": {},
-    "timezone": "browser",
-    "title": "Test",
-    "uid": "bdmmm33qzyfwgc",
-    "version": 1,
+    "timezone": "utc",
+    "title": "test2",
+    "uid": "test",
+    "version": 7,
     "weekStart": ""
   }

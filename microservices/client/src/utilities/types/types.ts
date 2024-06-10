@@ -13,5 +13,5 @@ export interface IPostRequest {
     headers?: any,
 }
 
-type ValuePiece = Date | null;
-export type DateRange = ValuePiece | [ValuePiece, ValuePiece];
+type DatePiece = Date | null;
+export type DateRange = DatePiece | [DatePiece, DatePiece];

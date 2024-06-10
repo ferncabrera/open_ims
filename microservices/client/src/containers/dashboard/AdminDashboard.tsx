@@ -11,15 +11,9 @@ import { SimpleSummaryCard } from '../../components/cards/SimpleSummaryCard';
 import { MdMoving, MdInfoOutline } from "react-icons/md";
 import { bannerState } from '../../atoms/state';
 import { useRecoilState } from 'recoil';
-
-const delay = ms => new Promise(res => setTimeout(res, ms));
+import { standardizeDateRangeTime } from '../../utilities/helpers/functions';
 
 const HOST: string | undefined = import.meta.env.VITE_HOST_IP;
-
-let USDollar = new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-});
 
 const standardMetricDateRanges = [
     "week",
@@ -53,28 +47,11 @@ function getSummaryOfTimePeriod(data: any[]) {
 
 };
 
-interface TimeRangeSummaryObj {
-    expenses: number | string,
-    income: number | string,
-    projected_expenses: number | string,
-    projected_income: number | string,
-    granularity: number | string,
-    profit: number | string,
-    name: string,
-    profit_percent_movement: string | number,
-    expense_percent_movement: string | number,
-    income_percent_movement: string | number,
-};
-
 export const AdminDashboard = () => {
     const [userInfo, setUserInfo] = useState({ firstName: null, email: null, permission: null });
     const [dateRange, setDateRange] = useState<DateRange>(null);
-    const [prevDateRange, setPrevDateRange] = useState<DateRange>(null);
+    // const [prevDateRange, setPrevDateRange] = useState<DateRange>(null);
     const [dashboardMetricsGranularity, setDashboardMetricsGranularity] = useState("month");
-    const [incomeExpenseProfitQueryData, setIncomeExpenseProfitQueryData] = useState([]);
-    const [timeRangeSummary, setTimeRangeSummary] = useState<TimeRangeSummaryObj>();
-    const [loadingTileData, setLoadingTileData] = useState<boolean>(false);
-    const [randomNumbers, setRandomNumbers] = useState<number>(0);
     const [bannerTextState, setBannerTextState] = useRecoilState(bannerState);
 
 
@@ -86,11 +63,57 @@ export const AdminDashboard = () => {
         })
     }, []);
 
+    const getOldestIncomeExpense = async ({ paddays = 0 }) => {
+        const response: any = await getJSONResponse({ endpoint: '/api/server/oldest_income_and_expense_record_dates', params: { paddays } });
+        return response;
+    };
+
+    useEffect(() => {
+
+        //? At the moment all of our documents have a DATE type without Time or TimeZone resolution.
+        //? All documents should be stored in UTC time.
+
+
+        switch (dashboardMetricsGranularity) {
+            case "week":
+                const bow = new Date() as any;
+                const eow = new Date();
+                bow.setDate(bow.getDate() - (bow.getDay() + 6) % 7)
+                bow.setHours(0, 0, 0, 0);
+                eow.setDate(bow.getDate() + 6);
+                setDateRange(standardizeDateRangeTime([bow, eow]));
+                break;
+            case "month":
+                const curr = new Date();
+                const bom = new Date(curr.getFullYear(), curr.getMonth(), 1);
+                setDateRange(standardizeDateRangeTime([bom, new Date(curr.getFullYear(), curr.getMonth() + 1, 0)]));
+                break;
+            // case "quarter":
+            //     toUTC([new Date(new Date().setMonth(new Date().getMonth() - 3)), new Date()]);
+            //     break;
+            case "year":
+                const cur = new Date();
+                const boy = new Date(cur.getFullYear(), 0, 1,0,0,0,0);
+                setDateRange(standardizeDateRangeTime([boy, new Date(cur.getFullYear(), 11, 31)]));
+                break;
+            case "all":
+                (async () => {
+                    const datesToSet = await getOldestIncomeExpense({ paddays: 5 });
+                    setDateRange(standardizeDateRangeTime([new Date(datesToSet.oldest_record_date), new Date(datesToSet.newest_record_date)]));
+                })();
+                break;
+            case "custom":
+                break;
+        }
+    }, [dashboardMetricsGranularity]);
+
+    console.log("Admindashboard date range statevar printed--> ", dateRange)
+
     return (
-        <div className="px-2 h-75">
+        <div className="px-2" style={{height: '88%'}}>
             <Row className={"py-1"}>
 
-                <Col xs={dashboardMetricsGranularity != "custom" ? 8: 6} className={"align-self-center"}>
+                <Col xs={dashboardMetricsGranularity != "custom" ? 8 : 6} className={"align-self-center"}>
                     {userInfo.firstName !== null &&
                         <p style={{ fontSize: "calc(16px + 1.25vw)" }} className='mb-0 font-30 dark-text my-md-3 mt-2 text-nowrap'>Welcome back, <span className='text-capitalize'>{userInfo.firstName}</span>.</p>
                     }
@@ -146,7 +169,7 @@ export const AdminDashboard = () => {
                             </>
                             :
                             <>
-                                <CCGDateRangePicker dateRange={dateRange} setDateRange={setDateRange} additionalClasses={`float-lg-end mb-2 px-2 bg-white ${styles.dashboardDateRangePicker}`} />
+                                <CCGDateRangePicker dateRange={dateRange} setDateRange={(dr) => dr?setDateRange(standardizeDateRangeTime(dr)):setDashboardMetricsGranularity("month")} additionalClasses={`float-lg-end mb-2 px-2 bg-white ${styles.dashboardDateRangePicker}`} />
                             </>
                         }
                     </div>
@@ -154,12 +177,13 @@ export const AdminDashboard = () => {
                 </Col>
 
             </Row>
-
+                {/* //? This is not how it should be done but lifes busy and we need to get going */}
             <Row className='h-100'>
-
-                <iframe src={`http://${HOST}/grafana/d/bdmmm33qzyfwgc/test?orgId=1&from=1713924486069&to=1716516486069&kiosk&theme=light`} width="100%" height="100%" frameBorder="0"></iframe>
- 
+                {
+                    dateRange && <iframe src={`http://${HOST}/grafana/d/test/test2?orgId=1&from=${dateRange[0].valueOf()}&to=${dateRange[1].valueOf()}&kiosk&theme=light&var-custom_var_date_range=${dateRange[0].toISOString().split('T')[0]} - ${dateRange[1].toISOString().split('T')[0]}`} width="100%" height="100%" frameBorder="0"></iframe>
+                }
             </Row>
+
         </div>
     )
 }
