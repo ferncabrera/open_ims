@@ -76,10 +76,10 @@ export const DefaultUsers = () => {
     setSelectedIds(null);
   }
 
-  const createCustomer = () => {
+  const createUser = () => {
     setEntity({
       action: "create",
-      category: "purchaseOrders",
+      category: "users",
       path: `/ccg/users/create/new`,
       id: null
     });
@@ -96,7 +96,7 @@ export const DefaultUsers = () => {
         <Col className='d-flex justify-content-end' xs={7} >
             <PillButton onClick={null} className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
             <PillButton onClick={deleteMultiple} disabled={disableDelete} className='me-2' text='Delete' color='standard' icon={<FaRegTrashAlt />} />
-            <PillButton onClick={createCustomer} className='me-1' text='+ Create Customer' color='blue' />
+            <PillButton onClick={createUser} className='me-1' text='+ Create User' color='blue' />
         </Col>
       </Row>
       <CCGTable
