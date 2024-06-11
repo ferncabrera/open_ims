@@ -55,12 +55,14 @@ spec:
               name: ge-config
             - mountPath: /etc/grafana/provisioning/datasources
               name: ge-config
+              readOnly: false
             - mountPath: /etc/grafana/provisioning/dashboards
               name: ge-config
+              readOnly: false
       volumes:
-        - name: grafana-pv
-          persistentVolumeClaim:
-            claimName: grafana-pvc
         - name: ge-config
           configMap:
             name: ge-config
+        - name: grafana-pv
+          persistentVolumeClaim:
+            claimName: grafana-pvc
