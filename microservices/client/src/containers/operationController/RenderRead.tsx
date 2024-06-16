@@ -11,6 +11,9 @@ interface IRenderReadProps {
 export const RenderRead = (props: IRenderReadProps) => {
   const { entity } = props;
 
+  if (!entity.id)
+    return <Error />
+
   switch (entity.category) {
     case "customers":
       return (

@@ -1149,7 +1149,7 @@
               "mode": "percentage",
               "steps": [
                 {
-                  "color": "super-light-green",
+                  "color": "green",
                   "value": null
                 }
               ]
@@ -1165,7 +1165,7 @@
                 {
                   "id": "color",
                   "value": {
-                    "fixedColor": "super-light-red",
+                    "fixedColor": "red",
                     "mode": "shades"
                   }
                 }
@@ -1180,7 +1180,7 @@
                 {
                   "id": "color",
                   "value": {
-                    "fixedColor": "super-light-yellow",
+                    "fixedColor": "yellow",
                     "mode": "fixed"
                   }
                 }
@@ -1724,7 +1724,7 @@
       "list": [
         {
           "current": {
-            "selected": true,
+            "selected": false,
             "text": "day",
             "value": "day"
           },
@@ -1798,6 +1798,6 @@
     "timezone": "utc",
     "title": "test2",
     "uid": "test",
-    "version": 7,
+    "version": 1,
     "weekStart": ""
   }

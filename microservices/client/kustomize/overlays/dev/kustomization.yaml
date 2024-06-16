@@ -1,5 +1,5 @@
 #! Vite requires environment veriables for the client to be provided at build-time as PROD
-#! env variables are directly string-replaced in the compiled JS. K8s secrets are provided at run-time
+#! env variables are directly string-replaced in the compiled JS. K8s secrets are provided (NOT ACCESSIBLE????? I NEED TO LOOK INTO THIS) at run-time
 #! so we cannot use them for our client.
 #? To configure secrets for the client please reference the clients README.md!
 resources:

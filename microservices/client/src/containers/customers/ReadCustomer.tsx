@@ -6,8 +6,8 @@ import { Row, Col } from "react-bootstrap";
 import { hasEmptyKeys } from '../../utilities/helpers/functions';
 import { CCGTable } from '../../components/table/CCGTable';
 import { Columns } from "./ReadTableSchema";
-import { useRecoilState } from 'recoil';
-import { breadcrumbsState, bannerState, entityState } from '../../atoms/state';
+import { useAtom } from 'jotai';
+import { breadcrumbsState, bannerState, entityState } from '../../atoms/atoms';
 import { MdOutlineEdit, MdOutlinePictureAsPdf } from "react-icons/md";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { useNavigate } from 'react-router';
@@ -21,7 +21,7 @@ interface IReadCustomerProps {
 
 interface ICustomerData {
   vendor: string;
-  id: number;
+  id: number | null;
   companyName: string;
   firstName: string;
   lastName: string;
@@ -79,9 +79,9 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
   const basicInfo = ['Customer ID', 'Company Name', 'Contact Name', 'Email', 'Phone', 'Vendor', 'Net Terms'];
 
   const navigate = useNavigate();
-  const [breadcrumbs, setBreadcrumb] = useRecoilState(breadcrumbsState);
-  const [banner, setBanner] = useRecoilState(bannerState);
-  const [entity, setEntity] = useRecoilState<IEntityState>(entityState);
+  const [breadcrumbs, setBreadcrumb] = useAtom(breadcrumbsState);
+  const [banner, setBanner] = useAtom(bannerState);
+  const [entity, setEntity] = useAtom<IEntityState>(entityState);
   const [customerData, setCustomerData] = useState<ICustomerData>(initialCustomerData);
   const [tableData, setTableData] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -118,7 +118,8 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
     navigate('/ccg/customers');
   };
 
-  const handleEdit = (customerId: number) => {
+  const handleEdit = (customerId: number | null) => {
+    // TODO Need better err handling when we dont have stuff as expected
     setEntity({
       action: 'update',
       category: 'customers',
@@ -216,7 +217,7 @@ export const ReadCustomer = (props: IReadCustomerProps) => {
         <h2>Customers</h2>
       </Col>
         <Col className='d-flex justify-content-end' xs={7} >
-            <PillButton className='me-2' onClick={null} text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
+            <PillButton className='me-2' onClick={()=>console.log("todo")} text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
             <PillButton className='me-2' onClick={() => handleDelete(customerData.id)} text='Delete' color='standard' icon={<FaRegTrashAlt />} />
             <PillButton className='me-1' onClick={() => handleEdit(customerData.id)} text='Edit Customer' color='blue' icon={<MdOutlineEdit/>} />
         </Col>

@@ -8,8 +8,8 @@ import { fieldValidation } from '../../../utilities/validation';
 import { IValidate } from '../../../utilities/types/validationTypes';
 import { sendPostRequest, getJSONResponse } from '../../../utilities/apiHelpers';
 import { useNavigate } from 'react-router-dom';
-import { bannerState } from '../../../atoms/state';
-import { useRecoilState } from 'recoil';
+import { bannerState } from '../../../atoms/atoms';
+import { useAtom } from 'jotai';
 import _ from 'lodash';
 
 import styles from './index.module.scss';
@@ -20,7 +20,7 @@ const initialErrorFieldState = {
 }
 
 const formData = {};
-let trackErrorList = [];
+let trackErrorList : Array<boolean> = [];
 
 
 export const Login = () => { // test comment
@@ -37,7 +37,7 @@ export const Login = () => { // test comment
     const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
     const [resetEmail, setEmail] = useState('');
     const [isSigningIn, setIsSigningIn] = useState(false);
-    const [bannerText, setBannerTextState] = useRecoilState(bannerState);
+    const [bannerText, setBannerTextState] = useAtom(bannerState);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -52,7 +52,7 @@ export const Login = () => { // test comment
         }
     }, [showResetPassword]);
 
-    const modalFooter = emailSent ? null : <a
+    const modalFooter = emailSent ? <></> : <a
         onClick={() => {
             setShowResetPassword(false);
             setEmailSent(false);
@@ -133,12 +133,12 @@ export const Login = () => { // test comment
             if (_.get(response, 'token', '')) {
                 navigate('/ccg/dashboard');
             } else {
-                setBannerTextState({variant: 'danger', message: response.message})
+                setBannerTextState({variant: 'danger', message: response?.message ? response.message : global.__APP_DEFAULT_ERROR_MSG__});
             }
             setIsSigningIn(false);
         } catch (e) {
             //need our global state banner here to handle our errors
-            setBannerTextState({variant: 'danger', message: e})
+            setBannerTextState({variant: 'danger', message: (e?.toString()?e.toString(): global.__APP_DEFAULT_ERROR_MSG__)});
         }
     }
 

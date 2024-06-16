@@ -5,50 +5,50 @@ import { Form, Row, Col, Spinner } from 'react-bootstrap';
 import { hasEmptyKeys } from '../../utilities/helpers/functions';
 import { IValidate } from "../../utilities/types/validationTypes";
 import { fieldValidation } from '../../utilities/validation';
-import { bannerState, breadcrumbsState } from '../../atoms/state';
-import { useRecoilState } from 'recoil';
+import { bannerState, breadcrumbsState } from '../../atoms/atoms';
+import { useAtom } from 'jotai';
 import { useNavigate } from 'react-router';
 import _ from 'lodash';
 
 interface IEditCustomerProps {
-  customerId: number;
+  customerId: number | null;
 }
 
 interface ICustomerData {
   vendor: string;
-  id: number;
+  id: number | null;
   companyName: string;
   firstName: string;
   lastName: string;
   email: string;
   phone: string;
   netTerms: any;
-  shipping: {
-    customerAddressName: string;
-    address1: string;
-    address2: string;
-    city: string;
-    province: string;
-    country: string;
-    postalCode: string;
+  shipping?: {
+    customerAddressName?: string | undefined;
+    address1?: string | undefined;
+    address2?: string | undefined;
+    city?: string | undefined;
+    province?: string | undefined;
+    country?: string | undefined;
+    postalCode?: string | undefined;
   };
-  billing: {
-    customerAddressName: string;
-    address1: string;
-    address2: string;
-    city: string;
-    province: string;
-    country: string;
-    postalCode: string;
+  billing?: {
+    customerAddressName?: string | undefined;
+    address1?: string | undefined;
+    address2?: string | undefined;
+    city?: string | undefined;
+    province?: string | undefined;
+    country?: string | undefined;
+    postalCode?: string | undefined;
   }
 }
 
 interface IErrorFields {
-  companyName: IErrorObject;
-  firstName: IErrorObject;
-  lastName: IErrorObject;
-  email: IErrorObject;
-  phone: IErrorObject;
+  companyName: IErrorObject | null;
+  firstName: IErrorObject | null;
+  lastName: IErrorObject | null;
+  email: IErrorObject | null;
+  phone: IErrorObject | null;
 }
 
 const initialErrorState = {
@@ -59,7 +59,7 @@ const initialErrorState = {
   phone: null
 };
 
-let trackErrorList = [];
+let trackErrorList: (Boolean)[]= [];
 
 export const EditCreateCustomer = (props: IEditCustomerProps) => {
 
@@ -70,11 +70,11 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [isCheckedBilling, setIsCheckedBilling] = useState(false);
-  const [vendorList, setVendorList] = useState([]);
+  const [vendorList, setVendorList] = useState <Array<any>>([]);
   const [initialVendor, setInitialVendor] = useState('');
   const [error, setError] = useState<IErrorFields>(initialErrorState);
-  const [bannerTextState, setBannerTextState] = useRecoilState(bannerState)
-  const [breadcrumbs, setBreadcrumb] = useRecoilState(breadcrumbsState);
+  const [bannerTextState, setBannerTextState] = useAtom(bannerState)
+  const [breadcrumbs, setBreadcrumb] = useAtom(breadcrumbsState);
   const [customerData, setCustomerData] = useState<ICustomerData>(
     {
       vendor: '',
@@ -446,7 +446,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mr' md={6}>
                       <Form.Control
                         type='input'
-                        value={customerData.shipping.customerAddressName}
+                        value={customerData?.shipping?.customerAddressName}
                         onChange={(e) => setCustomerData({ ...customerData, shipping: { ...customerData.shipping, customerAddressName: e.target.value } })}
                       />
                     </Col>
@@ -460,7 +460,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mrp-20'>
                       <Form.Control
                         type='input'
-                        value={customerData.billing.customerAddressName}
+                        value={customerData?.billing?.customerAddressName}
                         disabled={isCheckedBilling}
                         onChange={(e) => setCustomerData({ ...customerData, billing: { ...customerData.billing, customerAddressName: e.target.value } })}
                       />
@@ -479,7 +479,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mr' md={6}>
                       <Form.Control
                         type='input'
-                        value={customerData.shipping.address1}
+                        value={customerData?.shipping?.address1}
                         onChange={(e) => setCustomerData({ ...customerData, shipping: { ...customerData.shipping, address1: e.target.value } })}
                       />
                     </Col>
@@ -493,7 +493,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mrp-20'>
                       <Form.Control
                         type='input'
-                        value={customerData.billing.address1}
+                        value={customerData?.billing?.address1}
                         disabled={isCheckedBilling}
                         onChange={(e) => setCustomerData({ ...customerData, billing: { ...customerData.billing, address1: e.target.value } })}
                       />
@@ -512,7 +512,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mr' md={6}>
                       <Form.Control
                         type='input'
-                        value={customerData.shipping.address2}
+                        value={customerData?.shipping?.address2}
                         onChange={(e) => setCustomerData({ ...customerData, shipping: { ...customerData.shipping, address2: e.target.value } })}
                       />
                     </Col>
@@ -526,7 +526,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mrp-20'>
                       <Form.Control
                         type='input'
-                        value={customerData.billing.address2}
+                        value={customerData?.billing?.address2}
                         disabled={isCheckedBilling}
                         onChange={(e) => setCustomerData({ ...customerData, billing: { ...customerData.billing, address2: e.target.value } })}
                       />
@@ -545,7 +545,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mr' md={6}>
                       <Form.Control
                         type='input'
-                        value={customerData.shipping.city}
+                        value={customerData?.shipping?.city}
                         onChange={(e) => setCustomerData({ ...customerData, shipping: { ...customerData.shipping, city: e.target.value } })}
                       />
                     </Col>
@@ -559,7 +559,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mrp-20'>
                       <Form.Control
                         type='input'
-                        value={customerData.billing.city}
+                        value={customerData?.billing?.city}
                         disabled={isCheckedBilling}
                         onChange={(e) => setCustomerData({ ...customerData, billing: { ...customerData.billing, city: e.target.value } })}
                       />
@@ -578,7 +578,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mr' md={6}>
                       <Form.Control
                         type='input'
-                        value={customerData.shipping.province}
+                        value={customerData?.shipping?.province}
                         onChange={(e) => setCustomerData({ ...customerData, shipping: { ...customerData.shipping, province: e.target.value } })}
                       />
                     </Col>
@@ -592,7 +592,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mrp-20'>
                       <Form.Control
                         type='input'
-                        value={customerData.billing.province}
+                        value={customerData?.billing?.province}
                         disabled={isCheckedBilling}
                         onChange={(e) => setCustomerData({ ...customerData, billing: { ...customerData.billing, province: e.target.value } })}
                       />
@@ -611,7 +611,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mr' md={6}>
                       <Form.Control
                         type='input'
-                        value={customerData.shipping.country}
+                        value={customerData?.shipping?.country}
                         onChange={(e) => setCustomerData({ ...customerData, shipping: { ...customerData.shipping, country: e.target.value } })}
                       />
                     </Col>
@@ -625,7 +625,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mrp-20'>
                       <Form.Control
                         type='input'
-                        value={customerData.billing.country}
+                        value={customerData?.billing?.country}
                         disabled={isCheckedBilling}
                         onChange={(e) => setCustomerData({ ...customerData, billing: { ...customerData.billing, country: e.target.value } })}
                       />
@@ -643,7 +643,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mr' md={6}>
                       <Form.Control
                         type='input'
-                        value={customerData.shipping.postalCode}
+                        value={customerData?.shipping?.postalCode}
                         onChange={(e) => setCustomerData({ ...customerData, shipping: { ...customerData.shipping, postalCode: e.target.value } })}
                       />
                     </Col>
@@ -657,7 +657,7 @@ export const EditCreateCustomer = (props: IEditCustomerProps) => {
                     <Col className='mrp-20'>
                       <Form.Control
                         type='input'
-                        value={customerData.billing.postalCode}
+                        value={customerData?.billing?.postalCode}
                         disabled={isCheckedBilling}
                         onChange={(e) => setCustomerData({ ...customerData, billing: { ...customerData.billing, postalCode: e.target.value } })}
                       />

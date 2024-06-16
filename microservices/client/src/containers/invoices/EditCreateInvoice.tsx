@@ -2,9 +2,12 @@ import React, { useEffect, useState } from 'react'
 import { getJSONResponse, sendPostRequest, sendPatchRequest } from '../../utilities/apiHelpers';
 import { CrudForm } from '../../components/forms/CrudForm';
 import { CCGTable } from '../../components/table/CCGTable';
-import { bannerState, breadcrumbsState, productState } from '../../atoms/state';
 import { Row, Col, Form } from "react-bootstrap";
-import { useRecoilState, useResetRecoilState } from 'recoil';
+
+import { bannerState, breadcrumbsState, productState } from '../../atoms/atoms';
+import { useAtom,  } from 'jotai';
+import { useResetAtom } from 'jotai/utils';
+
 import { EditColumns } from "./ProductTableSchema";
 import _ from 'lodash';
 
@@ -13,15 +16,15 @@ interface IEditInvoiceProps {
 }
 
 interface ITableRowData {
-    id: number;
-    product_code: number;
+    id: number | null;
+    product_code: number | null;
     item_name: string;
     unique_product_id: string;
-    quantity: number;
-    rate: number;
+    quantity: number | null;
+    rate: number | null;
     taxable: boolean;
-    discount: number;
-    amount: number;
+    discount: number | null;
+    amount: number | null;
 }
 
 const initialInvoiceData = {
@@ -44,11 +47,11 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
     const [invoiceData, setInvoiceData] = useState(initialInvoiceData);
     const [tableData, setTableData] = useState<ITableRowData[]>([])
-    const [products, setProducts] = useRecoilState(productState);
-    const [breadcrumbs, setBreadcrumbs] = useRecoilState(breadcrumbsState);
-    const [banner, setBanner] = useRecoilState(bannerState);
 
-    const resetProducts = useResetRecoilState(productState)
+    const [products, setProducts] = useAtom(productState);
+    const [breadcrumbs, setBreadcrumbs] = useAtom(breadcrumbsState);
+    const [banner, setBanner] = useAtom(bannerState);
+    const resetProducts = useResetAtom(productState)
 
 
     useEffect(() => {

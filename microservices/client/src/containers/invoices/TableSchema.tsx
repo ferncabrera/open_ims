@@ -32,7 +32,7 @@ export const Columns = [
     header: 'Date',
     cell: (props) => {
 
-      const ISODate: string = _.get(props.row.original, 'invoice_date', null);
+      const ISODate: string | null = _.get(props.row.original, 'invoice_date', null);
       
       return (
         <div className="d-flex">
@@ -87,7 +87,7 @@ export const Columns = [
       return (
         <div className="">
           <StatusPill
-            text={status}
+            text={status ? status : "error getting status"}
             color={color}
           />
         </div>

@@ -34,7 +34,7 @@ export const fieldValidation = (data: IValidate) => {
 
 export const validateFormOnSubmit = (requiredArr: string[], data ) : [any, boolean] => {
 
-    const trackErrorList = [];
+    const trackErrorList : (any)[] = [];
     const errorObject: any = {};
 
     _.forEach(requiredArr, (key) => {

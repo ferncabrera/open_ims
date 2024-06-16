@@ -14,12 +14,18 @@ import { PillButton } from '../buttons/PillButton';
 import { MdArrowForward, MdArrowBack } from "react-icons/md";
 import _ from 'lodash';
 
+type SelectedFitlerObject = {
+  element: React.ReactElement;
+  type: String;
+  id: Number;
+};
+
 interface ICCGTableProps {
   columns: any;
   data: any;
   // columns and data must be compatible with eachother when passed in as props
   totalCount: number;
-  fetchDataFunction: (pageSize, pageIndex, searchQuery?) => void;
+  fetchDataFunction: (pageSize: Number, pageIndex: Number, searchQuery?) => void;
   handleSelectedRows?: (selectedRows) => void;
   pageSize: number;
   pageIndex: number;
@@ -29,7 +35,6 @@ interface ICCGTableProps {
   frontEndPagination?: boolean;
   addRowButton?: boolean;
   onAddRow?: () => void;
-
 }
 
 export const CCGTable: React.FC<ICCGTableProps> = (props) => {
@@ -47,19 +52,20 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     addRowButton = false,
     onAddRow = null,
     frontEndPagination = false,
-
   } = props;
+
+  const filters = props.filters ? props.filters : [];
 
   let i_key = 0;
 
   const columnSchema = useMemo(() => columns, []);
   // const tableData = useMemo(() => data, []);
 
-  const [currentPage, setCurrentPage] = useState(1);
+  const [currentPage, setCurrentPage] = useState<Number | null>(1);
   const [isLoading, setIsLoading] = useState(true);
   const [rowSelection, setRowSelection] = useState({});
-  const [selectedFilters, setSelectedFilters] = useState([]);
-  const [filterOptions, setFilterOptions] = useState(props.filters);
+  const [selectedFilters, setSelectedFilters] = useState<Array<SelectedFitlerObject>>([]);
+  const [filterOptions, setFilterOptions] = useState(filters);
   const [filterValues, setFilterValues] = useState({});
 
 
@@ -182,7 +188,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
           </Row>
         </div>
         <div className='px-4 py-3 bg-white filter-size-section'>
-          {!addRowButton &&
+          {!onAddRow &&
             <Row>
               <Col>
                 {data &&
@@ -197,7 +203,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                   onChange={e => {
                     const pageSize = e.target.value;
                     setIsLoading(true);
-                    fetchDataFunction(pageSize, 0, filterValues);
+                    fetchDataFunction(Number(pageSize), 0, filterValues);
                   }}
                 >
                   {[10, 20, 30, 40, 50].map(pageSizeOption => (
@@ -254,9 +260,9 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
           </tbody>
 
         </table>
-        {addRowButton &&
-          <Row className='bg-white px-3 pt-3'>
-            <Col sm={2}>
+        {onAddRow && addRowButton &&
+          <Row className='bg-white pt-3 pb-1'>
+            <Col className='ps-4' sm={3}>
               <Button className='btn-white' onClick={onAddRow}>+ Add Row</Button>
             </Col>
           </Row>
@@ -265,19 +271,19 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
           {!addRowButton &&
             <Row>
               <Col className='ms-3'>
-                <Button
+                {(Number(pageIndex) === 0) ? null : <Button
                   className='pagination'
                   variant='info'
                   onClick={(e) => {
                     e.preventDefault();
                     setIsLoading(true)
                     setCurrentPage(1);
-                    fetchDataFunction(pageSize, Number(pageIndex) - 1, filterValues)
+                    fetchDataFunction(Number(pageSize), Number(pageIndex) - 1, filterValues)
                   }}
-                  disabled={(Number(pageIndex) === 0) ? true : false}
+                // disabled={(Number(pageIndex) === 0) ? true : false}
                 >
                   <MdArrowBack /> Previous
-                </Button>
+                </Button>}
               </Col>
               <Col>
                 <span className="flex items-center page-input">
@@ -291,7 +297,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                       if (!isNaN(input) && (input >= 1) && ((input + (Number(pageIndex) + 1) >= 1) && (input <= Math.ceil(totalCount / pageSize)))) {
                         setIsLoading(true);
                         setCurrentPage(1);
-                        fetchDataFunction(pageSize, input - 1, filterValues);
+                        fetchDataFunction(Number(pageSize), input - 1, filterValues);
                       } else {
                         setCurrentPage(null);
                       }
@@ -301,19 +307,19 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
                 </span>
               </Col>
               <Col className='d-flex justify-content-end me-3'>
-                <Button
+                {(Number(pageIndex) + 1 >= Math.ceil(totalCount / pageSize)) ? null : <Button
                   className='pagination'
                   variant='info'
                   onClick={(event) => {
                     event.preventDefault();
                     setIsLoading(true);
                     setCurrentPage(1);
-                    fetchDataFunction(pageSize, Number(pageIndex) + 1, filterValues)
+                    fetchDataFunction(Number(pageSize), Number(pageIndex) + 1, filterValues)
                   }}
-                  disabled={(Number(pageIndex) + 1 >= Math.ceil(totalCount / pageSize)) ? true : false}
+                // disabled={(Number(pageIndex) + 1 >= Math.ceil(totalCount / pageSize)) ? true : false}
                 >
                   Next <MdArrowForward />
-                </Button>
+                </Button>}
               </Col>
             </Row>
           }

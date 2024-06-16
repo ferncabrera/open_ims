@@ -30,7 +30,7 @@ export const Columns = [
         header: 'Company Name',
         cell: (props) => {
 
-            const companyName: string = _.get(props.row.original, 'company_name', null);
+            const companyName: string | null = _.get(props.row.original, 'company_name', null);
             const id: string = _.get(props.row.original, 'id', '');
             return (
                 <div className="d-flex">
@@ -50,8 +50,8 @@ export const Columns = [
     columnHelper.accessor("contact_name", {
         header: 'Contact Name',
         cell: (props) => {
-            const firstName: string = _.get(props.row.original, 'first_name', null);
-            const lastName: string = _.get(props.row.original, 'last_name', null);
+            const firstName: string | null = _.get(props.row.original, 'first_name', null);
+            const lastName: string | null = _.get(props.row.original, 'last_name', null);
 
             return `${firstName} ${lastName}`
         }

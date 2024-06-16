@@ -8,8 +8,8 @@ import { DateRange } from '../../utilities/types/types';
 import { IoIosArrowDropup, IoIosArrowDropdown } from "react-icons/io";
 import { makeFriendlyDollarAmount } from '../../utilities/helpers/functions';
 import useWindowDimensions from '../../hooks/useWindowDimensions'
-import { bannerState } from '../../atoms/state';
-import { useRecoilState } from 'recoil';
+import { bannerState } from '../../atoms/atoms';
+import { useAtom } from 'jotai';
 
 const renderColorfulLegendText = (value: string, entry: any) => {
     const hasUnderscores = value.includes('_');
@@ -54,10 +54,13 @@ interface ICCGChartDataAttributes {
     granularity: string,
 };
 
-function filterByGranularity(data: ICCGChartDataAttributes[], targetGranularity: string) {
+function filterByGranularity(data: ICCGChartDataAttributes[] | undefined, targetGranularity: string) {
     // console.log(data.filter(item => item.granularity === targetGranularity).map(item => ({...item, name: "abc"})));
-    return data.filter(item => item.granularity === targetGranularity);
-}
+    if (data)
+        return data.filter(item => item.granularity === targetGranularity);
+    else 
+        return [];
+}   
 
 interface ICCGChartProps {
     chartData?: ICCGChartDataAttributes[],
@@ -165,7 +168,7 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
     const [showChartGranularityMenu, setShowChartGranularityMenu] = useState(false);
     const [data, setData] = useState<ICCGChartDataAttributes[]>([]);
     const { height: winHeight, width: winWidth } = useWindowDimensions();
-    const [bannerTextState, setBannerTextState] = useRecoilState(bannerState);
+    const [bannerTextState, setBannerTextState] = useAtom(bannerState);
 
     // TODO in the future each chart can display its own custom date range, perhaps for him to create custom reports using the charts?
     // const [dateRange, setDateRange] = useState<DateRange>([new Date(new Date().setFullYear(new Date().getFullYear() - 1)), new Date()]);
@@ -615,8 +618,8 @@ export const CCGChart: React.FC<ICCGChartProps> = ({ chartData, loadingChartData
                             />
                             {showBrush &&
                                 <Brush onChange={(i) => {
-                                    setStartIndexBrush(i.startIndex);
-                                    setEndIndexBrush(i.endIndex);
+                                    setStartIndexBrush(i?.startIndex ? i?.startIndex : 0);
+                                    setEndIndexBrush(i?.endIndex ? i?.endIndex : 0);
                                 }}
                                     // className={"mx-auto"}
                                     // x={80}

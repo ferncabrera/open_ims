@@ -45,7 +45,7 @@ export const Columns = [
             return (
                 <div className="">
                     <StatusPill
-                        text={status}
+                        text={status ? status : "error getting status"}
                         color={color}
                     />
                 </div>

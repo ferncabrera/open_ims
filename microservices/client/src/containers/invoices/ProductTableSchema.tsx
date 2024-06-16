@@ -1,8 +1,7 @@
 import { createColumnHelper } from "@tanstack/react-table"
 import { useEffect, useState } from "react";
-import { useRecoilState } from "recoil";
-import { productState } from "../../atoms/state";
-
+import { useAtom } from "jotai";
+import { productState } from "../../atoms/atoms";
 
 import { FaRegTrashAlt } from "react-icons/fa";
 import { Form } from "react-bootstrap";
@@ -20,7 +19,7 @@ export const EditColumns = [
 
             let itemNumber = null
 
-            const [product, setProduct] = useRecoilState(productState);
+            const [product, setProduct] = useAtom(productState);
             const [singleSelection, setSingleSelection] = useState([])
 
             const id = _.get(props.row.original, 'id');
@@ -56,7 +55,7 @@ export const EditColumns = [
         header: 'Product Name',
         cell: (props) => {
 
-            const [product, setProduct] = useRecoilState(productState);
+            const [product, setProduct] = useAtom(productState);
 
             const id = _.get(props.row.original, 'id');
 

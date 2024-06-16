@@ -5,8 +5,9 @@ import { Sidebar } from '../../components/mainComponents/Sidebar'
 import { isUserAuth } from '../../utilities/helpers/functions';
 import { useNavigate } from 'react-router-dom';
 import { OverlaySpinner } from '../../components/modals/OverlaySpinner';
-import { useRecoilValue, useResetRecoilState } from 'recoil';
-import { overlaySpinnerState, breadcrumbsState } from '../../atoms/state';
+import { useAtom } from 'jotai';
+import { useResetAtom } from 'jotai/utils';
+import { overlaySpinnerState, breadcrumbsState } from '../../atoms/atoms';
 import { GoHome } from 'react-icons/go';
 import { Link } from 'react-router-dom';
 import styles from "./index.module.scss";
@@ -19,9 +20,9 @@ export const MainContainer = (props: any) => {
     let i_key = 0;
 
     const navigate = useNavigate();
-    const spinnerState = useRecoilValue(overlaySpinnerState);
-    const breadcrumbs = useRecoilValue(breadcrumbsState);
-    const resetBreadcrumbs = useResetRecoilState(breadcrumbsState)
+    const [spinnerState,] = useAtom(overlaySpinnerState);
+    const [breadcrumbs,] = useAtom(breadcrumbsState);
+    const resetBreadcrumbs = useResetAtom(breadcrumbsState)
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     // we should use a global state here tbh - but will do this temporarily to show we have access to cookie data
     const [sidebarProps, setSidebarProps] = useState({});

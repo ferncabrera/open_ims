@@ -7,19 +7,19 @@ import { FaRegTrashAlt } from "react-icons/fa";
 import { Row, Col } from 'react-bootstrap';
 import {Columns} from './TableSchema'
 import { getJSONResponse, sendDeleteRequest } from '../../utilities/apiHelpers';
-import { breadcrumbsState, bannerState, entityState } from '../../atoms/state';
-import { useRecoilState } from 'recoil';
+import { breadcrumbsState, bannerState, entityState } from '../../atoms/atoms';
+import { useAtom } from 'jotai';
 import { Link } from 'react-router-dom';
 import _ from 'lodash';
 
 export const DefaultInvoices = () => {
 
   const [responseData, setResponseData] = useState<any>([]);
-  const [selectedIds, setSelectedIds] = useState([]);
+  const [selectedIds, setSelectedIds] = useState <Array<any>>([]);
   const [disableDelete, setDisableDelete] = useState(true);
-  const [breadcrumbState, setBreadcrumb] = useRecoilState(breadcrumbsState);
-  const [banner, setBannerState] = useRecoilState(bannerState);
-  const [entity, setEntity] = useRecoilState(entityState);
+  const [breadcrumbState, setBreadcrumb] = useAtom(breadcrumbsState);
+  const [banner, setBannerState] = useAtom(bannerState);
+  const [entity, setEntity] = useAtom(entityState);
 
   const navigate = useNavigate();
 
@@ -74,7 +74,7 @@ export const DefaultInvoices = () => {
         setBannerState({message: 'Failed to delete Invoice(s)', variant: 'danger'});
         return
       }
-    setSelectedIds(null);
+    setSelectedIds([]);
   }
 
   const createInvoice = () => {
@@ -95,7 +95,7 @@ export const DefaultInvoices = () => {
           <h2>Sales</h2>
         </Col>
         <Col className='d-flex justify-content-end' xs={7} >
-            <PillButton onClick={null} className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
+            <PillButton onClick={() => console.log("todo")} className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
             <PillButton onClick={deleteMultiple} disabled={disableDelete} className='me-2' text='Delete' color='standard' icon={<FaRegTrashAlt />} />
             <PillButton onClick={createInvoice} className='me-1' text='+ Create Invoice' color='blue' />
         </Col>

@@ -9,8 +9,8 @@ import { DateRange } from '../../utilities/types/types';
 import styles from "./index.module.scss";
 import { SimpleSummaryCard } from '../../components/cards/SimpleSummaryCard';
 import { MdMoving, MdInfoOutline } from "react-icons/md";
-import { bannerState } from '../../atoms/state';
-import { useRecoilState } from 'recoil';
+import { bannerState } from '../../atoms/atoms';
+import { useAtom } from 'jotai';
 
 const delay = ms => new Promise(res => setTimeout(res, ms));
 
@@ -73,7 +73,7 @@ export const AdminDashboard = () => {
     const [timeRangeSummary, setTimeRangeSummary] = useState<TimeRangeSummaryObj>();
     const [loadingTileData, setLoadingTileData] = useState<boolean>(false);
     const [randomNumbers, setRandomNumbers] = useState<number>(0);
-    const [bannerTextState, setBannerTextState] = useRecoilState(bannerState);
+    const [bannerTextState, setBannerTextState] = useAtom(bannerState);
 
     const getIncomeExpenseByDate = async ({ startdate = null, enddate = null }) => {
         const response: any = await getJSONResponse({ endpoint: '/api/server/income_and_expense_by_date', params: { startdate, enddate } });
@@ -165,8 +165,8 @@ export const AdminDashboard = () => {
                     setLoadingTileData(true);
                     const isoEndDate: any = new Date(new Date(dateRange[1]).setHours(0, 0, 0, 0));
                     const startDate: any = dateRange[0].toISOString().substring(0, 10);
-                    const prevStartDate: any = prevDateRange[0].toISOString().substring(0, 10);
-                    const prevEndDate: any = new Date(new Date(prevDateRange[1]).setHours(0, 0, 0, 0)).toISOString().substring(0, 10);
+                    const prevStartDate: any = (prevDateRange ? prevDateRange[0] : Date.now()).toISOString().substring(0, 10);
+                    const prevEndDate: any = new Date(new Date(prevDateRange ? prevDateRange[1] : Date.now())?.setHours(0, 0, 0, 0)).toISOString().substring(0, 10);
                     currDateRangeRes = await getIncomeExpenseByDate({ startdate: startDate, enddate: isoEndDate.toISOString().substring(0, 10) });
                     prevDateRangeRes = await getIncomeExpenseByDate({ startdate: prevStartDate, enddate: prevEndDate });
                     if (!prevDateRangeRes.success)
@@ -193,7 +193,7 @@ export const AdminDashboard = () => {
                     });
                     setIncomeExpenseProfitQueryData(currDateRangeRes.data);
                 } catch (e: any) {
-                    let additionalErrorDetails = false;
+                    let additionalErrorDetails : false | string = false;
                     if (currDateRangeRes) {
                         additionalErrorDetails = currDateRangeRes.additionalErrorDetails
                     }
