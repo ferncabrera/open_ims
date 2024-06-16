@@ -25,4 +25,13 @@ export const breadcrumbsState = atom({
     default: {
         pathArr: [],
     }
+});
+
+export const productState = atom({
+    key:'productState',
+    default: {
+        productRows: {},
+        getProducts: [],
+        getUniqueProducts: []
+    }
 })

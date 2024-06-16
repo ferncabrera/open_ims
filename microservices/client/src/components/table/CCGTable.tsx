@@ -26,6 +26,10 @@ interface ICCGTableProps {
   filters?: { label: string, type: string, id: number }[];
   searchPlaceholder: string;
   tableHeader?: string;
+  frontEndPagination?: boolean;
+  addRowButton?: boolean;
+  onAddRow?: () => void;
+
 }
 
 export const CCGTable: React.FC<ICCGTableProps> = (props) => {
@@ -40,6 +44,9 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     handleSelectedRows = null,
     searchPlaceholder,
     tableHeader = null,
+    addRowButton = false,
+    onAddRow = null,
+    frontEndPagination = false,
 
   } = props;
 
@@ -97,7 +104,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
   }
 
   const handleInputFilter = (data, id) => {
-    setFilterValues(prevFilterValues => ({...prevFilterValues, ['input' + id]: data}))
+    setFilterValues(prevFilterValues => ({ ...prevFilterValues, ['input' + id]: data }))
     return
   };
 
@@ -111,7 +118,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
     if (filterType !== 'date') {
       setFilterValues(prevFilterValues => ({ ...prevFilterValues, [filterType + id]: '' }));
     } else {
-      setFilterValues(prevFilterValues => ({...prevFilterValues, [filterType]: ''}));
+      setFilterValues(prevFilterValues => ({ ...prevFilterValues, [filterType]: '' }));
     }
     setFilterOptions((prevFilterOptions) => ([...prevFilterOptions, { type: filterType, label, id }]));
   };
@@ -175,31 +182,33 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
           </Row>
         </div>
         <div className='px-4 py-3 bg-white filter-size-section'>
-          <Row>
-            <Col>
-              {data &&
-                `Showing 0 - ${table.getRowModel().rows.length} results out of ${totalCount}`
-              }
-            </Col>
-            <Col className='d-flex justify-content-end'>
-              <span className='pe-2'>Results Per Page </span>
-              <select
-                className='size-select'
-                value={pageSize}
-                onChange={e => {
-                  const pageSize = e.target.value;
-                  setIsLoading(true);
-                  fetchDataFunction(pageSize, 0, filterValues);
-                }}
-              >
-                {[10, 20, 30, 40, 50].map(pageSizeOption => (
-                  <option key={pageSizeOption} value={pageSizeOption}>
-                    {pageSizeOption}
-                  </option>
-                ))}
-              </select>
-            </Col>
-          </Row>
+          {!addRowButton &&
+            <Row>
+              <Col>
+                {data &&
+                  `Showing 0 - ${table.getRowModel().rows.length} results out of ${totalCount}`
+                }
+              </Col>
+              <Col className='d-flex justify-content-end'>
+                <span className='pe-2'>Results Per Page </span>
+                <select
+                  className='size-select'
+                  value={pageSize}
+                  onChange={e => {
+                    const pageSize = e.target.value;
+                    setIsLoading(true);
+                    fetchDataFunction(pageSize, 0, filterValues);
+                  }}
+                >
+                  {[10, 20, 30, 40, 50].map(pageSizeOption => (
+                    <option key={pageSizeOption} value={pageSizeOption}>
+                      {pageSizeOption}
+                    </option>
+                  ))}
+                </select>
+              </Col>
+            </Row>
+          }
         </div>
         {isLoading &&
           <div className='d-flex justify-content-center'>
@@ -245,60 +254,69 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
           </tbody>
 
         </table>
-        <div className='bg-white pt-3 pb-2'>
-          <Row>
-            <Col className='ms-3'>
-              <Button
-                className='pagination'
-                variant='info'
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsLoading(true)
-                  setCurrentPage(1);
-                  fetchDataFunction(pageSize, Number(pageIndex) - 1, filterValues)
-                }}
-                disabled={(Number(pageIndex) === 0) ? true : false}
-              >
-                <MdArrowBack /> Previous
-              </Button>
-            </Col>
-            <Col>
-              <span className="flex items-center page-input">
-                Go to page:
-                <Form.Control
-                  size='sm'
-                  value={!currentPage ? '' : (Number(pageIndex) + 1)}
-                  onChange={(e) => {
-                    e.preventDefault()
-                    const input = Number(e.target.value);
-                    if (!isNaN(input) && (input >= 1) && ((input + (Number(pageIndex) + 1) >= 1) && (input <= Math.ceil(totalCount / pageSize)))) {
-                      setIsLoading(true);
-                      setCurrentPage(1);
-                      fetchDataFunction(pageSize, input - 1, filterValues);
-                    } else {
-                      setCurrentPage(null);
-                    }
-                  }}
-                />
-                of {Math.ceil(totalCount / pageSize)}
-              </span>
-            </Col>
-            <Col className='d-flex justify-content-end me-3'>
-              <Button
-                className='pagination'
-                variant='info'
-                onClick={(event) => {
-                  event.preventDefault();
-                  setIsLoading(true);
-                  setCurrentPage(1);
-                  fetchDataFunction(pageSize, Number(pageIndex) + 1, filterValues)
-                }}
-                disabled={(Number(pageIndex) + 1 >= Math.ceil(totalCount / pageSize)) ? true : false}
-              >
-                Next <MdArrowForward />
-              </Button>
+        {addRowButton &&
+          <Row className='bg-white px-3 pt-3'>
+            <Col sm={2}>
+              <Button className='btn-white' onClick={onAddRow}>+ Add Row</Button>
             </Col>
           </Row>
+        }
+        <div className='bg-white pt-3 pb-2'>
+          {!addRowButton &&
+            <Row>
+              <Col className='ms-3'>
+                <Button
+                  className='pagination'
+                  variant='info'
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsLoading(true)
+                    setCurrentPage(1);
+                    fetchDataFunction(pageSize, Number(pageIndex) - 1, filterValues)
+                  }}
+                  disabled={(Number(pageIndex) === 0) ? true : false}
+                >
+                  <MdArrowBack /> Previous
+                </Button>
+              </Col>
+              <Col>
+                <span className="flex items-center page-input">
+                  Go to page:
+                  <Form.Control
+                    size='sm'
+                    value={!currentPage ? '' : (Number(pageIndex) + 1)}
+                    onChange={(e) => {
+                      e.preventDefault()
+                      const input = Number(e.target.value);
+                      if (!isNaN(input) && (input >= 1) && ((input + (Number(pageIndex) + 1) >= 1) && (input <= Math.ceil(totalCount / pageSize)))) {
+                        setIsLoading(true);
+                        setCurrentPage(1);
+                        fetchDataFunction(pageSize, input - 1, filterValues);
+                      } else {
+                        setCurrentPage(null);
+                      }
+                    }}
+                  />
+                  of {Math.ceil(totalCount / pageSize)}
+                </span>
+              </Col>
+              <Col className='d-flex justify-content-end me-3'>
+                <Button
+                  className='pagination'
+                  variant='info'
+                  onClick={(event) => {
+                    event.preventDefault();
+                    setIsLoading(true);
+                    setCurrentPage(1);
+                    fetchDataFunction(pageSize, Number(pageIndex) + 1, filterValues)
+                  }}
+                  disabled={(Number(pageIndex) + 1 >= Math.ceil(totalCount / pageSize)) ? true : false}
+                >
+                  Next <MdArrowForward />
+                </Button>
+              </Col>
+            </Row>
+          }
         </div>
       </div>
     </div >

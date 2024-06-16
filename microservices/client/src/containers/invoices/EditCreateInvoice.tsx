@@ -2,14 +2,26 @@ import React, { useEffect, useState } from 'react'
 import { getJSONResponse, sendPostRequest, sendPatchRequest } from '../../utilities/apiHelpers';
 import { CrudForm } from '../../components/forms/CrudForm';
 import { CCGTable } from '../../components/table/CCGTable';
-import { bannerState, breadcrumbsState } from '../../atoms/state';
+import { bannerState, breadcrumbsState, productState } from '../../atoms/state';
 import { Row, Col, Form } from "react-bootstrap";
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import { EditColumns } from "./ProductTableSchema";
 import _ from 'lodash';
 
 interface IEditInvoiceProps {
     invoiceId: number | null;
+}
+
+interface ITableRowData {
+    id: number;
+    product_code: number;
+    item_name: string;
+    unique_product_id: string;
+    quantity: number;
+    rate: number;
+    taxable: boolean;
+    discount: number;
+    amount: number;
 }
 
 const initialInvoiceData = {
@@ -20,34 +32,92 @@ const initialInvoiceData = {
     customer: '',
     salesRep: '',
     paymentStatus: '',
-    invoiceAmount: '',
+    tax: 0,
+    invoiceAmount: 0,
     paymentDue: '',
     datePaid: '',
     deliveryStatus: ''
-};
-
-const handleSubmit = async () => {
-    console.log('Submitted!')
 };
 
 export const EditCreateInvoice = (props: IEditInvoiceProps) => {
     const { invoiceId } = props;
 
     const [invoiceData, setInvoiceData] = useState(initialInvoiceData);
-    const [breadcrumbs, setBreadcrumbs] = useRecoilState(breadcrumbsState)
+    const [tableData, setTableData] = useState<ITableRowData[]>([])
+    const [products, setProducts] = useRecoilState(productState);
+    const [breadcrumbs, setBreadcrumbs] = useRecoilState(breadcrumbsState);
+    const [banner, setBanner] = useRecoilState(bannerState);
+
+    const resetProducts = useResetRecoilState(productState)
 
 
     useEffect(() => {
         if (!invoiceId) {
-            setBreadcrumbs({ pathArr: [...breadcrumbs.pathArr, <span>New Customer</span>] })
+            setBreadcrumbs({ pathArr: [...breadcrumbs.pathArr, <span>New Sales-Invoice</span>] })
         } else {
-            setBreadcrumbs({ pathArr: [...breadcrumbs.pathArr, <span>Edit Customer</span>] })
+            setBreadcrumbs({ pathArr: [...breadcrumbs.pathArr, <span>Edit Sales-Invoice</span>] })
         }
-    }, [])
+
+        Promise.all([getAllProducts(), getAllUniqueProducts()])
+            .then(() => console.log('can set some loader here'))
+            .catch((err) => setBanner({message: "Error loading in product data", variant: 'danger'}))
+
+        const productsArray: ITableRowData[] = Object.values(products.productRows);
+        setTableData(productsArray);
+
+        // on component unmount
+        return () => {
+            resetProducts()
+        }
+    }, []);
+
+    useEffect(() => {
+        
+        // const productsArray: ITableRowData[] = Object.values(products);
+        // console.log('products', products)
+        // if (productsArray.length !== tableData.length) {
+        //     setTableData((prev) => ([...prev, ...productsArray]));
+        // }
+
+
+    }, [products]);
+
+    const getAllProducts = async () => {
+        const response: IResponse = await getJSONResponse({endpoint: "/api/server/products"});
+        if (response.status !== 200) {
+            setBanner({message: "Error retrieving products", variant: 'danger'})
+            return
+        };
+        setProducts((prev) => ({...prev, getProducts: [...response.data]}));
+    };
+
+    const getAllUniqueProducts = async () => {
+        const response: IResponse = await getJSONResponse({endpoint: "/api/server/unique-products"});
+        if (response.status !== 200) {
+            setBanner({message: "Error retrieving products", variant: "danger"})
+            return
+        }
+        setProducts((prev) => ({...prev, getUniqueProducts: [...response.data]}));
+    }
+
+
+    const handleAddRow = () => {
+        const id = Object.keys(products.productRows).length + 1
+        const data = { id, product_code: null, item_name: '', unique_product_id: '', quantity: null, rate: null, taxable: false, discount: null, amount: null }
+        const row =
+            { [id]: data };
+        setProducts((prev) => ({...prev, productRows: {...prev.productRows, ...row}}));
+        setTableData((prev) => ([...prev, data]))
+        // UseEffect updates the table and officially handles the row addition.
+    };
+
+    const handleSubmit = async () => {
+        console.log('Submitted!')
+    };
 
     return (
         <div className='mx-3'>
-            <CrudForm header={invoiceId ? 'Edit Invoice' : 'New Invoice'} handleSubmit={handleSubmit}>
+            <CrudForm header={invoiceId ? 'Edit Sales-Invoice' : 'New Sales-Invoice'} handleSubmit={handleSubmit}>
                 <div id='form-content'>
                     <Form className='my-5 pt-2'>
 
@@ -157,14 +227,25 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
                         <Form.Group as={Row} className='mb-4 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
-                                Reference#:
+                                Total Invoice Amount:
+                            </Form.Label>
+                            <Col className='mrp-50' md={3}>
+                                <strong>
+                                    {invoiceData.invoiceAmount}
+                                </strong>
+                            </Col>
+                        </Form.Group>
+
+                        <Form.Group as={Row} className='mb-4 pb-1'>
+                            <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
+                                {`Tax (%):`}
                             </Form.Label>
                             <Col className='mrp-50' md={3}>
                                 <Form.Control
                                     name='invoiceAmount'
                                     type='input'
-                                    value={invoiceData.invoiceAmount}
-                                    onChange={(e) => setInvoiceData((prevData) => ({ ...prevData, invoiceAmount: e.target.value }))}
+                                    value={invoiceData.tax}
+                                    onChange={(e) => setInvoiceData((prevData) => ({ ...prevData, tax: Number(e.target.value) }))}
                                     required
                                 // We will worry about validations later
                                 />
@@ -218,13 +299,16 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                         <div className='mt-5'>
                             <CCGTable
                                 columns={EditColumns}
-                                data={[]}
-                                totalCount={ 0}
-                                pageSize={5 }
-                                pageIndex={ 0}
+                                data={tableData}
+                                totalCount={0}
+                                pageSize={5}
+                                pageIndex={0}
                                 fetchDataFunction={() => null}
                                 searchPlaceholder='Search by Parameter'
-                                tableHeader='Invoice Items'
+                                tableHeader='Products'
+                                frontEndPagination={true}
+                                addRowButton={true}
+                                onAddRow={handleAddRow}
                             />
                         </div>
 

@@ -24,7 +24,7 @@ export const DefaultInvoices = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    setBreadcrumb({ pathArr: [<Link to='/ccg/invoices'>Invoices</Link>] })
+    setBreadcrumb({ pathArr: [<Link to='/ccg/sales'>Sales</Link>] })
     getDataList(10, 0).catch((e) => console.log(e))
   }, []);
 
@@ -80,11 +80,11 @@ export const DefaultInvoices = () => {
   const createInvoice = () => {
     setEntity({
       action: "create",
-      category: "invoices",
-      path: `/ccg/invoices/create/new`,
+      category: "sales",
+      path: `/ccg/sales/create/new`,
       id: null
     });
-    navigate('/ccg/invoices/create/new')
+    navigate('/ccg/sales/create/new')
   }
 
   return (
@@ -92,7 +92,7 @@ export const DefaultInvoices = () => {
     <div className='mt-3 mb-5 mx-3'>
       <Row className='mb-2 justify-content-end'>
         <Col>
-          <h2>Invoices</h2>
+          <h2>Sales</h2>
         </Col>
         <Col className='d-flex justify-content-end' xs={7} >
             <PillButton onClick={null} className='me-2' text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />

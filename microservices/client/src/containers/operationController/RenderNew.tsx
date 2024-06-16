@@ -19,7 +19,7 @@ export const RenderNew = (props: IRenderNewProps) => {
           customerId={entity.id}
         />
       );
-    case "invoices":
+    case "sales":
       return (
         <EditCreateInvoice invoiceId={entity.id}/>
       )

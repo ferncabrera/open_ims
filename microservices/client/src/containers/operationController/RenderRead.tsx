@@ -17,7 +17,7 @@ export const RenderRead = (props: IRenderReadProps) => {
         <ReadCustomer customerId={entity.id} />
       )
 
-    case "invoices":
+    case "sales":
         return (
           <ReadInvoice invoiceId={entity.id} />
         )

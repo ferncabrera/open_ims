@@ -46,7 +46,7 @@ const Routes = [
         element: <DefaultVendors />
       },
       {
-        path: '/ccg/invoices',
+        path: '/ccg/sales',
         element: <DefaultInvoices />
       },
       {
