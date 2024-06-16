@@ -262,7 +262,7 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
         </table>
         {onAddRow && addRowButton &&
           <Row className='bg-white pt-3 pb-1'>
-            <Col className='ps-4' sm={3}>
+            <Col className='ps-4' sm={2}>
               <Button className='btn-white' onClick={onAddRow}>+ Add Row</Button>
             </Col>
           </Row>
