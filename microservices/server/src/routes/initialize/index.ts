@@ -10,6 +10,7 @@ import vendor_routes from "../vendors";
 import invoice_routes from "../invoices";
 import purchase_order_routes from "../purchase_orders";
 import employee_routes from "../employees";
+import product_routes from "../products";
 
 export const initializeRoutes = (app: Express) => {
   // All routes that need to be passed into Express' middleware put here
@@ -22,4 +23,5 @@ export const initializeRoutes = (app: Express) => {
   app.use(invoice_routes);
   app.use(purchase_order_routes);
   app.use(employee_routes);
+  app.use(product_routes);
 };
