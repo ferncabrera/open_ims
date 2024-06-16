@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react'
 import { Modal } from 'react-bootstrap';
 
@@ -37,7 +38,7 @@ export const CenteredModal: React.FC<IModalProps> = (props) => {
     <>
       <Modal
         className='open-ims-styling pxy-3'
-        size={size}
+        size={size ? size : undefined}
         centered
         keyboard={false}
         show={show}

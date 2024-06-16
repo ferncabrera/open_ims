@@ -4,7 +4,12 @@ import react from '@vitejs/plugin-react-swc'
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  define: {
+      __APP_VERSION__: JSON.stringify('v0.4.0'),
+      __APP_DEFAULT_ERROR_MSG__: JSON.stringify('Oops, an error occured! Sorry about that please try again later.')
+    },
   plugins: [react()],
+//   plugins: [react({ plugins: [["@swc-jotai/react-refresh", {}], ["@swc-jotai/debug-label", {}]] })],
   server: {
     host: true,
     port: 5000,
@@ -22,4 +27,4 @@ export default defineConfig({
       provider: 'v8',
     }
   }
-})
+});

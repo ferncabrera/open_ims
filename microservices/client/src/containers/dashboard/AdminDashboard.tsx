@@ -9,8 +9,8 @@ import { DateRange } from '../../utilities/types/types';
 import styles from "./index.module.scss";
 import { SimpleSummaryCard } from '../../components/cards/SimpleSummaryCard';
 import { MdMoving, MdInfoOutline } from "react-icons/md";
-import { bannerState } from '../../atoms/state';
-import { useRecoilState } from 'recoil';
+import { bannerState } from '../../atoms/atoms';
+import { useAtom } from 'jotai';
 import { standardizeDateRangeTime } from '../../utilities/helpers/functions';
 
 const HOST: string | undefined = import.meta.env.VITE_HOST_IP;
@@ -24,35 +24,12 @@ const standardMetricDateRanges = [
     "custom"
 ];
 
-function getSummaryOfTimePeriod(data: any[]) {
-    let filteredForYears = data.filter(item => item.granularity === "year");
-
-    if (filteredForYears.length === 0) {
-        return {}; // Return an empty object if the input array is empty
-    }
-
-    // Initialize the aggregated object with the first entry in the array
-    let aggregatedData = { ...filteredForYears[0] };
-
-    // Loop through the remaining entries and sum up the values
-    for (let i = 1; i < filteredForYears.length; i++) {
-        aggregatedData.projected_expenses += filteredForYears[i].projected_expenses;
-        aggregatedData.expenses += filteredForYears[i].expenses;
-        aggregatedData.projected_income += filteredForYears[i].projected_income;
-        aggregatedData.income += filteredForYears[i].income;
-        aggregatedData.profit += filteredForYears[i].profit;
-    }
-
-    return { aggregatedData };
-
-};
-
 export const AdminDashboard = () => {
     const [userInfo, setUserInfo] = useState({ firstName: null, email: null, permission: null });
     const [dateRange, setDateRange] = useState<DateRange>(null);
     // const [prevDateRange, setPrevDateRange] = useState<DateRange>(null);
     const [dashboardMetricsGranularity, setDashboardMetricsGranularity] = useState("month");
-    const [bannerTextState, setBannerTextState] = useRecoilState(bannerState);
+    const [bannerTextState, setBannerTextState] = useAtom(bannerState);
 
 
     useEffect(() => {

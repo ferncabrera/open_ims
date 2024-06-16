@@ -4,11 +4,13 @@ import renderer from 'react-test-renderer';
 import { render, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from "react-router";
-import { RecoilRoot } from "recoil";
+//?  Pretty sure we don't even need a provider but just shimming one in here since we had one for the Recoil tests. Not sure if by convention or testing 
+//?  environment necessity...
+import { Provider } from "jotai";
 import { Login } from "../Login";
 
 function tree() {
-    return render(<MemoryRouter><RecoilRoot><Login /></RecoilRoot></MemoryRouter>)
+    return render(<MemoryRouter><Provider><Login /></Provider></MemoryRouter>)
 }
 
 
@@ -17,7 +19,7 @@ describe("Login Component", () => {
 
     // This first test case takes a snapshot. Compares and makes sure no previous styles or html changes were made from its last snapshot.
     it("Login renders correctly", () => {
-        const tree = renderer.create(<MemoryRouter><RecoilRoot><Login /></RecoilRoot></MemoryRouter>).toJSON();
+        const tree = renderer.create(<MemoryRouter><Provider><Login /></Provider></MemoryRouter>).toJSON();
         expect(tree).toMatchSnapshot();
 
     });
