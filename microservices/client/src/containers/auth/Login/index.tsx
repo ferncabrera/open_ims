@@ -10,6 +10,7 @@ import { sendPostRequest, getJSONResponse } from '../../../utilities/apiHelpers'
 import { useNavigate } from 'react-router-dom';
 import { bannerState } from '../../../atoms/atoms';
 import { useAtom } from 'jotai';
+import { useResetAtom } from 'jotai/utils';
 import _ from 'lodash';
 
 import styles from './index.module.scss';
@@ -38,6 +39,7 @@ export const Login = () => { // test comment
     const [resetEmail, setEmail] = useState('');
     const [isSigningIn, setIsSigningIn] = useState(false);
     const [bannerText, setBannerTextState] = useAtom(bannerState);
+    const resetBannerState = useResetAtom(bannerState);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -132,6 +134,7 @@ export const Login = () => { // test comment
             const response: IResponse = await sendPostRequest({ endpoint: '/api/server/login', data: loginData });
             if (_.get(response, 'token', '')) {
                 navigate('/ccg/dashboard');
+                resetBannerState();
             } else {
                 setBannerTextState({variant: 'danger', message: response?.message ? response.message : global.__APP_DEFAULT_ERROR_MSG__});
             }

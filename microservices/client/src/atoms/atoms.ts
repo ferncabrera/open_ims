@@ -3,7 +3,7 @@ import { atomWithReset, useResetAtom } from 'jotai/utils'
 import { IBannerState } from "../utilities/types/types";
 
 interface IBreadcrumbsState {
-    pathArr: React.ReactElement[];
+    pathArr: (React.ReactElement)[];
 }
 
 
@@ -25,6 +25,5 @@ export const entityState = atomWithReset <IEntityState>({
 export const overlaySpinnerState = atomWithReset <Boolean>(false);
 
 export const breadcrumbsState = atomWithReset <IBreadcrumbsState>({
-        //? Should it default to some home route?
         pathArr: [],
     });

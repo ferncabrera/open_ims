@@ -1,4 +1,5 @@
 @import "../../styles/general/colors.scss";
+@import "../../styles/general/variables.scss";
 
 .loading_bar {
     position: absolute;
@@ -19,7 +20,7 @@
         bottom: 0;
         width: 0;
         border-bottom: solid 3px $success-faded;
-        animation: loadingAnimation 5s linear forwards
+        animation: loadingAnimation $alertDisplaySeconds linear forwards
     }
 }
 
@@ -32,7 +33,7 @@
         bottom: 0;
         width: 0;
         border-bottom: solid 3px $invalid-faded;
-        animation: loadingAnimation 5s linear forwards
+        animation: loadingAnimation $alertDisplaySeconds linear forwards
     }
 }
 

@@ -19,6 +19,6 @@ export type DateRange = DatePiece | [DatePiece, DatePiece];
 export interface IBannerState {
     variant: string;
     message: string;
-    infinite?: number | false;
+    infinite?: boolean;
     additionalErrorDetails?: string | false
 }
