@@ -24,6 +24,9 @@ export const StatusPill = (props: IStatusPill) => {
       case 'red':
         setColorStyle(styles.red);
         break;
+      default:
+        setColorStyle(styles.red);
+        break;
     }
   }, [color])
 

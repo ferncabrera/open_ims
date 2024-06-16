@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { getJSONResponse, sendPostRequest, sendPatchRequest } from '../../utilities/apiHelpers';
 import { CrudForm } from '../../components/forms/CrudForm';
 import { CCGTable } from '../../components/table/CCGTable';
-import { bannerState, breadcrumbsState } from '../../atoms/state';
+import { bannerState, breadcrumbsState } from '../../atoms/atoms';
 import { Row, Col, Form } from "react-bootstrap";
-import { useRecoilState } from 'recoil';
+import { useAtom } from 'jotai';
 import { EditColumns } from "./ProductTableSchema";
 import _ from 'lodash';
 
@@ -34,7 +34,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
     const { invoiceId } = props;
 
     const [invoiceData, setInvoiceData] = useState(initialInvoiceData);
-    const [breadcrumbs, setBreadcrumbs] = useRecoilState(breadcrumbsState)
+    const [breadcrumbs, setBreadcrumbs] = useAtom(breadcrumbsState)
 
 
     useEffect(() => {

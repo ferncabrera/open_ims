@@ -8,8 +8,8 @@ export const Columns = [
     columnHelper.accessor("invoice_date", {
         header: 'Date',
         cell: (props) => {
-            const date: Date = _.get(props, 'row.original.invoice_date');
-            const formatDate = new Date(date)
+            const date: Date | undefined = _.get(props, 'row.original.invoice_date');
+            const formatDate = new Date(date ? date : Date.now());
             const month = String(formatDate.getMonth() + 1).padStart(2, "0"); // Months are zero-based, so add 1
             const day = String(formatDate.getDate()).padStart(2, "0");
             const year = formatDate.getFullYear();
@@ -42,7 +42,7 @@ export const Columns = [
             return (
                 <div className="">
                     <StatusPill
-                        text={status}
+                        text={status ? status : "error getting status"}
                         color={color}
                     />
                 </div>

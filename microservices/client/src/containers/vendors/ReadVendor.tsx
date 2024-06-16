@@ -11,8 +11,8 @@ import { FaRegTrashAlt } from 'react-icons/fa';
 
 import { getJSONResponse, sendDeleteRequest } from '../../utilities/apiHelpers';
 import { useNavigate } from 'react-router';
-import { useRecoilState } from 'recoil';
-import { breadcrumbsState, bannerState, entityState } from '../../atoms/state';
+import { useAtom } from 'jotai';
+import { breadcrumbsState, bannerState, entityState } from '../../atoms/atoms';
 
 import _ from 'lodash';
 
@@ -78,9 +78,9 @@ export const ReadVendor = (props: IReadVendorProps) => {
 
     const [vendorData, setVendorData] = useState<IVendorData>(initialVendorData);
     const [purchaseOrderData, setPurchaseOrderData] = useState({});
-    const [breadcrumbs, setBreadcrumbs] = useRecoilState(breadcrumbsState);
-    const [banner, setBanner] = useRecoilState(bannerState);
-    const [entity, setEntity] = useRecoilState(entityState);
+    const [breadcrumbs, setBreadcrumbs] = useAtom(breadcrumbsState);
+    const [banner, setBanner] = useAtom(bannerState);
+    const [entity, setEntity] = useAtom(entityState);
 
     useEffect(() => {
         getVendorData();
@@ -90,7 +90,7 @@ export const ReadVendor = (props: IReadVendorProps) => {
     const getVendorData = async () => {
         const response: IResponse = await getJSONResponse({ endpoint: '/api/server/vendor', params: { id: vendorId } });
         if (response.status !== 200) {
-            return setBanner({ message: response.message, variant: 'danger' });
+            return setBanner({ message: (response?.message ? response.message : global.__APP_DEFAULT_ERROR_MSG__), variant: 'danger' });
         };
         setBreadcrumbs({ pathArr: [...breadcrumbs.pathArr, <span>{response.data.companyName}</span>] })
         setVendorData(response.data);
@@ -102,7 +102,7 @@ export const ReadVendor = (props: IReadVendorProps) => {
 
         const response: IResponse = await getJSONResponse({ endpoint: '/api/server/purchase-orders', params: { pageIndex, pageSize, searchQuery } });
         if (response.status !== 200) {
-            return setBanner({ message: response.message, variant: 'danger' })
+            return setBanner({ message: (response.message ? response.message : global.__APP_DEFAULT_ERROR_MSG__) , variant: 'danger' })
         };
         setPurchaseOrderData(response);
     }
@@ -137,7 +137,7 @@ export const ReadVendor = (props: IReadVendorProps) => {
             { label: 'Phone', val: vendorData.phone },
         ];
 
-        const infoArr = [];
+        const infoArr : (React.ReactElement)[] = [];
 
         const JSXFrame = (element) => {
             return (
@@ -189,14 +189,14 @@ export const ReadVendor = (props: IReadVendorProps) => {
                     <h2>Vendors</h2>
                 </Col>
                 <Col className='d-flex justify-content-end' xs={7} >
-                    <PillButton className='me-2' onClick={null} text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
+                    <PillButton className='me-2' onClick={() => console.log("todo!")} text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
                     <PillButton className='me-2' onClick={() => handleDelete(vendorId)} text='Delete' color='standard' icon={<FaRegTrashAlt />} />
                     <PillButton className='me-1' onClick={() => handleEdit(vendorId)} text='Edit Vendor' color='blue' icon={<MdOutlineEdit />} />
                 </Col>
             </Row>
             <CrudForm
                 header={vendorData.companyName}
-                handleSubmit={null}
+                handleSubmit={async () => false}
             >
                 <div className='mt-5'>
                     <Row>

@@ -31,7 +31,7 @@ export const Columns = [
     header: 'Purchase Date',
     cell: (props) => {
 
-      const ISODate: string = _.get(props.row.original, 'purchase_date', null);
+      const ISODate: string | undefined | null = _.get(props.row.original, 'purchase_date', null);
       let dateString = '-';
       if (ISODate) {
         const date = new Date(ISODate);

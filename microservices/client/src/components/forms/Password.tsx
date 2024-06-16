@@ -2,12 +2,13 @@ import React, { ChangeEvent, useState } from 'react'
 import {MdOutlineVisibilityOff, MdOutlineVisibility} from 'react-icons/md';
 import { Form, InputGroup } from 'react-bootstrap';
 import styles from './Password.module.scss';
+import { SyntheticEvent } from 'react';
 
 interface IPasswordProps {
     onChange: (event: ChangeEvent<HTMLInputElement>) => void;
     className?: string;
     isInvalid?: any;
-    onBlur: (e) => void;
+    onBlur: (e:SyntheticEvent) => void;
     required: boolean;
     errorMessage: string;
     newPassword?: boolean;
@@ -30,7 +31,7 @@ export const Password: React.FC<IPasswordProps> = (props) => {
                         onChange={props.onChange}
                         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
                         // isInvalid={props.isInvalid}
-                        onBlur={(e) => props.onBlur(e)}
+                        onBlur={(e:SyntheticEvent) => props.onBlur(e)}
                         required={props.required}
                     />
                     <span

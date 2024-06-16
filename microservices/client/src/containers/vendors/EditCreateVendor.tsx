@@ -2,8 +2,8 @@ import React, { useEffect, useState, version } from 'react';
 import { CrudForm } from '../../components/forms/CrudForm';
 import { Form, Row, Col } from 'react-bootstrap';
 
-import { useRecoilState } from 'recoil';
-import { bannerState, breadcrumbsState } from '../../atoms/state';
+import { useAtom } from 'jotai';
+import { bannerState, breadcrumbsState } from '../../atoms/atoms';
 import { useNavigate } from 'react-router';
 
 import { getJSONResponse, sendPostRequest, sendPatchRequest } from '../../utilities/apiHelpers';
@@ -12,21 +12,51 @@ import { hasEmptyKeys } from '../../utilities/helpers/functions';
 import { IValidate } from '../../utilities/types/validationTypes';
 
 import _ from 'lodash';
+import { IoNavigateCircleOutline } from 'react-icons/io5';
 
 interface IEditCreateVendorProps {
-  vendorId: number;
+  vendorId: number | null;
 };
 
 interface IErrorFields {
-  companyName: IErrorObject;
-  firstName: IErrorObject;
-  lastName: IErrorObject;
-  email: IErrorObject;
-  phone: IErrorObject;
+  companyName: IErrorObject | null;
+  firstName: IErrorObject | null;
+  lastName: IErrorObject | null;
+  email: IErrorObject | null;
+  phone: IErrorObject | null;
 
 };
 
-const initialVendorData = {
+interface VendorData {
+    connectCustomer: string | null;
+    vendorId: null | number;
+    companyName: string;
+    firstName: string;
+lastName: string;
+    email: string;
+    phone: string;
+    netTerms: any;
+    shipping?: {
+      vendorAddressName?: string | undefined;
+      address1?: string | undefined;
+      address2?: string | undefined;
+      city?: string | undefined;
+      province?: string | undefined;
+      country?: string | undefined;
+      postalCode?: string | undefined;
+    };
+    billing?: {
+      vendorAddressName?: string | undefined;
+      address1?: string | undefined;
+      address2?: string | undefined;
+      city?: string | undefined;
+      province?: string | undefined;
+      country?: string | undefined;
+      postalCode?: string | undefined;
+    };
+}
+
+const initialVendorData: VendorData = {
   connectCustomer: null,
   vendorId: null,
   companyName: '',
@@ -68,14 +98,14 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
 
   const { vendorId } = props;
 
-  const [vendorData, setVendorData] = useState(initialVendorData);
-  const [customerList, setCustomerList] = useState([]);
+  const [vendorData, setVendorData] = useState <VendorData>(initialVendorData);
+  const [customerList, setCustomerList] = useState <Array<any>>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingSubmit, setIsLoadingSubmit] = useState(false);
   const [isCheckedBilling, setIsCheckedBilling] = useState(false);
   const [error, setError] = useState<IErrorFields>(initialErrorState)
-  const [banner, setBanner] = useRecoilState(bannerState);
-  const [breadcrumbs, setBreadcrumbs] = useRecoilState(breadcrumbsState);
+  const [banner, setBanner] = useAtom(bannerState);
+  const [breadcrumbs, setBreadcrumbs] = useAtom(breadcrumbsState);
 
   const navigate = useNavigate();
 
@@ -188,7 +218,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
               </Form.Label>
               <Col className='mrp-50' md={2}>
                 <Form.Select
-                  value={vendorData.connectCustomer}
+                  value={vendorData?.connectCustomer ? vendorData?.connectCustomer : undefined}
                   onChange={(e) => setVendorData((prev) => ({ ...prev, connectCustomer: e.target.value }))}
                 >
                   <option value={''}>Select Available Customer</option>
@@ -394,7 +424,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mr' md={6}>
                     <Form.Control
                       type='input'
-                      value={vendorData.shipping.vendorAddressName}
+                      value={vendorData?.shipping?.vendorAddressName ? vendorData?.shipping?.vendorAddressName : undefined}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, shipping: { ...prev.shipping, vendorAddressName: e.target.value } }))}
                     />
                   </Col>
@@ -408,7 +438,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mrp-20'>
                     <Form.Control
                       type='input'
-                      value={vendorData.billing.vendorAddressName}
+                      value={vendorData?.billing?.vendorAddressName ? vendorData.billing.vendorAddressName : undefined}
                       disabled={isCheckedBilling}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, billing: { ...prev.billing, vendorAddressName: e.target.value } }))}
                     />
@@ -427,7 +457,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mr' md={6}>
                     <Form.Control
                       type='input'
-                      value={vendorData.shipping.address1}
+                      value={vendorData?.shipping?.address1}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, shipping: { ...prev.shipping, address1: e.target.value } }))}
                     />
                   </Col>
@@ -441,7 +471,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mrp-20'>
                     <Form.Control
                       type='input'
-                      value={vendorData.billing.address1}
+                      value={vendorData?.billing?.address1}
                       disabled={isCheckedBilling}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, billing: { ...prev.billing, address1: e.target.value } }))}
                     />
@@ -460,7 +490,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mr' md={6}>
                     <Form.Control
                       type='input'
-                      value={vendorData.shipping.address2}
+                      value={vendorData?.shipping?.address2}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, shipping: { ...prev.shipping, address2: e.target.value } }))}
                     />
                   </Col>
@@ -474,7 +504,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mrp-20'>
                     <Form.Control
                       type='input'
-                      value={vendorData.billing.address2}
+                      value={vendorData?.billing?.address2}
                       disabled={isCheckedBilling}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, billing: { ...prev.billing, address2: e.target.value } }))}
                     />
@@ -493,7 +523,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mr' md={6}>
                     <Form.Control
                       type='input'
-                      value={vendorData.shipping.city}
+                      value={vendorData?.shipping?.city}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, shipping: { ...prev.shipping, city: e.target.value } }))}
                     />
                   </Col>
@@ -507,7 +537,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mrp-20'>
                     <Form.Control
                       type='input'
-                      value={vendorData.billing.city}
+                      value={vendorData?.billing?.city}
                       disabled={isCheckedBilling}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, billing: { ...prev.billing, city: e.target.value } }))}
                     />
@@ -526,7 +556,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mr' md={6}>
                     <Form.Control
                       type='input'
-                      value={vendorData.shipping.province}
+                      value={vendorData?.shipping?.province}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, shipping: { ...prev.shipping, province: e.target.value } }))}
                     />
                   </Col>
@@ -540,7 +570,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mrp-20'>
                     <Form.Control
                       type='input'
-                      value={vendorData.billing.province}
+                      value={vendorData?.billing?.province}
                       disabled={isCheckedBilling}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, billing: { ...prev.billing, province: e.target.value } }))}
                     />
@@ -559,7 +589,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mr' md={6}>
                     <Form.Control
                       type='input'
-                      value={vendorData.shipping.country}
+                      value={vendorData?.shipping?.country}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, shipping: { ...prev.shipping, country: e.target.value } }))}
                     />
                   </Col>
@@ -573,7 +603,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mrp-20'>
                     <Form.Control
                       type='input'
-                      value={vendorData.billing.country}
+                      value={vendorData?.billing?.country}
                       disabled={isCheckedBilling}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, billing: { ...prev.billing, country: e.target.value } }))}
                     />
@@ -591,7 +621,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mr' md={6}>
                     <Form.Control
                       type='input'
-                      value={vendorData.shipping.postalCode}
+                      value={vendorData?.shipping?.postalCode}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, shipping: { ...prev.shipping, postalCode: e.target.value } }))}
                     />
                   </Col>
@@ -605,7 +635,7 @@ export const EditCreateVendor = (props: IEditCreateVendorProps) => {
                   <Col className='mrp-20'>
                     <Form.Control
                       type='input'
-                      value={vendorData.billing.postalCode}
+                      value={vendorData?.billing?.postalCode}
                       disabled={isCheckedBilling}
                       onChange={(e) => setVendorData((prev) => ({ ...prev, billing: { ...prev.billing, postalCode: e.target.value } }))}
                     />

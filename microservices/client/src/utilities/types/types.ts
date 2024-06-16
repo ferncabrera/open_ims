@@ -15,3 +15,10 @@ export interface IPostRequest {
 
 type DatePiece = Date | null;
 export type DateRange = DatePiece | [DatePiece, DatePiece];
+
+export interface IBannerState {
+    variant: string;
+    message: string;
+    infinite?: number | false;
+    additionalErrorDetails?: string | false
+}

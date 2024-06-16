@@ -3,8 +3,8 @@ import { CrudForm } from '../../components/forms/CrudForm';
 import { PillButton } from '../../components/buttons/PillButton';
 import { StatusPill } from '../../components/graphics/StatusPill';
 import { CCGTable } from '../../components/table/CCGTable';
-import { useRecoilState } from 'recoil';
-import { breadcrumbsState, bannerState, entityState } from '../../atoms/state';
+import { useAtom } from 'jotai';
+import { breadcrumbsState, bannerState, entityState } from '../../atoms/atoms';
 import { getJSONResponse, sendDeleteRequest } from '../../utilities/apiHelpers';
 import { useNavigate } from 'react-router';
 import { Row, Col } from 'react-bootstrap';
@@ -21,13 +21,13 @@ interface IReadInvoiceProps {
 interface IInvoiceData {
 
     invoiceStatus: string;
-    invoiceId: number;
+    invoiceId: number | null;
     referenceNumber: string;
     invoiceDate: string;
     customer: string;
     salesRepresentative: string;
     paymentStatus: string;
-    invoiceAmount: number;
+    invoiceAmount: number | null;
     paymentDueDate: string;
     datePaid: string;
     deliveryStatus: string;
@@ -85,9 +85,9 @@ export const ReadInvoice = (props: IReadInvoiceProps) => {
     const invoiceId = props.invoiceId;
     const navigate = useNavigate();
 
-    const [breadcrumbs, setBreadcrumb] = useRecoilState(breadcrumbsState);
-    const [banner, setBanner] = useRecoilState(bannerState);
-    const [entity, setEntity] = useRecoilState<IEntityState>(entityState);
+    const [breadcrumbs, setBreadcrumb] = useAtom(breadcrumbsState);
+    const [banner, setBanner] = useAtom(bannerState);
+    const [entity, setEntity] = useAtom<IEntityState>(entityState);
     const [invoiceData, setInvoiceData] = useState<IInvoiceData>(initialInvoiceData);
     const [tableData, setTableData] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -103,7 +103,7 @@ export const ReadInvoice = (props: IReadInvoiceProps) => {
     const getInvoiceData = async () => {
         const response: IResponse = await getJSONResponse({ endpoint: '/api/server/single-invoice', params: { id: props.invoiceId } });
         if (response.status !== 200) {
-            setBanner({ message: response.message, variant: 'danger' });
+            setBanner({ message: (response?.message ? response.message : global.__APP_DEFAULT_ERROR_MSG__), variant: 'danger' });
             return
         }
         if (!_.isEmpty(response.data)) {
@@ -134,7 +134,7 @@ export const ReadInvoice = (props: IReadInvoiceProps) => {
         });
     };
 
-    const getPillColor = (fieldLabel: string) => {
+    const getPillColor = (fieldLabel: string | null) => {
         if ((fieldLabel === 'Paid') || (fieldLabel === 'Confirmed') || (fieldLabel === 'Delivered') || (fieldLabel === 'Shipped')) {
             return 'green'
         } else if (fieldLabel === 'Draft') {
@@ -161,8 +161,8 @@ export const ReadInvoice = (props: IReadInvoiceProps) => {
             { label: 'Date Paid', val: convertDateISO(invoiceData.datePaid, 0) }
         ];
 
-        const JSXInfoFieldArray = [];
-        const JSXPaymentFieldArray = [];
+        const JSXInfoFieldArray : (React.ReactElement)[] = [];
+        const JSXPaymentFieldArray : (React.ReactElement)[] = [];
 
 
         const JSXFrame = (label: string, value: any) => (
@@ -262,7 +262,7 @@ export const ReadInvoice = (props: IReadInvoiceProps) => {
                     <h2>Customers</h2>
                 </Col>
                 <Col className='d-flex justify-content-end' xs={7} >
-                    <PillButton className='me-2' onClick={null} text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
+                    <PillButton className='me-2' onClick={()=>console.log("todo")} text='Export' color='standard' icon={<MdOutlinePictureAsPdf />} />
                     <PillButton className='me-2' onClick={() => handleDelete(invoiceId)} text='Delete' color='standard' icon={<FaRegTrashAlt />} />
                     <PillButton className='me-1' onClick={() => handleEdit(invoiceId)} text='Edit Customer' color='blue' icon={<MdOutlineEdit />} />
                 </Col>

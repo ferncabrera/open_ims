@@ -1,13 +1,14 @@
 import React, { ReactNode } from 'react';
 import { Row, Col, Button, Spinner } from 'react-bootstrap';
 import styles from './CrudForm.module.scss';
-import { entityState, overlaySpinnerState } from '../../atoms/state';
-import { useResetRecoilState, useRecoilState } from 'recoil';
+import { entityState, overlaySpinnerState } from '../../atoms/atoms';
+import { useResetAtom } from 'jotai/utils';
+import { useAtom } from 'jotai';
 
 interface ICrudForm {
   children: ReactNode;
   header: string;
-  handleSubmit(): Promise<void | boolean>;
+  handleSubmit(): null | Promise<void | boolean>;
   handleCancel?: () => void;
   disablePrimary?: boolean;
   disableSecondary?: boolean;
@@ -15,9 +16,9 @@ interface ICrudForm {
 
 export const CrudForm = (props: ICrudForm) => {
 
-  const resetEntityState = useResetRecoilState(entityState);
-  const [entity, setEntity] = useRecoilState(entityState);
-  const [overlaySpinner, setOverlaySpinner] = useRecoilState(overlaySpinnerState);
+  const resetEntityState = useResetAtom(entityState);
+  const [entity, setEntity] = useAtom(entityState);
+  const [overlaySpinner, setOverlaySpinner] = useAtom(overlaySpinnerState);
 
   const {
     handleSubmit,

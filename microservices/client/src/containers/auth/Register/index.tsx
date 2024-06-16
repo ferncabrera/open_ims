@@ -5,8 +5,8 @@ import { Password } from '../../../components/forms/Password';
 import { IValidate } from '../../../utilities/types/validationTypes';
 import { fieldValidation } from '../../../utilities/validation';
 import { sendPostRequest } from '../../../utilities/apiHelpers';
-import { bannerState } from '../../../atoms/state';
-import { useRecoilState } from 'recoil';
+import { bannerState } from '../../../atoms/atoms';
+import { useAtom } from 'jotai';
 import _ from 'lodash';
 
 import styles from './index.module.scss';
@@ -19,7 +19,7 @@ const initialErrorFieldState = {
 }
 
 const formData = {};
-let trackErrorList = [];
+let trackErrorList : Array<Boolean> = [];
 
 export const Register = () => {
 
@@ -33,7 +33,7 @@ export const Register = () => {
 
     const [error, setError] = useState<IErrorFields>(initialErrorFieldState);
     const [isLoading, setIsLoading] = useState(false);
-    const [bannerTextState, setBannerTextState] = useRecoilState(bannerState);
+    const [bannerTextState, setBannerTextState] = useAtom(bannerState);
 
     useEffect(() => {
         _.set(formData, keyPaths.email, "");
@@ -73,9 +73,9 @@ export const Register = () => {
         const response: IResponse = await sendPostRequest({ endpoint: "/api/server/register", data: registrationData });
         // need to put some sort of spinner here
         if (response.status === 201) {
-            setBannerTextState({ message: response.message, variant: 'success' })
+            setBannerTextState({ message: response?.message ? response.message : global.__APP_DEFAULT_ERROR_MSG__, variant: 'success' })
         } else {
-            setBannerTextState({ message: response.message, variant: 'danger' })
+            setBannerTextState({ message: response?.message ? response.message : global.__APP_DEFAULT_ERROR_MSG__, variant: 'danger' })
         }
         setIsLoading(false);
     }
