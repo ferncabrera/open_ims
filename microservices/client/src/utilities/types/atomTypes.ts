@@ -4,3 +4,7 @@ export interface IProductAtom {
     getProducts: any[]; // any because teh backend is responsible for constructing and sending data which can change frequently.
     getUniqueProducts: any[]; // any because teh backend is responsible for constructing and sending data which can change frequently.
 }
+
+export interface IDeleteRowAtom {
+    rowId: number | null
+}

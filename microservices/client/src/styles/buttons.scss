@@ -80,5 +80,15 @@
         }
     }
 
+    .red-trash {
+        color: $invalid;
+
+        &:hover {
+            cursor: pointer;
+            transform: rotate(10deg);
+        }
+
+    }
+
     
 }

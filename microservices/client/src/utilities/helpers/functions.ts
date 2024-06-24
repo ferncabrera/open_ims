@@ -1,5 +1,6 @@
 import { getJSONResponse } from "../apiHelpers";
 import { DateRange } from "../types/types";
+import _ from "lodash";
 
 export const isUserAuth = async () => {
     const res = await getJSONResponse({ endpoint: '/api/server/is-authenticated' });
@@ -54,14 +55,40 @@ export const convertDateISO = (isoDate, format: 0 | 1) => {
     }
 };
 
-export const standardizeDateRangeTime = (dr: DateRange) : DateRange => {
+export const standardizeDateRangeTime = (dr: DateRange): DateRange => {
     if (!dr)
-        return dr;    
-    else{
+        return dr;
+    else {
         console.log("Ret from new func --> ", [new Date(dr[0].setUTCHours(0, 0, 0, 0)), new Date(dr[1].setUTCHours(23, 59, 59, 999))]);
         console.log("Ret from new func --> ", [new Date(dr[0].setUTCHours(0, 0, 0, 0)).toDateString(), new Date(dr[1].setUTCHours(23, 59, 59, 999)).toDateString()]);
         console.log("Ret from new func --> ", [(dr[0].setUTCHours(0, 0, 0, 0)), (dr[1].setUTCHours(23, 59, 59, 999))]);
         // console.log("Ret from new func --> ", [(dr[0].setUTCHours(0, 0, 0, 0).toDateString), (dr[1].setUTCHours(23, 59, 59, 999).toDateString())]);
-        return([new Date(dr[0].setUTCHours(0, 0, 0, 0)), new Date(dr[1].setUTCHours(23, 59, 59, 999))]);
+        return ([new Date(dr[0].setUTCHours(0, 0, 0, 0)), new Date(dr[1].setUTCHours(23, 59, 59, 999))]);
     }
 };
+
+function deepEqual(obj1: { id }, obj2: { id }) {
+    "Checks if two objects are equal or not while exempting the id field"
+
+    const copy1 = { ...obj1 }
+    const copy2 = { ...obj2 }
+    delete copy1.id;
+    delete copy2.id;
+
+    const isEqual = _.isEqual(copy1, copy2);
+
+    return isEqual;
+};
+
+export const compareMultipleObjects = (objects: []) => {
+    "Takes an array of objects and iterates it through the deepEqual checker"
+    for (let i = 0; i < objects.length; i++) {
+        for (let j = i + 1; j < objects.length; j++ ) {
+            const isEqual = deepEqual(objects[i], objects[j]);
+            if (isEqual) {
+                return true
+            }
+        }
+    }
+    return false
+}

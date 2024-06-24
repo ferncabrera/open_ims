@@ -2,7 +2,7 @@ import { atom } from "jotai";
 import { atomWithReset, useResetAtom } from 'jotai/utils'
 import { IBannerState } from "../utilities/types/types";
 
-import { IProductAtom } from "../utilities/types/atomTypes";
+import { IDeleteRowAtom, IProductAtom } from "../utilities/types/atomTypes";
 
 interface IBreadcrumbsState {
     pathArr: React.ReactElement[];
@@ -42,3 +42,10 @@ export const productState = atomWithReset <IProductAtom> (
         getUniqueProducts: []
     }
 )
+
+export const deleteRowState = atomWithReset <IDeleteRowAtom> (
+    // Global listener for table operations that require stateful row deletion/removal without back-end support
+    {
+        rowId: null
+    }
+);

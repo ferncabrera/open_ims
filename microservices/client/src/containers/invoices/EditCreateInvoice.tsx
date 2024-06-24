@@ -4,11 +4,13 @@ import { CrudForm } from '../../components/forms/CrudForm';
 import { CCGTable } from '../../components/table/CCGTable';
 import { Row, Col, Form } from "react-bootstrap";
 
-import { bannerState, breadcrumbsState, productState } from '../../atoms/atoms';
-import { useAtom,  } from 'jotai';
+import { bannerState, breadcrumbsState, productState, deleteRowState } from '../../atoms/atoms';
+import { useAtom, } from 'jotai';
 import { useResetAtom } from 'jotai/utils';
+import { compareMultipleObjects } from '../../utilities/helpers/functions';
 
 import { EditColumns } from "./ProductTableSchema";
+import { produce } from 'immer';
 import _ from 'lodash';
 
 interface IEditInvoiceProps {
@@ -17,14 +19,13 @@ interface IEditInvoiceProps {
 
 interface ITableRowData {
     id: number | null;
-    product_code: number | null;
+    item_number: number | null;
     item_name: string;
-    unique_product_id: string;
-    quantity: number | null;
-    rate: number | null;
+    quantity: number | string;
+    rate: number | string;
     taxable: boolean;
-    discount: number | null;
-    amount: number | null;
+    discount: number | string;
+    amount: number | string;
 }
 
 const initialInvoiceData = {
@@ -47,11 +48,17 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
     const [invoiceData, setInvoiceData] = useState(initialInvoiceData);
     const [tableData, setTableData] = useState<ITableRowData[]>([])
+    const [taxValue, setTaxValue] = useState<number>(0);
+    const [amount, setAmount] = useState<number>(0);
+    // Need idNumber to start from 1 because some conditional checks in schema check for id and I am too lazy to change it to include 0
+    const [idNumber, setIdNumber] = useState<number>(1);
 
     const [products, setProducts] = useAtom(productState);
     const [breadcrumbs, setBreadcrumbs] = useAtom(breadcrumbsState);
     const [banner, setBanner] = useAtom(bannerState);
-    const resetProducts = useResetAtom(productState)
+    const [removeRow, setRemoveRow] = useAtom(deleteRowState);
+    const resetProducts = useResetAtom(productState);
+    const resetRemoveRow = useResetAtom(deleteRowState);
 
 
     useEffect(() => {
@@ -63,58 +70,97 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
         Promise.all([getAllProducts(), getAllUniqueProducts()])
             .then(() => console.log('can set some loader here'))
-            .catch((err) => setBanner({message: "Error loading in product data", variant: 'danger'}))
+            .catch((err) => setBanner({ message: "Error loading in product data", variant: 'danger' }))
 
         const productsArray: ITableRowData[] = Object.values(products.productRows);
         setTableData(productsArray);
 
         // on component unmount
         return () => {
-            resetProducts()
+            resetProducts();
+            resetRemoveRow();
         }
     }, []);
 
     useEffect(() => {
-        
-        // const productsArray: ITableRowData[] = Object.values(products);
-        // console.log('products', products)
-        // if (productsArray.length !== tableData.length) {
-        //     setTableData((prev) => ([...prev, ...productsArray]));
-        // }
 
+        // FOR VALIDATIONS NEED TO VALIDATE QUANTITIES BEFORE SUBMISSION!
 
-    }, [products]);
+    
+        //TALLY TAX AND AMOUNT VALUES
+        const productRows = products.productRows;
+        let amountSum = 0;
+        let taxSum = 0;
+        for (const productIndex in productRows) {
+            amountSum += Number(productRows[productIndex].amount)
+            if (productRows[productIndex].taxable) {
+                taxSum += Number(productRows[productIndex].amount) * (invoiceData.tax) / 100
+            };
+        };
+
+        setAmount(amountSum);
+        setTaxValue(taxSum);
+
+    }, [products.productRows, invoiceData.tax]);
+
+    useEffect(() => {
+        //listens for row deletion
+        if (!_.isNaN(removeRow.rowId) && _.isNumber(removeRow.rowId)) {
+            deleteRow(removeRow.rowId);
+            resetRemoveRow();
+        }
+    }, [removeRow.rowId])
 
     const getAllProducts = async () => {
-        const response: IResponse = await getJSONResponse({endpoint: "/api/server/products"});
+        const response: IResponse = await getJSONResponse({ endpoint: "/api/server/products" });
         if (response.status !== 200) {
-            setBanner({message: "Error retrieving products", variant: 'danger'})
+            setBanner({ message: "Error retrieving products", variant: 'danger' })
             return
         };
-        setProducts((prev) => ({...prev, getProducts: [...response.data]}));
+        setProducts((prev) => ({ ...prev, getProducts: [...response.data] }));
     };
 
     const getAllUniqueProducts = async () => {
-        const response: IResponse = await getJSONResponse({endpoint: "/api/server/unique-products"});
+        const response: IResponse = await getJSONResponse({ endpoint: "/api/server/unique-products" });
         if (response.status !== 200) {
-            setBanner({message: "Error retrieving products", variant: "danger"})
+            setBanner({ message: "Error retrieving products", variant: "danger" })
             return
         }
-        setProducts((prev) => ({...prev, getUniqueProducts: [...response.data]}));
+        setProducts((prev) => ({ ...prev, getUniqueProducts: [...response.data] }));
     }
 
 
     const handleAddRow = () => {
-        const id = Object.keys(products.productRows).length + 1
-        const data = { id, product_code: null, item_name: '', unique_product_id: '', quantity: null, rate: null, taxable: false, discount: null, amount: null }
+        // Need to ensure on generating a unique ID number - use idNumber in local useState.
+        const data = { id: idNumber, item_number: null, item_name: '', quantity: '', rate: '', taxable: false, discount: '', amount: '' }
         const row =
-            { [id]: data };
-        setProducts((prev) => ({...prev, productRows: {...prev.productRows, ...row}}));
+            { [idNumber]: data };
+        setProducts((prev) => ({ ...prev, productRows: { ...prev.productRows, ...row } }));
         setTableData((prev) => ([...prev, data]))
+        setIdNumber((prev) => prev + 1);
         // UseEffect updates the table and officially handles the row addition.
     };
 
+    const deleteRow = (rowId) => {
+
+        console.log('rowId', rowId);
+        const newProductState = produce(products, draft => {
+            delete draft.productRows[rowId]
+        });
+        const data: ITableRowData[] = Object.values(newProductState.productRows);
+        setTableData([...data]);
+        setProducts(newProductState);
+
+
+
+    };
+
     const handleSubmit = async () => {
+        // Function that checks if 2 objects are the same
+        const ObjectArray: [] = Object.values(products.productRows) as [];
+        const isDuplicate = compareMultipleObjects(ObjectArray);
+        console.log('isDuplicate?', isDuplicate)
+        // Report duplication error here!
         console.log('Submitted!')
     };
 
@@ -230,17 +276,6 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
                         <Form.Group as={Row} className='mb-4 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
-                                Total Invoice Amount:
-                            </Form.Label>
-                            <Col className='mrp-50' md={3}>
-                                <strong>
-                                    {invoiceData.invoiceAmount}
-                                </strong>
-                            </Col>
-                        </Form.Group>
-
-                        <Form.Group as={Row} className='mb-4 pb-1'>
-                            <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
                                 {`Tax (%):`}
                             </Form.Label>
                             <Col className='mrp-50' md={3}>
@@ -248,7 +283,12 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                                     name='invoiceAmount'
                                     type='input'
                                     value={invoiceData.tax}
-                                    onChange={(e) => setInvoiceData((prevData) => ({ ...prevData, tax: Number(e.target.value) }))}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        if (_.isNumber(Number(value)) && !_.isNaN(Number(value)) && (Number(value) <= 100) && (Number(value) >= 0)) {
+                                            setInvoiceData((prevData) => ({ ...prevData, tax: Number(value) }))
+                                        }
+                                    }}
                                     required
                                 // We will worry about validations later
                                 />
@@ -298,6 +338,22 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                                 </Form.Select>
                             </Col>
                         </Form.Group>
+
+                        <div>
+                            <Row className='d-flex mx-3 me-4 pe-3 justify-content-end'>
+                                <div className='d-flex justify-content-end'>
+                                    <h3 className='pe-3'>Amount:</h3>  <h3><strong>${amount.toFixed(2)}</strong></h3>
+                                </div>
+                                <div className='d-flex justify-content-end'>
+                                    <h3 className='pe-3'>+ Tax:</h3>  <h3><strong>${taxValue.toFixed(2)}</strong></h3>
+                                </div>
+                                <span style={{ borderBottom: "solid", width: "25em", height: "7px" }}></span>
+                                <div className='d-flex justify-content-end'>
+                                    <h3 className='pe-3'>Total Amount:</h3>  <h3><strong>${(amount + taxValue).toFixed(2)}</strong></h3>
+                                </div>
+
+                            </Row>
+                        </div>
 
                         <div className='mt-5'>
                             <CCGTable
