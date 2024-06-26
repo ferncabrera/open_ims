@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { getJSONResponse, sendPostRequest, sendPatchRequest } from '../../utilities/apiHelpers';
 import { CrudForm } from '../../components/forms/CrudForm';
 import { CCGTable } from '../../components/table/CCGTable';
+import { Typeahead } from 'react-bootstrap-typeahead';
 import { Row, Col, Form } from "react-bootstrap";
 
 import { bannerState, breadcrumbsState, productState, deleteRowState } from '../../atoms/atoms';
@@ -12,6 +13,7 @@ import { compareMultipleObjects } from '../../utilities/helpers/functions';
 import { EditColumns } from "./ProductTableSchema";
 import { produce } from 'immer';
 import _ from 'lodash';
+import { preventInputBlur } from 'react-bootstrap-typeahead/types/utils';
 
 interface IEditInvoiceProps {
     invoiceId: number | null;
@@ -48,6 +50,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
     const [invoiceData, setInvoiceData] = useState(initialInvoiceData);
     const [tableData, setTableData] = useState<ITableRowData[]>([])
+    const [customers, setCustomers] = useState([]);
     const [taxValue, setTaxValue] = useState<number>(0);
     const [amount, setAmount] = useState<number>(0);
     // Need idNumber to start from 1 because some conditional checks in schema check for id and I am too lazy to change it to include 0
@@ -60,6 +63,9 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
     const resetProducts = useResetAtom(productState);
     const resetRemoveRow = useResetAtom(deleteRowState);
 
+    //State for typeahead functionality 
+    const [singleSelectedCustomer, setSingleSelectedCustomer] = useState([invoiceData.customer]);
+
 
     useEffect(() => {
         if (!invoiceId) {
@@ -68,7 +74,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
             setBreadcrumbs({ pathArr: [...breadcrumbs.pathArr, <span>Edit Sales-Invoice</span>] })
         }
 
-        Promise.all([getAllProducts(), getAllUniqueProducts()])
+        Promise.all([getAllProducts(), getAllUniqueProducts(), getCustomers()])
             .then(() => console.log('can set some loader here'))
             .catch((err) => setBanner({ message: "Error loading in product data", variant: 'danger' }))
 
@@ -86,7 +92,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
         // FOR VALIDATIONS NEED TO VALIDATE QUANTITIES BEFORE SUBMISSION!
 
-    
+
         //TALLY TAX AND AMOUNT VALUES
         const productRows = products.productRows;
         let amountSum = 0;
@@ -127,7 +133,16 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
             return
         }
         setProducts((prev) => ({ ...prev, getUniqueProducts: [...response.data] }));
-    }
+    };
+
+    const getCustomers = async () => {
+        const response: IResponse = await getJSONResponse({ endpoint: "/api/server/all-customers" });
+        if (response.status !== 200) {
+            setBanner({ message: "Error retrieving customers", variant: 'danger' })
+            return
+        };
+        setCustomers(response.data)
+    };
 
 
     const handleAddRow = () => {
@@ -154,6 +169,16 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
 
     };
+
+    const handleCustomerChange = (optionArr: [data: string]) => {
+        let value = optionArr[0];
+        if (!value) {
+            value = ''
+            setSingleSelectedCustomer([value])
+        };
+        setInvoiceData((prev) => ({...prev, customer: value}));
+        setSingleSelectedCustomer(optionArr)
+    }
 
     const handleSubmit = async () => {
         // Function that checks if 2 objects are the same
@@ -231,13 +256,23 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                                 Customer:
                             </Form.Label>
                             <Col className='mrp-50' md={3}>
-                                <Form.Select
+                                {/* <Form.Select
                                     onChange={(e) => setInvoiceData((prev) => ({ ...prev, customer: e.target.value }))}
                                     value={invoiceData.customer}
                                 >
                                     {!invoiceData.customer && <option> </option>}
-                                    {/* Will need a customer list here */}
-                                </Form.Select>
+                                    Will need a customer list here
+                                </Form.Select> */}
+                                <Typeahead
+                                    id='CustomerSelection'
+                                    onChange={handleCustomerChange}
+                                    labelKey={'company_name'}
+                                    options={customers}
+                                    selected={singleSelectedCustomer}
+                                    positionFixed
+                                    maxHeight="200px"
+
+                                />
                             </Col>
                         </Form.Group>
 

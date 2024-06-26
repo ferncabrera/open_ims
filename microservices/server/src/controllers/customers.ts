@@ -251,6 +251,11 @@ export const get_available_customers = async (req: Request, res: Response) => {
   res.status(200).json({message: 'Successfully retrieved available customers', data: available});
 };
 
+export const get_all_customers = async (req: Request, res: Response) => {
+  const customers_list_query = await query("SELECT * FROM customer_table");
+  res.status(200).json({message: 'Successfully retrieved all customers', data: customers_list_query.rows})
+};
+
 
 export const update_customer = async (req: Request, res: Response) => {
 

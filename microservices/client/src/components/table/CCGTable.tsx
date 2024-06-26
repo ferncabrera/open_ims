@@ -156,36 +156,38 @@ export const CCGTable: React.FC<ICCGTableProps> = (props) => {
         {/* Need to make an insertable component header here */}
         <div className='bg-white filter-header-section'>
           <h5 className='mb-3'><strong>{tableHeader}</strong></h5>
-          <Row className='w-100'>
-            <Col className='d-flex flex-wrap'>
-              <BasicSearchFilters
-                search={handleSearch}
-                placeHolder={searchPlaceholder}
-              />
-              {
-                !_.isEmpty(selectedFilters) &&
-                _.map(selectedFilters, (filter) => {
-                  i_key++;
-                  return <div key={i_key} className='px-1 py-1'>{filter.element} </div>
-                })
-              }
-              {!_.isEmpty(filterOptions) &&
-                <div className='py-1 px-1'>
-                  <FilterButton onSelect={handleFilterSelection} className='h-auto w-auto btn-grey' options={filterOptions} />
-                </div>
-              }
-            </Col>
-            <Col className='d-flex justify-content-end' xs={4}>
-              <div className='py-1 px-1'>
-                <PillButton
-                  className='h-auto'
-                  text='Apply and Search'
-                  color='blue'
-                  onClick={handleApplyFilters}
+          {!addRowButton &&
+            <Row className='w-100'>
+              <Col className='d-flex flex-wrap'>
+                <BasicSearchFilters
+                  search={handleSearch}
+                  placeHolder={searchPlaceholder}
                 />
-              </div>
-            </Col>
-          </Row>
+                {
+                  !_.isEmpty(selectedFilters) &&
+                  _.map(selectedFilters, (filter) => {
+                    i_key++;
+                    return <div key={i_key} className='px-1 py-1'>{filter.element} </div>
+                  })
+                }
+                {!_.isEmpty(filterOptions) &&
+                  <div className='py-1 px-1'>
+                    <FilterButton onSelect={handleFilterSelection} className='h-auto w-auto btn-grey' options={filterOptions} />
+                  </div>
+                }
+              </Col>
+              <Col className='d-flex justify-content-end' xs={4}>
+                <div className='py-1 px-1'>
+                  <PillButton
+                    className='h-auto'
+                    text='Apply and Search'
+                    color='blue'
+                    onClick={handleApplyFilters}
+                  />
+                </div>
+              </Col>
+            </Row>
+          }
         </div>
         <div className='px-4 py-3 bg-white filter-size-section'>
           {!onAddRow &&
