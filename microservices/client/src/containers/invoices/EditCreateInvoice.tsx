@@ -174,7 +174,6 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
     const deleteRow = (rowId) => {
 
-        console.log('rowId', rowId);
         const newProductState = produce(products, draft => {
             delete draft.productRows[rowId]
         });
