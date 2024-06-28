@@ -220,6 +220,15 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
             setError(errorObject)
             return
           }
+        
+        // Check to make sure every required product field is filled out
+        for (const obj_index in products.productRows) {
+            const isProductFilled = Object.values(products.productRows[obj_index]).every(attr => attr !== '');
+            if (!isProductFilled) {
+                setBanner({message: "Please fill out missing field(s) in product table", variant: 'danger'});
+                return
+            }
+        }
 
         console.log('Submitted!')
     };
@@ -241,7 +250,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                             </Form.Group>
                         }
 
-                        <Form.Group as={Row} className='mb-2 pb-1'>
+                        <Form.Group as={Row} className='mb-1 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
                                 Reference#:
                             </Form.Label>
@@ -269,7 +278,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                             </Col>
                         </Form.Group>
 
-                        <Form.Group as={Row} className='mb-2 pb-1'>
+                        <Form.Group as={Row} className='mb-1 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
                                 Invoice Status:
                             </Form.Label>
@@ -299,7 +308,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                             </Col>
                         </Form.Group>
 
-                        <Form.Group as={Row} className='mb-2 pb-1'>
+                        <Form.Group as={Row} className='mb-1 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
                                 Invoice Date:
                             </Form.Label>
@@ -326,7 +335,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                             </Col>
                         </Form.Group>
 
-                        <Form.Group as={Row} className='mb-2 pb-1'>
+                        <Form.Group as={Row} className='mb-1 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
                                 Customer:
                             </Form.Label>
@@ -357,7 +366,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                             </Col>
                         </Form.Group>
 
-                        <Form.Group as={Row} className='mb-2 pb-1'>
+                        <Form.Group as={Row} className='mb-1 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
                                 Sales Representative:
                             </Form.Label>
@@ -389,7 +398,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
                         <strong><p className='mt-3 pb-3 mb-3 fs-5'>Payment Information</p></strong>
 
-                        <Form.Group as={Row} className='mb-2 pb-1'>
+                        <Form.Group as={Row} className='mb-1 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
                                 Payment Status:
                             </Form.Label>
@@ -439,7 +448,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                             </Col>
                         </Form.Group>
 
-                        <Form.Group as={Row} className='mb-2 pb-1'>
+                        <Form.Group as={Row} className='mb-1 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
                                 Payment Due:
                             </Form.Label>
@@ -466,7 +475,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                             </Col>
                         </Form.Group>
 
-                        <Form.Group as={Row} className='mb-2 pb-1'>
+                        <Form.Group as={Row} className='mb-1 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
                                 Date Paid:
                             </Form.Label>
@@ -496,7 +505,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
                         <strong><p className='mt-3 pb-3 mb-3 fs-5'>Shipping Information</p></strong>
 
-                        <Form.Group as={Row} className='mb-2 pb-1'>
+                        <Form.Group as={Row} className='mb-1 pb-1'>
                             <Form.Label className='fw-normal' column md={2} sm={2} xs={2}>
                                 Delivery Status:
                             </Form.Label>
