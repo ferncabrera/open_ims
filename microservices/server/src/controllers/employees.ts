@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { query } from "../db";
+import _ from "lodash";
 
 interface IGetRequestHeaders {
   id?: number;
@@ -62,4 +63,32 @@ export const get_employees = async (req: Request, res: Response) => {
     total: totalCount,
     employees: employee_query.rows
   });
+}
+
+export const get_all_employees = async (req: Request, res: Response) => {
+
+  const employee_query = await query("SELECT * FROM employee_table");
+  const user_query = await query("SELECT * FROM user_table");
+
+  const employees = employee_query.rows;
+  const users = user_query.rows;
+
+  const indexed_users = _.reduce(users, (accumulator: any, current) => {
+    accumulator[current.id] = current;
+
+    return accumulator
+  }, {});
+
+  const employees_full_data = _.map(employees, (employee) => {
+    const id = employee.emp_id;
+    const corresponding_user_data = indexed_users[id]
+
+    const full_name = `${corresponding_user_data.first_name} ${corresponding_user_data.last_name}`
+
+    return {fullName: full_name, ...employee}
+
+  } );
+
+  res.status(200).json({message: "Successfully got employee data", data: employees_full_data})
+
 }

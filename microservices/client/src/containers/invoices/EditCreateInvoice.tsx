@@ -66,6 +66,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
     const [invoiceData, setInvoiceData] = useState(initialInvoiceData);
     const [tableData, setTableData] = useState<ITableRowData[]>([])
     const [customers, setCustomers] = useState([]);
+    const [employees, setEmployees] = useState([]);
     const [taxValue, setTaxValue] = useState<number>(0);
     const [amount, setAmount] = useState<number>(0);
     const [error, setError] = useState(initialErrorState)
@@ -81,6 +82,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
 
     //State for typeahead functionality 
     const [singleSelectedCustomer, setSingleSelectedCustomer] = useState([invoiceData.customer]);
+    const [singleSelectedEmployee, setSingleSelectedEmployee] = useState([invoiceData.salesRep])
 
 
     useEffect(() => {
@@ -90,7 +92,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
             setBreadcrumbs({ pathArr: [...breadcrumbs.pathArr, <span>Edit Sales-Invoice</span>] })
         }
 
-        Promise.all([getAllProducts(), getAllUniqueProducts(), getCustomers()])
+        Promise.all([getAllProducts(), getAllUniqueProducts(), getCustomers(), getEmployees()])
             .then(() => console.log('can set some loader here'))
             .catch((err) => setBanner({ message: "Error loading in product data", variant: 'danger' }))
 
@@ -160,6 +162,15 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
         setCustomers(response.data)
     };
 
+    const getEmployees = async () => {
+        const response: IResponse = await getJSONResponse({endpoint: "/api/server/get-all-employees"});
+        if (response.status !== 200) {
+            setBanner({message: "Error retrieving employees", variant: "danger"})
+            return
+        }
+        setEmployees(response.data)
+    };
+
 
     const handleAddRow = () => {
         // Need to ensure on generating a unique ID number - use idNumber in local useState.
@@ -206,6 +217,16 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
         setSingleSelectedCustomer(optionArr)
     }
 
+    const handleEmployeeChange = (optionArr: [data: string]) => {
+        let value = optionArr[0];
+        if (!value) {
+            value = ''
+            setSingleSelectedEmployee([value])
+        };
+        setInvoiceData((prev) => ({ ...prev, salesRep: value }));
+        setSingleSelectedEmployee(optionArr)
+    }
+
     const handleSubmit = async () => {
         // Function that checks if 2 objects are the same
         const ObjectArray: [] = Object.values(products.productRows) as [];
@@ -229,6 +250,8 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                 return
             }
         }
+
+        // Finally can submit invoiceData and productRow state to backend.
 
         console.log('Submitted!')
     };
@@ -373,10 +396,10 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                             <Col className='mrp-50' md={3}>
                                 <Typeahead
                                     id='salesRep'
-                                    onChange={() => null}
-                                    // labelKey={'company_name'}
-                                    options={[]}
-                                    selected={[""]}
+                                    onChange={handleEmployeeChange}
+                                    labelKey={'fullName'}
+                                    options={employees}
+                                    selected={singleSelectedEmployee}
                                     positionFixed
                                     maxHeight="200px"
                                     isInvalid={error.salesRep?.valid === false}
