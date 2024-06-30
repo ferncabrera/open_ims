@@ -496,6 +496,7 @@ CROSS JOIN LATERAL (
           up.vendor_id
 
       FROM unique_products_table up
+      JOIN products_table p ON up.item_number = p.item_number
       WHERE up.vendor_id = c.created_by
       LIMIT FLOOR(random() * 9) + 1
   ) item
