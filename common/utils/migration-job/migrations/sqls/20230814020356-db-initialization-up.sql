@@ -105,14 +105,13 @@ CREATE TABLE invoice_orders (
     customer_id INT REFERENCES customer_table(id) ON UPDATE CASCADE ON DELETE NO ACTION,
     invoice_date DATE NOT NULL,
     product_quantity_rate_list JSONB[],
-    amount_due NUMERIC NOT NULL,
     delivery_status sales_order_delivery,
     payment_status order_payment,
     order_status order_status,
     date_paid DATE,
     date_due DATE,
     created_by INT,
-    FOREIGN KEY (created_by) REFERENCES employee_table (emp_id) ON UPDATE CASCADE ON DELETE NO ACTION,
+    FOREIGN KEY (created_by) REFERENCES user_table (id) ON UPDATE CASCADE ON DELETE NO ACTION,
     sales_rep INT,
     FOREIGN KEY (sales_rep) REFERENCES employee_table (emp_id) ON UPDATE CASCADE ON DELETE NO ACTION
 );
@@ -440,7 +439,7 @@ VALUES
   GROUP BY v.id, series;
 
   -- Invoices
-  INSERT INTO invoice_orders (customer_id, invoice_date, product_quantity_rate_list, amount_due, delivery_status, payment_status, order_status, date_paid, date_due, created_by, sales_rep, reference_number)
+  INSERT INTO invoice_orders (customer_id, invoice_date, product_quantity_rate_list, delivery_status, payment_status, order_status, date_paid, date_due, created_by, sales_rep, reference_number)
   SELECT
       c.id,
       CURRENT_DATE - (random() * 1100)::integer AS invoice_date,
@@ -449,24 +448,34 @@ VALUES
               JSONB_BUILD_OBJECT(
                   'item_number', item.item_number,
                   'quantity', item.quantity,
-                  'rate', item.rate
+                  'rate', item.rate,
+                  'item_name', item.product_name,
+                  'taxable', item.taxable,
+                  'discount', item.discount,
+                  'lot', item.lot,
+                  'vendor_id', item.vendor_id
               )
           FROM (
               SELECT 
                   up.item_number,
                   FLOOR(random() * 9) + 1 AS quantity,
-                  15.75 AS rate
+                  15.75 AS rate,
+                  p.product_name,
+                  TRUE AS taxable,
+                  22 AS discount,
+                  up.lot,
+                  up.vendor_id
               FROM unique_products_table up
+              JOIN products_table p ON up.item_number = p.item_number
               WHERE up.vendor_id = c.created_by
               LIMIT FLOOR(random() * 9) + 1
           ) item
       ) AS product_quantity_rate_list,
-      SUM((item.quantity * item.rate)::numeric) AS amount_due,
-    CASE 
-        WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 3 = 0 THEN 'Shipped'::sales_order_delivery 
-        WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 3 = 1 THEN 'Not shipped'::sales_order_delivery 
-        ELSE 'Delivered'::sales_order_delivery 
-    END AS delivery_status,
+      CASE 
+          WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 3 = 0 THEN 'Shipped'::sales_order_delivery 
+          WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 3 = 1 THEN 'Not shipped'::sales_order_delivery 
+          ELSE 'Delivered'::sales_order_delivery 
+      END AS delivery_status,
       CASE WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 2 = 0 THEN 'Paid'::order_payment ELSE 'Not paid'::order_payment END AS payment_status,
       CASE WHEN ROW_NUMBER() OVER (PARTITION BY c.id ORDER BY series) % 3 != 0 THEN 'Confirmed'::order_status ELSE 'Draft'::order_status END AS order_status,
       CURRENT_DATE + (random() * 100)::integer AS date_paid,
@@ -475,11 +484,17 @@ VALUES
       FLOOR(random() * 6) + 1 AS sales_rep,
       to_char(FLOOR(random() * 999999999), 'FM000000000') AS reference_number
   FROM customer_table c
-  CROSS JOIN LATERAL (
+CROSS JOIN LATERAL (
       SELECT 
           up.item_number,
           FLOOR(random() * 9) + 1 AS quantity,
-          15.75 AS rate
+          15.75 AS rate,
+          p.product_name,
+          TRUE AS taxable,
+          22 AS discount,
+          up.lot,
+          up.vendor_id
+
       FROM unique_products_table up
       WHERE up.vendor_id = c.created_by
       LIMIT FLOOR(random() * 9) + 1
