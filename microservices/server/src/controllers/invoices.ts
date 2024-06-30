@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { query } from "../db";
+import { get_user_id } from "./users";
 import customError from "../utils/customError";
 import _ from "lodash";
 
@@ -170,7 +171,7 @@ export const get_all_invoices = async (req: Request, res: Response) => {
   const { date, input1, searchQuery } = filters;
 
   if (_.isEmpty(filters) || Object.values(filters).every(value => !value)) { // No filters or all filters are falsey values
-    invoice_query = await query("SELECT * FROM invoice_orders LIMIT $1 OFFSET $2", [pagesize, offset]);
+    invoice_query = await query("SELECT * FROM invoice_orders ORDER BY invoice_id LIMIT $1 OFFSET $2", [pagesize, offset]);
     count_query = await query("SELECT COUNT(*) FROM invoice_orders");
   } else {
 
@@ -231,4 +232,72 @@ export const get_all_invoices = async (req: Request, res: Response) => {
   res.status(200).json({ message: 'Invoices successfully retrieved', data });
 
 
-}
+};
+
+export const create_invoice = async (req: Request, res: Response) => {
+  
+  const [invoice_data, products] = req.body;
+
+  const {referenceNumber, invoiceStatus, invoiceDate, customer, salesRep, paymentStatus, paymentDue, datePaid, deliveryStatus, tax} = invoice_data;
+  const customer_id = customer.id;
+  const employee_id = salesRep.employee_id;
+
+  const format_products_object_array = _.map(Object.values(products), (object: any) => {
+  
+
+    // create JSONB object
+    const new_object = {
+      item_number: object.item_number,
+      quantity: object.quantity,
+      rate: object.rate,
+      item_name: object.item_name,
+      taxable: object.taxable,
+      discount: object.discount,
+      lot: object.lot,
+      vendor_id: object.vendor_id
+    }
+
+    const JSON_object = JSON.stringify(new_object);
+    return `"${JSON_object.replace(/"/g, '\\"')}"`;
+  });
+
+  const jsonbArrayString = `{${format_products_object_array.join(',')}}`;
+
+  // res.status(300).json({message: jsonbArrayString})
+
+  
+
+  const user_id = await get_user_id(req, res);
+
+  await query(
+    `INSERT INTO invoice_orders (
+      reference_number,
+      order_status,
+      invoice_date,
+      customer_id,
+      sales_rep,
+      payment_status,
+      date_due,
+      date_paid,
+      delivery_status,
+      tax,
+      created_by,
+      product_quantity_rate_list
+
+    ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12::JSONB[])`,
+    [referenceNumber, 
+      invoiceStatus, 
+      invoiceDate, 
+      customer_id, 
+      employee_id, 
+      paymentStatus, 
+      paymentDue, 
+      datePaid, 
+      deliveryStatus, 
+      tax, 
+      user_id, 
+      jsonbArrayString]
+  );
+
+  res.status(200).json({message: "Invoice successfully created!"});
+};

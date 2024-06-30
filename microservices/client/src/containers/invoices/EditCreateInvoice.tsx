@@ -11,6 +11,7 @@ import { useResetAtom } from 'jotai/utils';
 import { compareMultipleObjects } from '../../utilities/helpers/functions';
 import { fieldValidation, validateFormOnSubmit } from '../../utilities/validation';
 import { IValidate } from '../../utilities/types/validationTypes';
+import { useNavigate } from 'react-router';
 
 import { EditColumns } from "./ProductTableSchema";
 import { produce } from 'immer';
@@ -84,6 +85,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
     const [singleSelectedCustomer, setSingleSelectedCustomer] = useState([invoiceData.customer]);
     const [singleSelectedEmployee, setSingleSelectedEmployee] = useState([invoiceData.salesRep])
 
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (!invoiceId) {
@@ -241,6 +243,11 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
             setError(errorObject)
             return
           }
+
+        if (_.isEmpty(products.productRows)) {
+            setBanner({message: 'Please add products', variant: 'danger'});
+            return
+        }
         
         // Check to make sure every required product field is filled out
         for (const obj_index in products.productRows) {
@@ -252,6 +259,19 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
         }
 
         // Finally can submit invoiceData and productRow state to backend.
+        // Check whether this is an update or creation
+        if (!invoiceId) {
+            const response: any = await sendPostRequest({endpoint:'/api/server/invoice', data: [invoiceData, products.productRows]});
+            if (response.status === 200) {
+                setBanner({message: response.message, variant: 'success'});
+                navigate("/ccg/sales");
+            }
+            else {
+                setBanner({message: response.message, variant: 'danger'})
+            }
+
+        }
+
 
         console.log('Submitted!')
     };
@@ -338,7 +358,7 @@ export const EditCreateInvoice = (props: IEditInvoiceProps) => {
                             <Col className='mrp-50' md={3}>
                                 <Form.Control
                                     name='invoiceDate'
-                                    type='invoiceDate'
+                                    type='date'
                                     onChange={(e) => setInvoiceData((prev) => ({ ...prev, invoiceDate: e.target.value }))}
                                     value={invoiceData.invoiceDate}
                                     isInvalid={error.invoiceDate?.valid === false}

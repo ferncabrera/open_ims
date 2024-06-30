@@ -108,6 +108,7 @@ CREATE TABLE invoice_orders (
     delivery_status sales_order_delivery,
     payment_status order_payment,
     order_status order_status,
+    tax NUMERIC,
     date_paid DATE,
     date_due DATE,
     created_by INT,
@@ -439,7 +440,7 @@ VALUES
   GROUP BY v.id, series;
 
   -- Invoices
-  INSERT INTO invoice_orders (customer_id, invoice_date, product_quantity_rate_list, delivery_status, payment_status, order_status, date_paid, date_due, created_by, sales_rep, reference_number)
+  INSERT INTO invoice_orders (customer_id, invoice_date, product_quantity_rate_list, delivery_status, payment_status, order_status, date_paid, date_due, created_by, sales_rep, reference_number, tax)
   SELECT
       c.id,
       CURRENT_DATE - (random() * 1100)::integer AS invoice_date,
@@ -482,7 +483,8 @@ VALUES
       CURRENT_DATE + (random() * 100)::integer AS date_due,
       FLOOR(random() * 6) + 1 AS created_by,
       FLOOR(random() * 6) + 1 AS sales_rep,
-      to_char(FLOOR(random() * 999999999), 'FM000000000') AS reference_number
+      to_char(FLOOR(random() * 999999999), 'FM000000000') AS reference_number,
+      12.5 AS tax
   FROM customer_table c
 CROSS JOIN LATERAL (
       SELECT 
